@@ -36,6 +36,8 @@ export default function Companies() {
     }
   };
 
+  console.log(loading)
+  
   useEffect(() => {
     fetchCompany();
   }, [open]);
