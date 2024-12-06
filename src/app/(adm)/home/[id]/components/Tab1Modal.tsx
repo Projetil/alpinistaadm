@@ -1,6 +1,8 @@
+import { IRisk, riskSeverity, riskStatus } from "@/types/IRisk";
+import { formatDateToDDMMYYYY } from "@/utils/formatString";
 import { IoInformationCircle } from "react-icons/io5";
 
-const Tab1Modal = () => {
+const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
   return (
     <div>
       <div className="flex w-full justify-between mb-8">
@@ -11,38 +13,41 @@ const Tab1Modal = () => {
         <div className="flex flex-col gap-3 text-left">
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">ID</p>
-            <p>2488</p>
+            <p>{currentRisk ? currentRisk.id : ""}</p>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Estado</p>
-            <p>Estado</p>
+            <p>{currentRisk ? riskStatus[currentRisk.status] : ""}</p>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Data limite</p>
-            <p>01/01/2024</p>
+            <p>
+              {currentRisk ? formatDateToDDMMYYYY(currentRisk.limitDate) : ""}
+            </p>
           </div>
         </div>
         <div className="flex flex-col gap-3 text-left">
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Nome</p>
-            <p>Dispout 1923923324 Lorem Ipsum Error</p>
+            <p>{currentRisk ? currentRisk.name : ""}</p>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Severidade</p>
-            <p>Info</p>
+            <p>{currentRisk ? riskSeverity[currentRisk.riskSeverity] : ""}</p>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Data de correção</p>
-            <p>01/01/2024</p>
+            <p>
+              {" "}
+              {currentRisk ? formatDateToDDMMYYYY(currentRisk.limitDate) : ""}
+            </p>
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-3">
         <p className="font-semibold text-[#40414A]">Descrição</p>
         <p className="md:w-2/3 text-[#80828D]">
-          Lorem ipsum dolor sit amet consectetur. Malesuada in pellentesque
-          morbi velit lorem hendrerit malesuada egestas morbi. Enim faucibus
-          vitae tellus ac hendrerit.
+          {currentRisk ? currentRisk.description : ""}
         </p>
       </div>
     </div>

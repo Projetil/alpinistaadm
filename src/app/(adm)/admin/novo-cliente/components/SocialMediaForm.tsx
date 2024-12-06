@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CompanySocialNetworkAssetsService from "@/services/CompanySocialNetworkAssetsService";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -23,6 +24,7 @@ const SocialMediaForm = ({
   addStep: () => void;
   companyId: number;
 }) => {
+  const navigation = useRouter();
   const {
     register,
     handleSubmit,
@@ -102,6 +104,7 @@ const SocialMediaForm = ({
 
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
+          onClick={() => navigation.push("/admin")}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

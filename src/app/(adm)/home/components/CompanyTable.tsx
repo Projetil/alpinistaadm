@@ -8,7 +8,15 @@ import { useRouter } from "next/navigation";
 import { ICompany } from "@/types/ICompany";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
 
-const CompanyTable = ({ companies }: { companies: ICompany[] }) => {
+const CompanyTable = ({
+  companies,
+  pageNumber,
+  setPageNumber,
+}: {
+  companies?: ICompany[];
+  pageNumber: number;
+  setPageNumber: (x: number) => void;
+}) => {
   const navigate = useRouter();
 
   return (
@@ -89,9 +97,9 @@ const CompanyTable = ({ companies }: { companies: ICompany[] }) => {
         })}
       </div>
       <Pagination
-        pageIndex={1}
+        pageIndex={pageNumber}
         perPage={10}
-        handlePage={() => {}}
+        handlePage={setPageNumber}
         totalCount={10}
       />
     </div>

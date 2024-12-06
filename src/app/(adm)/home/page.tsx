@@ -1,18 +1,19 @@
 "use client";
 import CompanyService from "@/services/CompanyService";
-import { ICompany } from "@/types/ICompany";
+import { IPagedCompany } from "@/types/ICompany";
 import { useEffect, useState } from "react";
 import CompanyTable from "./components/CompanyTable";
 import { GoHomeFill } from "react-icons/go";
 
 export default function HomePage() {
-  const [companies, setCompanies] = useState<ICompany[]>([]);
+  const [companies, setCompanies] = useState<IPagedCompany>();
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
   const fetchCompany = async () => {
     try {
       setLoading(true);
-      const res = await CompanyService.GetAll();
+      const res = await CompanyService.GetAll(page, 10);
       setCompanies(res);
     } catch (error) {
       console.log(error);
@@ -24,7 +25,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchCompany();
-  }, [loading, open]);
+  }, [loading, page]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -34,7 +35,11 @@ export default function HomePage() {
           <h2 className="font-semibold md:text-3xl">Home</h2>
         </div>
       </section>
-      <CompanyTable companies={companies} />
+      <CompanyTable
+        companies={companies?.items}
+        pageNumber={page}
+        setPageNumber={(x: number) => setPage(x)}
+      />
     </main>
   );
 }

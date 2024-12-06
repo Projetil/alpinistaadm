@@ -1,9 +1,22 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
-import { tableAccountsData } from "@/data/tableAccount";
 import CardAccountMobile from "./CardAccountMobile";
+import { Dispatch, SetStateAction } from "react";
+import { IPagedRisk, riskSeverity, riskStatus } from "@/types/IRisk";
 
-const AccountTable = ({ openModal }: { openModal: () => void }) => {
+const AccountTable = ({
+  openModal,
+  risks,
+  currentPage,
+  setCurrentPage,
+  setRiskId,
+}: {
+  openModal: () => void;
+  risks?: IPagedRisk;
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  setRiskId: (x: number) => void;
+}) => {
   return (
     <section className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -37,9 +50,12 @@ const AccountTable = ({ openModal }: { openModal: () => void }) => {
           </tr>
         </thead>
         <tbody>
-          {tableAccountsData.map((row, index) => (
+          {risks?.items.map((row, index) => (
             <tr
-              onClick={openModal}
+              onClick={() => {
+                openModal();
+                setRiskId(row.id);
+              }}
               key={index}
               className={`${
                 index == 0 ? "" : "border-t border-gray-200"
@@ -55,10 +71,12 @@ const AccountTable = ({ openModal }: { openModal: () => void }) => {
                 <div className="flex">{row.active}</div>
               </td>
               <td className="py-3 px-4 text-sm">
-                <div className="flex">{row.state}</div>
+                <div className="flex">{riskStatus[Number(row.status)]}</div>
               </td>
               <td className="py-3 px-4  ">
-                <div className="flex">{row.severidade}</div>
+                <div className="flex">
+                  {riskSeverity[Number(row.riskSeverity)]}
+                </div>
               </td>
             </tr>
           ))}
@@ -66,24 +84,24 @@ const AccountTable = ({ openModal }: { openModal: () => void }) => {
       </table>
 
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {tableAccountsData.map((x, index) => {
+        {risks?.items.map((x, index) => {
           return (
             <CardAccountMobile
               key={index}
               id={x.id}
               name={x.name}
               active={x.active}
-              state={x.state}
-              severidade={x.severidade}
+              state={riskStatus[Number(x.status)]}
+              severidade={riskSeverity[Number(x.riskSeverity)]}
             />
           );
         })}
       </div>
       <Pagination
-        pageIndex={1}
+        pageIndex={currentPage}
         perPage={10}
-        handlePage={() => {}}
-        totalCount={10}
+        handlePage={setCurrentPage}
+        totalCount={risks?.totalItems}
       />
     </section>
   );

@@ -16,3 +16,8 @@ export interface ICreateAdministrator {
   position: string;
   password: string;
 }
+
+export interface IPagedAdministrator {
+  totalItems: number;
+  items: IAdministrator[];
+}

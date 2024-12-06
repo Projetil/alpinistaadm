@@ -2,8 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import RisksCommentService from "@/services/RisksCommentService";
+import { IPagedRisksComment } from "@/types/IRisksComment";
+import { formatDateToDDMMYYYY } from "@/utils/formatString";
+import { useSession } from "next-auth/react";
+import { useMemo, useState } from "react";
 import { IoMdSend } from "react-icons/io";
+import { toast } from "react-toastify";
 
 interface Message {
   id: number;
@@ -13,43 +18,56 @@ interface Message {
   isUser: boolean;
 }
 
-const CommentsChat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      sender: "someone@example.com",
-      timestamp: "13:24",
-      content:
-        "Lorem ipsum dolor sit amet consectetur. Malesuada in pellentesque morbi velit lorem hendrerit malesuada egestas morbi. Enim faucibus vitae tellus ac hendrerit.",
-      isUser: false,
-    },
-    {
-      id: 2,
-      sender: "you@example.com",
-      timestamp: "13:24",
-      content:
-        "Lorem ipsum dolor sit amet consectetur. Malesuada in pellentesque morbi velit lorem hendrerit malesuada egestas morbi. Enim faucibus vitae tellus ac hendrerit.",
-      isUser: true,
-    },
-  ]);
-
+const CommentsChat = ({
+  comments,
+  riskId,
+}: {
+  comments?: IPagedRisksComment;
+  riskId?: number;
+}) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const { data: session } = useSession();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (input.trim() === "") return;
-    const newMessage: Message = {
-      id: Date.now(),
-      sender: "you@example.com",
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      content: input,
-      isUser: true,
-    };
-    setMessages([...messages, newMessage]);
-    setInput("");
+
+    try {
+      await RisksCommentService.Post({
+        riskId: riskId || 0,
+        text: input,
+        userId: Number(session?.user?.id),
+      });
+      const newMessage: Message = {
+        id: Date.now(),
+        sender: session?.user.email || "",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        content: input,
+        isUser: true,
+      };
+      setMessages([...messages, newMessage]);
+      setInput("");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao enviar mensagem");
+    }
   };
+
+  useMemo(() => {
+    if (comments?.items) {
+      const newMessages = comments.items.map((comment) => ({
+        id: comment.id,
+        sender: comment.customerName,
+        timestamp: formatDateToDDMMYYYY(comment.createdAt),
+        content: comment.text,
+        isUser: false,
+      }));
+      setMessages(newMessages);
+    }
+  }, [comments]);
 
   return (
     <div className="flex flex-col w-full  rounded-md p-4 space-y-4">

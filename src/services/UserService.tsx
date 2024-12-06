@@ -30,6 +30,25 @@ const UserService = {
       }
     }
   },
+  Put: async (data: ICreateUser, id: number) => {
+    try {
+      await api.put(`/User/${id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
   Login: async (data: IUserLogin) => {
     try {
       await api.post("/User/Login", data, {

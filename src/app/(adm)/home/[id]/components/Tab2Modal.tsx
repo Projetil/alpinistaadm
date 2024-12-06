@@ -1,9 +1,10 @@
 "use client";
+import { IRisk } from "@/types/IRisk";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { IoInformationCircle } from "react-icons/io5";
 
-const Tab2Modal = () => {
+const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
   return (
     <div className="bg-[#FBFBFB] p-3 rounded-lg">
       <div className="flex w-full justify-between mb-8">
@@ -13,21 +14,15 @@ const Tab2Modal = () => {
       <div className="flex flex-col gap-4 ">
         <AccordingTab2
           title={"Observações"}
-          descript={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum."
-          }
+          descript={currentRisk ? currentRisk.observations : ""}
         />
         <AccordingTab2
           title={"Plano de ação"}
-          descript={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum."
-          }
+          descript={currentRisk ? currentRisk.actionPlan : ""}
         />
         <AccordingTab2
           title={"Evidências"}
-          descript={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur fringilla, risus id pulvinar aliquam, eros velit hendrerit nisl, vitae facilisis risus orci a dolor. Vestibulum porttitor accumsan nisi non euismod. Phasellus congue orci nec enim efficitur, vel eleifend diam dictum."
-          }
+          descript={currentRisk ? currentRisk.evidences : ""}
         />
       </div>
     </div>

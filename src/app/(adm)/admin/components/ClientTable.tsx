@@ -2,11 +2,19 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
 import CardClientMobile from "./CardClientMobile";
-import { ICompany } from "@/types/ICompany";
+import { IPagedCompany } from "@/types/ICompany";
 import { formatCNPJ, formatDateString } from "@/utils/formatString";
-import PopoverAdms from "./PopoverAdms";
+import PopoverClients from "./PopoverClients";
 
-const ClientTable = ({ companies }: { companies?: ICompany[] }) => {
+const ClientTable = ({
+  companies,
+  page,
+  setPage,
+}: {
+  companies?: IPagedCompany;
+  page: number;
+  setPage: (x: number) => void;
+}) => {
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -37,7 +45,7 @@ const ClientTable = ({ companies }: { companies?: ICompany[] }) => {
         </thead>
         <tbody>
           {companies &&
-            companies.map((row, index) => (
+            companies.items?.map((row, index) => (
               <tr
                 key={index}
                 className={`${
@@ -62,14 +70,14 @@ const ClientTable = ({ companies }: { companies?: ICompany[] }) => {
                 </td>
 
                 <td className="py-5 px-4 flex items-center justify-center">
-                  <PopoverAdms companyId={row.id} />
+                  <PopoverClients clientId={row.id} />
                 </td>
               </tr>
             ))}
         </tbody>
       </table>
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {companies?.map((x, index) => {
+        {companies?.items.map((x, index) => {
           return (
             <CardClientMobile
               key={index}
@@ -82,10 +90,10 @@ const ClientTable = ({ companies }: { companies?: ICompany[] }) => {
         })}
       </div>
       <Pagination
-        pageIndex={1}
+        pageIndex={page}
         perPage={10}
-        handlePage={() => {}}
-        totalCount={10}
+        handlePage={setPage}
+        totalCount={companies?.totalItems}
       />
     </div>
   );

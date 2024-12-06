@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import CompanyService from "@/services/CompanyService";
+import { useRouter } from "next/navigation";
 
 const schemaCompany = z.object({
   razaoSocial: z
@@ -45,6 +46,7 @@ const CompanyForm = ({
   addStep: () => void;
   setCompany: (x: number) => void;
 }) => {
+  const navigation = useRouter();
   const {
     register,
     handleSubmit,
@@ -193,6 +195,7 @@ const CompanyForm = ({
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
+          onClick={() => navigation.push("/admin")}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

@@ -1,17 +1,22 @@
-import { ICompany, ICreateCompany, IPagedCompany } from "@/types/ICompany";
-import { api } from "./api";
-import { HttpStatusCode } from "axios";
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
+import { HttpStatusCode } from "axios";
+import { api } from "./api";
+import {
+  IPagedRisksHistorical,
+  IRiskHistorical,
+} from "@/types/IRisksHistorical";
 
-const endpoint = "/Companies";
+const endpoint = "/RisksHistorical";
 
-const CompanyService = {
-  GetAll: async (pageNumber: number, pageSize: number) => {
+const RisksHistoricalService = {
+  Get: async (pageNumber: number, pageSize: number, riskId?: number) => {
     try {
       const res = await api.get(
-        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          riskId ? `&riskId=${riskId}&` : ""
+        }}`
       );
-      return res.data as IPagedCompany;
+      return res.data as IPagedRisksHistorical;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -27,23 +32,7 @@ const CompanyService = {
   GetById: async (id: number) => {
     try {
       const res = await api.get(`${endpoint}/${id}`);
-      return res.data as ICompany;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      switch (error.statusCode) {
-        case HttpStatusCode.BadRequest:
-          throw new ValidationError(error.body.erros);
-        case HttpStatusCode.NotFound:
-          throw new NotFoundError();
-        default:
-          throw new UnexpectedError();
-      }
-    }
-  },
-  Post: async (company: ICreateCompany) => {
-    try {
-      const res = await api.post(`${endpoint}`, company);
-      return res.data as ICompany;
+      return res.data as IRiskHistorical;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -58,4 +47,4 @@ const CompanyService = {
   },
 };
 
-export default CompanyService;
+export default RisksHistoricalService;

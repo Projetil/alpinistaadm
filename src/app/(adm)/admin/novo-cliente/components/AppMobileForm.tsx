@@ -126,6 +126,7 @@ const AppMobileForm = ({ companyId }: { companyId: number }) => {
       </Button>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
+          onClick={() => navigator.push("/admin")}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

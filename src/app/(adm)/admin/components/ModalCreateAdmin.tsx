@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AdministratorService from "@/services/AdministratorService";
 import UserService from "@/services/UserService";
+import { IAdministrator } from "@/types/IAdministrator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -37,12 +39,18 @@ export type DataCompany = z.infer<typeof schemaCompany>;
 const ModalCreateAdmin = ({
   open,
   setOpen,
+  admId,
+  setAdmId,
 }: {
   open: boolean;
   setOpen: () => void;
+  admId?: number;
+  setAdmId: (x: number) => void;
 }) => {
+  const [adm, setAdm] = useState<IAdministrator>();
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<DataCompany>({
@@ -51,27 +59,93 @@ const ModalCreateAdmin = ({
 
   const onSubmit = async (data: DataCompany) => {
     try {
-      const resUser = await UserService.Post({
-        email: data.email,
-        password: data.senha,
-        type: 2,
-      });
+      if (admId && admId > 0) {
+        await UserService.Put(
+          {
+            email: data.email,
+            password: data.senha,
+            type: 2,
+          },
+          adm?.userId ?? 0
+        );
 
-      await AdministratorService.Post({
-        name: data.userName,
-        email: data.email,
-        phone: Number(data.telefone),
-        position: data.cargo,
-        password: data.senha,
-        userId: resUser.id,
-      });
-      toast.success("Empresa Administrador com sucesso");
+        await AdministratorService.Put(
+          {
+            name: data.userName,
+            email: data.email,
+            phone: Number(data.telefone),
+            position: data.cargo,
+            password: data.senha,
+            userId: adm?.userId ?? 0,
+          },
+          admId
+        );
+        toast.success("Administrador atualizado com sucesso");
+      } else {
+        const resUser = await UserService.Post({
+          email: data.email,
+          password: data.senha,
+          type: 2,
+        });
+
+        await AdministratorService.Post({
+          name: data.userName,
+          email: data.email,
+          phone: Number(data.telefone),
+          position: data.cargo,
+          password: data.senha,
+          userId: resUser.id,
+        });
+        toast.success("Administrador criado com sucesso");
+      }
       setOpen();
     } catch (err) {
       toast.error("Erro ao Administrador empresa");
       console.log(err);
     }
   };
+
+  const fetchAdm = async () => {
+    try {
+      const res = await AdministratorService.GetById(admId || 0);
+      setAdm(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setAdmId(0);
+      reset({
+        userName: "",
+        profileType: "2",
+        email: "",
+        telefone: "",
+        cargo: "",
+        senha: "",
+      });
+    }
+  }, [open]);
+
+  useMemo(() => {
+    if (admId && admId > 0) {
+      fetchAdm();
+    }
+  }, [admId]);
+
+  useMemo(() => {
+    if (adm) {
+      reset({
+        userName: adm.name,
+        profileType: "2",
+        email: adm.email,
+        telefone: String(adm.phone),
+        cargo: adm.position,
+        senha: adm.password,
+      });
+    }
+  }, [adm]);
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
@@ -183,6 +257,7 @@ const ModalCreateAdmin = ({
           <div className="flex w-full gap-4 justify-end items-center mt-2">
             <Button
               variant={"outline"}
+              onClick={() => setOpen()}
               className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
               type="button"
             >

@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import CompanyAddressAssetsService from "@/services/CompanyAddressAssetsService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -36,6 +37,7 @@ const AddressForm = ({
   addStep: () => void;
   companyId: number;
 }) => {
+  const navigation = useRouter();
   const [addressSize, setAddressSize] = useState(1);
   const {
     register,
@@ -120,6 +122,7 @@ const AddressForm = ({
       </Button>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
+          onClick={() => navigation.push("/admin")}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

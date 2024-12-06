@@ -1,17 +1,23 @@
-import { ICompany, ICreateCompany, IPagedCompany } from "@/types/ICompany";
-import { api } from "./api";
-import { HttpStatusCode } from "axios";
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
+import { HttpStatusCode } from "axios";
+import { api } from "./api";
+import {
+  ICreateRisksComment,
+  IPagedRisksComment,
+  IRiskComment,
+} from "@/types/IRisksComment";
 
-const endpoint = "/Companies";
+const endpoint = "/RisksComment";
 
-const CompanyService = {
-  GetAll: async (pageNumber: number, pageSize: number) => {
+const RisksCommentService = {
+  Get: async (pageNumber: number, pageSize: number, riskId?: number) => {
     try {
       const res = await api.get(
-        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          riskId ? `&riskId=${riskId}&` : ""
+        }}`
       );
-      return res.data as IPagedCompany;
+      return res.data as IPagedRisksComment;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -27,7 +33,7 @@ const CompanyService = {
   GetById: async (id: number) => {
     try {
       const res = await api.get(`${endpoint}/${id}`);
-      return res.data as ICompany;
+      return res.data as IRiskComment;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -40,10 +46,10 @@ const CompanyService = {
       }
     }
   },
-  Post: async (company: ICreateCompany) => {
+  Post: async (data: ICreateRisksComment) => {
     try {
-      const res = await api.post(`${endpoint}`, company);
-      return res.data as ICompany;
+      const res = await api.post(`${endpoint}`, data);
+      return res.data as IRiskComment;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -58,4 +64,4 @@ const CompanyService = {
   },
 };
 
-export default CompanyService;
+export default RisksCommentService;

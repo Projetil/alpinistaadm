@@ -26,3 +26,8 @@ export interface ICreateCompany {
   technicalContactName: string;
   technicalContactEmail: string;
 }
+
+export interface IPagedCompany {
+  totalItems: number;
+  items: ICompany[];
+}

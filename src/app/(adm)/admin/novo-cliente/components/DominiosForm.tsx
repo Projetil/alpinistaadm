@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const domainSchema = z.object({
   domains: z.array(z.string().min(1, "Campo obrigatório").url("URL inválida")),
@@ -15,6 +16,7 @@ const domainSchema = z.object({
 type DomainFormValues = z.infer<typeof domainSchema>;
 
 const DominiosForm = ({ addStep }: { addStep: () => void }) => {
+  const navigation = useRouter();
   const [domainSize, setDomainSize] = useState(1);
   const {
     control,
@@ -74,6 +76,7 @@ const DominiosForm = ({ addStep }: { addStep: () => void }) => {
       </Button>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
+          onClick={() => navigation.push("/admin")}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

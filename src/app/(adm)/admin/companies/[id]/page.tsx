@@ -18,6 +18,7 @@ export default function Companies() {
   const [open, setOpen] = useState(false);
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const [companyName, setCompanyName] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const navigation = useRouter();
 
@@ -36,8 +37,6 @@ export default function Companies() {
     }
   };
 
-  console.log(loading)
-  
   useEffect(() => {
     fetchCompany();
   }, [open]);

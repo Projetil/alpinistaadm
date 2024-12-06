@@ -21,7 +21,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials, _req) {
         try {
-          const { tokenBearer, userID, userType } =
+          const { tokenBearer, userID, userType, email } =
             await UserService.ValidationCode(
               credentials!.value,
               credentials!.codeValidationType
@@ -30,6 +30,7 @@ export const authOptions: AuthOptions = {
             id: userID,
             token: tokenBearer,
             userType: userType,
+            email: email,
           };
         } catch (error) {
           if (isAxiosError(error)) {

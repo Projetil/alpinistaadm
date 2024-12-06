@@ -2,22 +2,41 @@
 import { GoHomeFill } from "react-icons/go";
 import AccountTable from "./components/AccountTable";
 import { FaRegArrowAltCircleLeft } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import PopoverClassify from "./components/PopoverClassify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalNewRisk from "./components/ModalNewRisk";
 import AtivosTable from "./components/AtivosTable";
 import { GoChecklist } from "react-icons/go";
 import ModalAccountDetail from "./components/ModalAccountDetail";
-import { riskData } from "@/data/risk";
+import { IPagedRisk } from "@/types/IRisk";
+import RisksService from "@/services/RisksService";
 
 export default function CompanyIndPage() {
+  const { id } = useParams();
   const navigate = useRouter();
   const [openModal, setOpenModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [risks, setRisks] = useState<IPagedRisk>();
   const [selected, setSelected] = useState("Padrão");
   const [openModalDetails, setOpenModalDetails] = useState(false);
+  const [openedRiskId, setOpenedRiskId] = useState<number>();
+  const [editRiskId, setEditRiskId] = useState<number>();
+
+  const fetchRisks = async () => {
+    try {
+      const res = await RisksService.Get(page, 10, undefined, Number(id));
+      setRisks(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRisks();
+  }, [page, openModal]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -61,10 +80,20 @@ export default function CompanyIndPage() {
       {selected == "Padrão" && (
         <AccountTable
           openModal={() => setOpenModalDetails(!openModalDetails)}
+          risks={risks}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
         />
       )}
       {selected == "Ativos" && (
-        <AtivosTable openModal={() => setOpenModalDetails(!openModalDetails)} />
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+        />
       )}
       {selected == "Padrão" && (
         <>
@@ -76,15 +105,19 @@ export default function CompanyIndPage() {
           </button>
 
           <ModalNewRisk
+            riskId={editRiskId}
             open={openModal}
             setOpen={() => setOpenModal(!openModal)}
+            setRiskId={(x: number) => setEditRiskId(x)}
           />
         </>
       )}
       <ModalAccountDetail
+        riskId={openedRiskId}
+        setRiskId={(x: number) => setEditRiskId(x)}
+        setOpenModalEdit={() => setOpenModal(!openModal)}
         open={openModalDetails}
         setOpen={() => setOpenModalDetails(!openModalDetails)}
-        risk={riskData[1]}
       />
     </main>
   );

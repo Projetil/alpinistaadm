@@ -2,53 +2,49 @@
 import { MdSecurity } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ICompany } from "@/types/ICompany";
+import { IPagedCompany } from "@/types/ICompany";
 import { useEffect, useState } from "react";
 import CompanyService from "@/services/CompanyService";
 import { useRouter } from "next/navigation";
 import ClientTable from "./components/ClientTable";
 import AdminTable from "./components/AdminTable";
 import AdministratorService from "@/services/AdministratorService";
-import { IAdministrator } from "@/types/IAdministrator";
+import { IPagedAdministrator } from "@/types/IAdministrator";
 import ModalCreateAdmin from "./components/ModalCreateAdmin";
 
 export default function AdminPage() {
-  const [company, setCompany] = useState<ICompany[]>([]);
-  const [admins, setAdmins] = useState<IAdministrator[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [company, setCompany] = useState<IPagedCompany>();
+  const [admins, setAdmins] = useState<IPagedAdministrator>();
   const navigation = useRouter();
   const [open, setOpen] = useState(false);
+  const [pageCompany, setPageCompany] = useState(1);
+  const [editAdmId, setEditAdmId] = useState<number>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [editComumId, setEditComumId] = useState<number>();
+  const [pageAdmin, setPageAdmin] = useState(1);
 
   const fetchAdmins = async () => {
     try {
-      setLoading(true);
-      const res = await AdministratorService.GetAll();
+      const res = await AdministratorService.GetAll(pageAdmin, 10);
       setAdmins(res);
     } catch (error) {
       console.log(error);
-      setLoading(true);
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchCompany = async () => {
     try {
-      setLoading(true);
-      const res = await CompanyService.GetAll();
+      const res = await CompanyService.GetAll(pageCompany, 10);
       setCompany(res);
     } catch (error) {
       console.log(error);
-      setLoading(true);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCompany();
     fetchAdmins();
-  }, [loading, open]);
+  }, [open, pageAdmin, pageCompany]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -97,14 +93,33 @@ export default function AdminPage() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="Customers">
-            <ClientTable companies={company} />
+            <ClientTable
+              companies={company}
+              page={pageCompany}
+              setPage={(x: number) => {
+                setPageCompany(x);
+              }}
+            />
           </TabsContent>
           <TabsContent value="Admins">
-            <AdminTable administrators={admins} />
+            <AdminTable
+              setAdmId={(x: number) => setEditAdmId(x)}
+              administrators={admins}
+              page={pageAdmin}
+              setOpenModal={() => setOpen(!open)}
+              setPage={(x: number) => {
+                setPageAdmin(x);
+              }}
+            />
           </TabsContent>
         </section>
       </Tabs>
-      <ModalCreateAdmin open={open} setOpen={() => setOpen(!open)} />
+      <ModalCreateAdmin
+        admId={editAdmId}
+        setAdmId={(x: number) => setEditAdmId(x)}
+        open={open}
+        setOpen={() => setOpen(!open)}
+      />
     </main>
   );
 }

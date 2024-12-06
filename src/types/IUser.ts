@@ -7,6 +7,7 @@ export interface IValidationResult {
   tokenBearer: string;
   userID: string;
   userType: number;
+  email: string;
 }
 
 export interface IUser {

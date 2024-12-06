@@ -1,17 +1,26 @@
-import { ICompany, ICreateCompany, IPagedCompany } from "@/types/ICompany";
-import { api } from "./api";
-import { HttpStatusCode } from "axios";
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
+import { HttpStatusCode } from "axios";
+import { api } from "./api";
+import { ICreateRisk, IPagedRisk, IRisk } from "@/types/IRisk";
 
-const endpoint = "/Companies";
+const endpoint = "/Risks";
 
-const CompanyService = {
-  GetAll: async (pageNumber: number, pageSize: number) => {
+const RisksService = {
+  Get: async (
+    pageNumber: number,
+    pageSize: number,
+    responsibleCustomerId?: number,
+    companyId?: number
+  ) => {
     try {
       const res = await api.get(
-        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          responsibleCustomerId
+            ? `&responsibleCustomerId=${responsibleCustomerId}&`
+            : ""
+        }${companyId ? `&companyId=${companyId}` : ""}`
       );
-      return res.data as IPagedCompany;
+      return res.data as IPagedRisk;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -27,7 +36,7 @@ const CompanyService = {
   GetById: async (id: number) => {
     try {
       const res = await api.get(`${endpoint}/${id}`);
-      return res.data as ICompany;
+      return res.data as IRisk;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -40,10 +49,26 @@ const CompanyService = {
       }
     }
   },
-  Post: async (company: ICreateCompany) => {
+  Post: async (data: ICreateRisk) => {
     try {
-      const res = await api.post(`${endpoint}`, company);
-      return res.data as ICompany;
+      const res = await api.post(`${endpoint}`, data);
+      return res.data as IRisk;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Put: async (data: ICreateRisk, id: number) => {
+    try {
+      const res = await api.put(`${endpoint}/${id}`, data);
+      return res.data as IRisk;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -58,4 +83,4 @@ const CompanyService = {
   },
 };
 
-export default CompanyService;
+export default RisksService;
