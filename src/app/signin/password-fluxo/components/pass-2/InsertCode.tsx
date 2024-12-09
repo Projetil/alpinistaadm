@@ -11,6 +11,8 @@ import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { LoadingSpinner } from "@/components/default/Spinner";
 
 export default function InsertCode({
   onClose,
@@ -19,6 +21,7 @@ export default function InsertCode({
   onClose: () => void;
   nextPage: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -28,6 +31,7 @@ export default function InsertCode({
   });
 
   const onSubmit = async (data: DataSchemaAuth) => {
+    setLoading(true);
     const result = await signIn("credentials", {
       value: data.code,
       codeValidationType: "2",
@@ -39,6 +43,7 @@ export default function InsertCode({
     }
     if (result?.error) {
       toast.error("Código inválido");
+      setLoading(false);
     }
   };
 
@@ -61,7 +66,7 @@ export default function InsertCode({
         </div>
 
         <Button type="submit" className="w-full bg-[#3088EE] text-white">
-          Enviar
+          {loading ? <LoadingSpinner /> : "Continuar"}
         </Button>
       </form>
     </Container>

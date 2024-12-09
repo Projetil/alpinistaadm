@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "../Container";
 import Header from "../Header";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import UserService from "@/services/UserService";
+import { LoadingSpinner } from "@/components/default/Spinner";
 
 const resetPasswordSchema = z
   .object({
@@ -39,6 +40,7 @@ export default function ResetPassword({
   onClose: () => void;
   nextPage: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -50,12 +52,15 @@ export default function ResetPassword({
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
+      setLoading(true);
       await UserService.PasswordRecovery(data.email ?? "");
       onClose();
       nextPage();
     } catch (error) {
       console.log(error);
       toast.error("Erro ao enviar código de recuperação");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +129,7 @@ export default function ResetPassword({
         </div>
 
         <Button type="submit" className="w-full bg-[#3088EE]">
-          Enviar
+          {loading ? <LoadingSpinner /> : "Enviar"}
         </Button>
       </form>
     </Container>

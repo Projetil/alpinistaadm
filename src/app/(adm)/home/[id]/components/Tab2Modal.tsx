@@ -6,7 +6,7 @@ import { IoInformationCircle } from "react-icons/io5";
 
 const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
   return (
-    <div className="bg-[#FBFBFB] p-3 rounded-lg">
+    <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
       <div className="flex w-full justify-between mb-8">
         <h4 className="font-semibold text-[#050506]">Detalhamento</h4>
         <IoInformationCircle color="#1A69C4" size={24} />
@@ -14,15 +14,39 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
       <div className="flex flex-col gap-4 ">
         <AccordingTab2
           title={"Observações"}
-          descript={currentRisk ? currentRisk.observations : ""}
+          descript={
+            currentRisk ? (
+              <p
+                dangerouslySetInnerHTML={{ __html: currentRisk.observations }}
+              ></p>
+            ) : (
+              ""
+            )
+          }
         />
         <AccordingTab2
           title={"Plano de ação"}
-          descript={currentRisk ? currentRisk.actionPlan : ""}
+          descript={
+            currentRisk ? (
+              <p
+                dangerouslySetInnerHTML={{ __html: currentRisk.actionPlan }}
+              ></p>
+            ) : (
+              ""
+            )
+          }
         />
         <AccordingTab2
           title={"Evidências"}
-          descript={currentRisk ? currentRisk.evidences : ""}
+          descript={
+            currentRisk ? (
+              <p
+                dangerouslySetInnerHTML={{ __html: currentRisk.evidences }}
+              ></p>
+            ) : (
+              ""
+            )
+          }
         />
       </div>
     </div>
@@ -36,7 +60,7 @@ const AccordingTab2 = ({
   descript,
 }: {
   title: string;
-  descript: string;
+  descript: string | React.JSX.Element;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

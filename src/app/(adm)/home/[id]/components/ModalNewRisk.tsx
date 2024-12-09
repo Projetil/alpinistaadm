@@ -1,6 +1,7 @@
 "use client";
 import { DatePicker } from "@/components/default/DatePicker";
 import Modal from "@/components/default/Modal";
+import Editor from "@/components/default/TextAreaInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,7 @@ import { IRisk } from "@/types/IRisk";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -63,9 +64,9 @@ const ModalNewRisk = ({
   });
 
   const {
-    register: register2,
     reset: reset2,
     handleSubmit: handleSubmit2,
+    control,
     formState: { errors: errors2 },
   } = useForm<RiskFormInputs2>({
     resolver: zodResolver(riskForm2Schema),
@@ -392,10 +393,19 @@ const ModalNewRisk = ({
               <Label className="">
                 Observações <span className="text-red-500">*</span>
               </Label>
-              <Textarea
-                {...register2("observations")}
-                placeholder="Observações"
-                className="placeholder:text-[#8C8B91] text-[#636267] w-full"
+              <Controller
+                name="observations"
+                control={control}
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Editor
+                    styling="30rem"
+                    contentDescription={value}
+                    setContentDescription={onChange}
+                  />
+                )}
               />
               {errors2.observations && errors2.observations && (
                 <p className="text-red-500">{errors2.observations?.message}</p>
@@ -405,10 +415,19 @@ const ModalNewRisk = ({
               <Label className="">
                 Plano de ação <span className="text-red-500">*</span>
               </Label>
-              <Textarea
-                {...register2("actionPlan")}
-                placeholder="Plano de ação"
-                className="placeholder:text-[#8C8B91] text-[#636267] w-full"
+              <Controller
+                name="actionPlan"
+                control={control}
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Editor
+                    styling="30rem"
+                    contentDescription={value}
+                    setContentDescription={onChange}
+                  />
+                )}
               />
               {errors2.actionPlan && errors2.actionPlan && (
                 <p className="text-red-500">{errors2.actionPlan?.message}</p>
@@ -418,10 +437,19 @@ const ModalNewRisk = ({
               <Label className="">
                 Evidências <span className="text-red-500">*</span>
               </Label>
-              <Textarea
-                {...register2("evidences")}
-                placeholder="Evidências"
-                className="placeholder:text-[#8C8B91] text-[#636267] w-full "
+              <Controller
+                name="evidences"
+                control={control}
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Editor
+                    styling="30rem"
+                    contentDescription={value}
+                    setContentDescription={onChange}
+                  />
+                )}
               />
               {errors2.evidences && errors2.evidences && (
                 <p className="text-red-500">{errors2.evidences?.message}</p>

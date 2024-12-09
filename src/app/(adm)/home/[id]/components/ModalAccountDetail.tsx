@@ -45,7 +45,7 @@ const ModalAccountDetail = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-6 px-6 rounded-lg flex flex-col gap-10 overflow-y-auto max-h-screen h-full md:h-auto md:w-auto w-full max-w-[800px]">
+      <div className="bg-white py-6 px-6 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-auto md:w-auto w-full max-w-[800px]">
         <div
           onClick={setOpen}
           className="flex w-full justify-between md:justify-end"

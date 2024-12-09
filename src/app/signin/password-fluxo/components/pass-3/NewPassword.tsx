@@ -39,6 +39,7 @@ export default function NewPassword({
   const [showPassword, setShowPassword] = useState(false);
   const { data: session } = useSession();
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -50,6 +51,7 @@ export default function NewPassword({
 
   const onSubmit = async (data: PasswordFormData) => {
     try {
+      setLoading(true);
       await UserService.PasswordRecoveryNewPassword(
         session?.user.id ?? "",
         data.password
@@ -62,6 +64,7 @@ export default function NewPassword({
     } catch (error) {
       console.log(error);
       toast.error("Erro ao alterar senha");
+      setLoading(false);
     }
   };
 
@@ -138,7 +141,7 @@ export default function NewPassword({
           type="submit"
           className="w-full mt-6 bg-[#3088EE] hover:bg-[#308DFF]"
         >
-          Confirmar
+          {loading ? "Carregando..." : "Confirmar"}
         </Button>
       </form>
     </Container>

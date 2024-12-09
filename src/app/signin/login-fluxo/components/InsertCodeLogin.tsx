@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import { LoadingSpinner } from "@/components/default/Spinner";
 
 export const schemaAuth = z.object({
   code: z.string().min(6, { message: "O código deve ter 6 caracteres" }),
@@ -22,6 +24,7 @@ export default function InsertCodeLogin({
   onClose: () => void;
   nextPage: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -31,6 +34,7 @@ export default function InsertCodeLogin({
   });
 
   const onSubmit = async (data: DataSchemaAuth) => {
+    setLoading(true);
     const result = await signIn("credentials", {
       value: data.code,
       codeValidationType: "1",
@@ -42,12 +46,13 @@ export default function InsertCodeLogin({
     }
     if (result?.error) {
       toast.error("Código inválido");
+      setLoading(false);
     }
   };
 
   return (
     <Container>
-      <Header title="Recuperar Senha" onClose={onClose} />
+      <Header title="Autenticação" onClose={onClose} />
       <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
         <p className={`text-sm text-[#636267]`}>
           Enviamos um código de recuperação para o seu e-mail ou telefone
@@ -64,7 +69,7 @@ export default function InsertCodeLogin({
         </div>
 
         <Button type="submit" className="w-full bg-[#3088EE] text-white">
-          Enviar
+          {loading ? <LoadingSpinner /> : "Continuar"}
         </Button>
       </form>
     </Container>

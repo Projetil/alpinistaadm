@@ -36,7 +36,7 @@ export default function HomePage() {
         </div>
       </section>
       <CompanyTable
-        companies={companies?.items}
+        companies={companies}
         pageNumber={page}
         setPageNumber={(x: number) => setPage(x)}
       />

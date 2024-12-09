@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CompanySocialNetworkAssetsService from "@/services/CompanySocialNetworkAssetsService";
 import { ICompanySocialNetworkAssets } from "@/types/ICompanySocialNetworkAssets";
+import { formatPhone } from "@/utils/formatString";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -112,9 +113,7 @@ const SocialMediaForm = ({
     >
       <div className="flex gap-4 md:flex-row flex-col items-center">
         <div className="text-[#050506] w-full">
-          <Label className="font-semibold text-lg">
-            LinkedIn <span className="text-red-500 ">*</span>
-          </Label>
+          <Label className="font-semibold text-lg">LinkedIn</Label>
           <Input {...register(`linkedin`)} type="text" placeholder="LinkedIn" />
           {errors.linkedin && errors.linkedin && (
             <p className="text-red-500">{errors.linkedin?.message}</p>
@@ -122,10 +121,17 @@ const SocialMediaForm = ({
         </div>
 
         <div className="text-[#050506] w-full">
-          <Label className="font-semibold text-lg">
-            WhatsApp <span className="text-red-500 ">*</span>
-          </Label>
-          <Input {...register(`whatsapp`)} placeholder="WhatsApp" type="text" />
+          <Label className="font-semibold text-lg">WhatsApp</Label>
+          <Input
+            {...register(`whatsapp`)}
+            placeholder="WhatsApp"
+            type="text"
+            onChange={(e) => {
+              const formattedValue = formatPhone(e.target.value);
+              e.target.value = formattedValue;
+              register("whatsapp").onChange(e);
+            }}
+          />
           {errors.whatsapp && errors.whatsapp && (
             <p className="text-red-500">{errors.whatsapp?.message}</p>
           )}
@@ -133,9 +139,7 @@ const SocialMediaForm = ({
       </div>
       <div className="flex gap-4 md:flex-row flex-col items-center">
         <div className="text-[#050506] w-full">
-          <Label className="font-semibold text-lg">
-            Instagram <span className="text-red-500 ">*</span>
-          </Label>
+          <Label className="font-semibold text-lg">Instagram</Label>
           <Input
             {...register(`instagram`)}
             type="text"
@@ -147,9 +151,7 @@ const SocialMediaForm = ({
         </div>
 
         <div className="text-[#050506] w-full">
-          <Label className="font-semibold text-lg">
-            Facebook <span className="text-red-500 ">*</span>
-          </Label>
+          <Label className="font-semibold text-lg">Facebook</Label>
           <Input {...register(`facebook`)} placeholder="Facebook" type="text" />
           {errors.facebook && errors.facebook && (
             <p className="text-red-500">{errors.facebook?.message}</p>

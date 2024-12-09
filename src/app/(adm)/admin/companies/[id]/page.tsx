@@ -13,6 +13,7 @@ import CardCustomerMobile from "./components/CardCustomerMobile";
 import ModalCreateCustomer from "./components/ModalCreateCustomer";
 import PopoverCustomer from "./components/PopoverCustomer";
 import { toast } from "react-toastify";
+import { formatPhone } from "@/utils/formatString";
 
 export default function Companies() {
   const { id } = useParams();
@@ -22,6 +23,10 @@ export default function Companies() {
   const [page, setPage] = useState(1);
   const navigation = useRouter();
   const [editCustomerId, setEditCustomerId] = useState<number>();
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
   const handleDeleteCustomer = async (id: number) => {
     try {
@@ -45,11 +50,40 @@ export default function Companies() {
     }
   };
 
-  console.log(editCustomerId);
+  const sortedCustomers = [...(customers?.items || [])].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    const aValue = a[key as keyof typeof a];
+    const bValue = b[key as keyof typeof b];
+
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      return direction === "asc"
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
+    }
+
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return direction === "asc" ? aValue - bValue : bValue - aValue;
+    }
+
+    return 0;
+  });
+
+  const handleSort = (key: string) => {
+    setSortConfig((prevConfig) => {
+      if (prevConfig?.key === key) {
+        return {
+          key,
+          direction: prevConfig.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
 
   useEffect(() => {
     fetchCompany();
-  }, [open]);
+  }, [open, page]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -79,85 +113,99 @@ export default function Companies() {
         <table className="min-w-full hidden md:table">
           <thead className="border-none">
             <tr className="text-[#636267] text-center">
-              <th className="py-3 px-4  text-sm font-semibold  items-center">
-                <div className="flex items-center gap-2">
+              <th className="py-3 px-4 text-sm font-semibold items-center">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => handleSort("name")}
+                >
                   NOME <FaArrowsAltV />
                 </div>
               </th>
-              <th className="py-3 px-4 text-sm font-semibold  items-center">
-                <div className="flex items-center justify-start gap-2">
+              <th className="py-3 px-4 text-sm font-semibold items-center">
+                <div
+                  className="flex items-center justify-start gap-2 cursor-pointer"
+                  onClick={() => handleSort("number")}
+                >
                   TELEFONE <FaArrowsAltV />
                 </div>
               </th>
-              <th className="py-3 px-4  text-sm font-semibold  items-center">
-                <div className="flex items-center gap-2">
+              <th className="py-3 px-4 text-sm font-semibold items-center">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => handleSort("profileId")}
+                >
                   TIPO <FaArrowsAltV />
                 </div>
               </th>
-              <th className="py-3 px-4  text-sm font-semibold  items-center">
-                <div className="flex items-center gap-2">
+              <th className="py-3 px-4 text-sm font-semibold items-center">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => handleSort("position")}
+                >
                   CARGO <FaArrowsAltV />
                 </div>
               </th>
-              <th className="py-3 px-4  text-sm font-semibold  items-center">
-                <div className="flex items-center gap-2">
+              <th className="py-3 px-4 text-sm font-semibold items-center">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => handleSort("email")}
+                >
                   E-MAIL <FaArrowsAltV />
                 </div>
               </th>
-              <th className="py-3 px-4  text-sm font-semibold">AÇÃO</th>
+              <th className="py-3 px-4 text-sm font-semibold">AÇÃO</th>
             </tr>
           </thead>
           <tbody>
-            {customers &&
-              customers.items.map((row, index) => (
-                <tr
-                  key={index}
-                  className={`${
-                    index == 0 ? "" : "border-t border-gray-200"
-                  }  text-[#636267] text-center`}
-                >
-                  <td className="py-5 px-4 text-sm max-w-[200px]">
-                    <div className="flex">{row.name}</div>
-                  </td>
-                  <td className="py-5 px-4 text-sm">
-                    <div className="flex justify-start">{row.number}</div>
-                  </td>
-                  <td className="py-5 px-4 text-sm">
-                    <div className="flex">
-                      {row.profileId == 1 ? "Comum" : "Gestor"}
-                    </div>
-                  </td>
-                  <td className="py-5 px-4 text-sm">
-                    <div className="flex">{row.position}</div>
-                  </td>
-                  <td className="py-5 px-4 text-sm">
-                    <div className="flex">{row.email}</div>
-                  </td>
-                  <td className="py-5 px-4 flex items-center justify-center">
-                    <PopoverCustomer
-                      customerId={row.id ?? 0}
-                      onDeleteCustomer={(x: number) => handleDeleteCustomer(x)}
-                      onEditCustomer={(x: number) => setEditCustomerId(x)}
-                      setOpenModal={() => setOpen(!open)}
-                    />
-                  </td>
-                </tr>
-              ))}
+            {sortedCustomers.map((row, index) => (
+              <tr
+                key={index}
+                className={`${
+                  index === 0 ? "" : "border-t border-gray-200"
+                } text-[#636267] text-center`}
+              >
+                <td className="py-5 px-4 text-sm max-w-[200px]">
+                  <div className="flex">{row.name}</div>
+                </td>
+                <td className="py-5 px-4 text-sm">
+                  <div className="flex justify-start">
+                    {formatPhone(row.number.toString())}
+                  </div>
+                </td>
+                <td className="py-5 px-4 text-sm">
+                  <div className="flex">
+                    {row.profileId === 1 ? "Comum" : "Gestor"}
+                  </div>
+                </td>
+                <td className="py-5 px-4 text-sm">
+                  <div className="flex">{row.position}</div>
+                </td>
+                <td className="py-5 px-4 text-sm">
+                  <div className="flex">{row.email}</div>
+                </td>
+                <td className="py-5 px-4 flex items-center justify-center">
+                  <PopoverCustomer
+                    customerId={row.id ?? 0}
+                    onDeleteCustomer={(x: number) => handleDeleteCustomer(x)}
+                    onEditCustomer={(x: number) => setEditCustomerId(x)}
+                    setOpenModal={() => setOpen(!open)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <div className="flex flex-col gap-4 md:hidden p-4">
-          {customers?.items.map((x, index) => {
-            return (
-              <CardCustomerMobile
-                key={index}
-                companyName={x.name}
-                email={x.email}
-                position={x.position}
-                phone={x.number.toString()}
-                typeCustomer={x.profileId == 1 ? "Ativo" : "Inativo"}
-              />
-            );
-          })}
+          {customers?.items.map((x, index) => (
+            <CardCustomerMobile
+              key={index}
+              companyName={x.name}
+              email={x.email}
+              position={x.position}
+              phone={x.number.toString()}
+              typeCustomer={x.profileId === 1 ? "Ativo" : "Inativo"}
+            />
+          ))}
         </div>
         <Pagination
           pageIndex={page}

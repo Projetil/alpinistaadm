@@ -8,6 +8,7 @@ import PermissionService from "@/services/PermissionService";
 import UserService from "@/services/UserService";
 import { ICustomer } from "@/types/ICustomer";
 import { IPermission } from "@/types/IPermission";
+import { formatPhone } from "@/utils/formatString";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
 import { useEffect, useMemo, useState } from "react";
@@ -98,7 +99,7 @@ const ModalCreateCustomer = ({
         await CustomerService.Post({
           name: data.userName,
           email: data.email,
-          number: Number(data.telefone),
+          number: Number(data.telefone.replace(/\D/g, "")),
           position: data.cargo,
           password: data.senha,
           profileId: Number(data.profileType),
@@ -110,7 +111,7 @@ const ModalCreateCustomer = ({
 
       setOpen();
     } catch (err) {
-      toast.error("Erro ao cadastrar empresa");
+      toast.error("Email já cadastrado");
       console.log(err);
     }
   };
@@ -175,7 +176,7 @@ const ModalCreateCustomer = ({
       <div className="bg-white py-6 px-6 rounded-lg flex flex-col gap-10 overflow-y-auto max-h-screen h-full md:h-auto md:w-auto w-full max-w-[1000px]">
         <div onClick={setOpen} className="flex w-full justify-start">
           <h3 className="font-semibold text-[#093970] text-3xl">
-            Novo usuário
+            {customerId && companyId > 0 ? "Editar" : "Novo"} usuário
           </h3>
         </div>
         <form
@@ -239,10 +240,15 @@ const ModalCreateCustomer = ({
                 <span className="text-red-500 ">*</span>
               </Label>
               <Input
-                type="number"
+                type="text"
                 placeholder="Telefone"
                 className="font-normal border-[#D7D7DA] bg-transparent mt-2"
                 {...register("telefone")}
+                onChange={(e) => {
+                  const formattedValue = formatPhone(e.target.value);
+                  e.target.value = formattedValue;
+                  register("telefone").onChange(e);
+                }}
               />
               {errors.telefone && (
                 <span className="text-red-500">{errors.telefone.message}</span>
@@ -293,7 +299,7 @@ const ModalCreateCustomer = ({
               className="text-white bg-[#3088EE] font-semibold"
               type="submit"
             >
-              Criar
+              {customerId && companyId > 0 ? "Salvar" : "Criar"}
             </Button>
           </div>
         </form>

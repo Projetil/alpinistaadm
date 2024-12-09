@@ -26,7 +26,6 @@ export default function RootLayout({
       >
         <SessionProvider>
           {children}
-
           <ToastContainer
             autoClose={3000}
             hideProgressBar={true}

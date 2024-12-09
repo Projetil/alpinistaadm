@@ -70,8 +70,8 @@ const CommentsChat = ({
   }, [comments]);
 
   return (
-    <div className="flex flex-col w-full  rounded-md p-4 space-y-4">
-      <div className="flex flex-col space-y-3 overflow-y-auto ">
+    <div className="flex flex-col w-full rounded-md p-4 space-y-4 ">
+      <div className="flex flex-col space-y-3 h-[250px] overflow-y-auto">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -92,7 +92,7 @@ const CommentsChat = ({
                   : "bg-[#EEEEF0] text-[#050506]"
               }  p-3 rounded-lg space-y-1 text-left`}
             >
-              <p className="text-sm">{message.content}</p>
+              <p className="text-sm break-all">{message.content}</p>
             </div>
           </div>
         ))}

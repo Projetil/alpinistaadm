@@ -2,23 +2,28 @@
 
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ChevronDownIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CompanyCardProps {
   companyName: string;
   status: string;
+  companyId: number;
   registrationDate: string;
   updateDate: string;
 }
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
   companyName,
+  companyId,
   status,
   registrationDate,
   updateDate,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useRouter();
 
   const toggleCard = () => {
     setIsOpen(!isOpen);
@@ -54,6 +59,14 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <p className="text-[#818086] text-sm">Data de atualização:</p>
               <p className="font-semibold ">{updateDate}</p>
             </div>
+          </div>
+          <div>
+            <Button
+              onClick={() => navigate.push(`/home/${companyId}`)}
+              className="py-2 px-4 bg-white text-lg font-bold rounded-lg text-[#3088EE] w-full mt-4"
+            >
+              Visualizar
+            </Button>
           </div>
         </div>
       )}

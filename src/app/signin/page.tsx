@@ -15,12 +15,15 @@ import { useForm } from "react-hook-form";
 import { DataSchemaSignIn, schemaSignIn } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import UserService from "@/services/UserService";
+import { toast } from "react-toastify";
+import { LoadingSpinner } from "@/components/default/Spinner";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [insertCode, setInsertCode] = useState(false);
   const [newPassword, setNewPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [insertCodeLogin, setInsertCodeLogin] = useState(false);
   const {
@@ -33,17 +36,19 @@ export default function SignIn() {
 
   const onSubmit = async (data: DataSchemaSignIn) => {
     try {
-      console.log(data);
+      setLoading(true);
       await UserService.Login(data);
       setInsertCodeLogin(true);
     } catch (err) {
       console.log(err);
+      toast.error("Senha ou Email incorretos");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen justify-center h-screen overflow-hidden">
-      {/* Reset Password Flow */}
       {resetPassword && (
         <ResetPassword
           onClose={() => setResetPassword(false)}
@@ -63,7 +68,6 @@ export default function SignIn() {
         />
       )}
 
-      {/* Login Flow */}
       {insertCodeLogin && (
         <InsertCodeLogin
           onClose={() => setInsertCodeLogin(false)}
@@ -135,10 +139,11 @@ export default function SignIn() {
                 </div>
                 <div>
                   <Button
+                    disabled={loading}
                     type="submit"
                     className="flex w-full justify-center rounded-md border border-transparent bg-[#3088EE] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#E0F3FF] focus:outline-none focus:ring-2 hover:text-[#050506] focus:ring-[#E0F3FF] focus:ring-offset-2"
                   >
-                    Entrar
+                    {loading ? <LoadingSpinner /> : "Entrar"}
                   </Button>
                 </div>
                 <div>

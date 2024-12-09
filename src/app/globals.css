@@ -11,3 +11,24 @@ body {
     --radius: 0.5rem;
   }
 }
+
+.EditorContent ul,
+.EditorContent ol {
+  margin: 0;
+  padding-left: 1.5em; /* Add padding to ensure list items are indented */
+  list-style-position: outside; /* Ensure bullets/numbers are outside the content */
+}
+
+.EditorContent:focus-visible {
+  border: none;
+  outline: none !important;
+}
+
+.EditorContent ol {
+  list-style-type: decimal; /* Default number style for ordered lists */
+}
+
+.EditorContent ul {
+  margin-bottom: 0.5em; /* Space between list items */
+  list-style-type: disc; /* Default bullet style for unordered lists */
+}

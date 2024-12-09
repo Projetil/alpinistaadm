@@ -152,7 +152,7 @@ const ModalCreateAdmin = ({
       <div className="bg-white py-6 px-6 rounded-lg flex flex-col gap-10 overflow-y-auto max-h-screen h-full md:h-auto md:w-auto w-full max-w-[1000px]">
         <div onClick={setOpen} className="flex w-full justify-start">
           <h3 className="font-semibold text-[#093970] text-3xl">
-            Novo usuário
+            {admId && admId > 0 ? "Editar" : "Novo"} Administrador
           </h3>
         </div>
         <form
@@ -267,7 +267,7 @@ const ModalCreateAdmin = ({
               className="text-white bg-[#3088EE] font-semibold"
               type="submit"
             >
-              Criar
+              {admId && admId > 0 ? "Salvar" : "Criar"}
             </Button>
           </div>
         </form>

@@ -42,6 +42,17 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteCompany = async (id: number) => {
+    try {
+      await CompanyService.Delete(id);
+      toast.success("Cliente excluído com sucesso");
+      fetchCompany();
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao excluir cliente");
+    }
+  };
+
   const fetchCompany = async () => {
     try {
       const res = await CompanyService.GetAll(pageCompany, 10);
@@ -109,6 +120,7 @@ export default function AdminPage() {
               setPage={(x: number) => {
                 setPageCompany(x);
               }}
+              handleDelete={handleDeleteCompany}
             />
           </TabsContent>
           <TabsContent value="Admins">

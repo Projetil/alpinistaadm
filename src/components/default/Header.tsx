@@ -7,11 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { PiHouse } from "react-icons/pi";
 import { useState } from "react";
 import { RiFolderUserFill, RiShieldUserFill } from "react-icons/ri";
+import Link from "next/link";
+import { GoHomeFill } from "react-icons/go";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -35,23 +38,50 @@ const Header = () => {
           <div className="p-4">
             <nav className="space-y-4 mt-8">
               <ul className="flex flex-col gap-2">
-                <li>
-                  <a className="flex font-bold items-center space-x-3 p-2 rounded-md bg-[#D8D9E0]">
-                    <PiHouse className="w-6 h-6" />
+                <li
+                  className={`md:hover:bg-[#F0F8FF] font-semibold ${
+                    pathname === "/home"
+                      ? "bg-[#F0F8FF] text-[#3088EE] p-2 rounded-lg"
+                      : "text-[#8C8B91]"
+                  }`}
+                >
+                  <Link
+                    href="/home"
+                    className="flex items-center justify-start gap-2"
+                  >
+                    <GoHomeFill size={22} />
                     <span>Home</span>
-                  </a>
+                  </Link>
                 </li>
-                <li>
-                  <a className="flex font-normal items-center space-x-3 p-2 rounded-md">
+                <li
+                  className={`md:hover:bg-[#F0F8FF] font-semibold ${
+                    pathname === "/admin"
+                      ? "bg-[#F0F8FF] text-[#3088EE] p-2 rounded-lg"
+                      : "text-[#8C8B91]"
+                  }`}
+                >
+                  <Link
+                    href="/admin"
+                    className="flex items-center justify-start gap-2"
+                  >
                     <RiShieldUserFill size={22} />
                     <span>Administração</span>
-                  </a>
+                  </Link>
                 </li>
-                <li>
-                  <a className="flex font-normal items-center space-x-3 p-2 rounded-md">
+                <li
+                  className={`md:hover:bg-[#F0F8FF] font-semibold ${
+                    pathname === "/permissions"
+                      ? "bg-[#F0F8FF] text-[#3088EE] p-2 rounded-lg"
+                      : "text-[#8C8B91]"
+                  }`}
+                >
+                  <Link
+                    href="/permissions"
+                    className="flex items-center justify-start gap-2"
+                  >
                     <RiFolderUserFill size={22} />
                     <span>Usuário e Permissões</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>

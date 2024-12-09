@@ -1,6 +1,7 @@
 // components/CompanyCard.tsx
 "use client";
 
+import { formatPhone } from "@/utils/formatString";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -45,7 +46,7 @@ const CardCustomerMobile: React.FC<CompanyCardProps> = ({
           <div className="flex justify-between">
             <div>
               <p className="text-[#818086] text-sm">Telefone:</p>
-              <p className="font-semibold ">{phone}</p>
+              <p className="font-semibold ">{formatPhone(phone)}</p>
             </div>
             <div>
               <p className="text-[#818086] text-sm">Tipo:</p>

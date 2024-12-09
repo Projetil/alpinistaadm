@@ -1,6 +1,7 @@
 "use client";
 
 import Modal from "@/components/default/Modal";
+import { LoadingSpinner } from "@/components/default/Spinner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ const ModalCreatePerms = ({
   permissionId?: number;
   setPermissionId: (x: number) => void;
 }) => {
+  const [loading, setLoading] = useState(false);
   const [permission, setPermission] = useState<IPermission>();
   const {
     register,
@@ -87,6 +89,7 @@ const ModalCreatePerms = ({
 
   const onSubmit = async (data: DataCompany) => {
     try {
+      setLoading(true);
       if (permissionId && permissionId > 0) {
         const newPermission: IPermission = {
           id: permissionId,
@@ -357,6 +360,8 @@ const ModalCreatePerms = ({
     } catch (err) {
       toast.error("Erro ao cadastrar empresa");
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -900,8 +905,9 @@ const ModalCreatePerms = ({
             <Button
               className="text-white bg-[#3088EE] font-semibold"
               type="submit"
+              disabled={loading}
             >
-              Adicionar
+              {loading ? <LoadingSpinner /> : "Salvar"}
             </Button>
           </div>
         </form>

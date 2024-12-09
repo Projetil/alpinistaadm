@@ -10,6 +10,7 @@ import CompanyService from "@/services/CompanyService";
 import { useRouter } from "next/navigation";
 import { ICompany } from "@/types/ICompany";
 import { useMemo, useState } from "react";
+import { formatCNPJ } from "@/utils/formatString";
 
 const schemaCompany = z.object({
   razaoSocial: z
@@ -19,7 +20,7 @@ const schemaCompany = z.object({
   cnpj: z
     .string()
     .min(3, "CNPJ é obrigatório")
-    .max(14, "CNPJ deve ter no máximo 14 caracteres"),
+    .max(18, "CNPJ deve ter no máximo 14 caracteres"),
   status: z.string(),
   contatoComercialNome: z
     .string()
@@ -162,6 +163,11 @@ const CompanyForm = ({
             type="text"
             className="font-normal border-[#D7D7DA] bg-transparent mt-2"
             {...register("cnpj")}
+            onChange={(e) => {
+              const formattedValue = formatCNPJ(e.target.value);
+              e.target.value = formattedValue;
+              register("cnpj").onChange(e);
+            }}
           />
           {errors.cnpj && (
             <span className="text-red-500">{errors.cnpj.message}</span>
