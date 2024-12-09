@@ -119,8 +119,8 @@ const ModalNewRisk = ({
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const res = await CustomerService.GetByCompanyId(Number(id));
-      setCustomers(res);
+      const res = await CustomerService.GetAllByCompanyId(0, 0, Number(id));
+      setCustomers(res.items);
     } catch (e) {
       console.log(e);
     } finally {

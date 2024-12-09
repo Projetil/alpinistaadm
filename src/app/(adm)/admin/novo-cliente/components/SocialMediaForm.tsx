@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CompanySocialNetworkAssetsService from "@/services/CompanySocialNetworkAssetsService";
+import { ICompanySocialNetworkAssets } from "@/types/ICompanySocialNetworkAssets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -20,35 +22,88 @@ export type SocialMediaFormValues = z.infer<typeof socialMediaSchema>;
 const SocialMediaForm = ({
   addStep,
   companyId,
+  editId,
 }: {
   addStep: () => void;
   companyId: number;
+  editId: string;
 }) => {
+  const [socialMediaData, setSocialMediaData] =
+    useState<ICompanySocialNetworkAssets>();
   const navigation = useRouter();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SocialMediaFormValues>({
     resolver: zodResolver(socialMediaSchema),
   });
 
   const onSubmit = async (data: SocialMediaFormValues) => {
-    try {
-      await CompanySocialNetworkAssetsService.Post({
-        companyId: companyId,
-        linkedIn: data.linkedin ?? "",
-        whatsapp: data.whatsapp ?? "",
-        instagram: data.instagram ?? "",
-        facebook: data.facebook ?? "",
-      });
-      toast.success("Rede sociais adicionadas com sucesso");
-      addStep();
-    } catch (error) {
-      toast.error("Erro ao adicionar rede socias");
-      console.log(error);
+    if (editId && editId !== "") {
+      try {
+        await CompanySocialNetworkAssetsService.Put(
+          {
+            companyId: Number(editId),
+            linkedIn: data.linkedin ?? "",
+            whatsapp: data.whatsapp ?? "",
+            instagram: data.instagram ?? "",
+            facebook: data.facebook ?? "",
+          },
+          Number(editId)
+        );
+        toast.success("Rede sociais editado com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao adicionar rede socias");
+        console.log(error);
+      }
+    } else {
+      try {
+        await CompanySocialNetworkAssetsService.Post({
+          companyId: companyId,
+          linkedIn: data.linkedin ?? "",
+          whatsapp: data.whatsapp ?? "",
+          instagram: data.instagram ?? "",
+          facebook: data.facebook ?? "",
+        });
+        toast.success("Rede sociais adicionadas com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao adicionar rede socias");
+        console.log(error);
+      }
     }
   };
+
+  const fetchSocialMedia = async () => {
+    try {
+      const res = await CompanySocialNetworkAssetsService.GetByCompanyId(
+        Number(editId)
+      );
+      setSocialMediaData(res);
+    } catch (erro) {
+      console.log(erro);
+    }
+  };
+
+  useMemo(() => {
+    if (editId && editId !== "") {
+      fetchSocialMedia();
+    }
+  }, [editId]);
+
+  useMemo(() => {
+    if (socialMediaData) {
+      reset({
+        linkedin: socialMediaData.linkedIn ?? "",
+        whatsapp: socialMediaData.whatsapp ?? "",
+        instagram: socialMediaData.instagram ?? "",
+        facebook: socialMediaData.facebook ?? "",
+      });
+    }
+  }, [socialMediaData]);
 
   return (
     <form

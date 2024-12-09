@@ -11,6 +11,7 @@ import AdminTable from "./components/AdminTable";
 import AdministratorService from "@/services/AdministratorService";
 import { IPagedAdministrator } from "@/types/IAdministrator";
 import ModalCreateAdmin from "./components/ModalCreateAdmin";
+import { toast } from "react-toastify";
 
 export default function AdminPage() {
   const [company, setCompany] = useState<IPagedCompany>();
@@ -19,8 +20,6 @@ export default function AdminPage() {
   const [open, setOpen] = useState(false);
   const [pageCompany, setPageCompany] = useState(1);
   const [editAdmId, setEditAdmId] = useState<number>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editComumId, setEditComumId] = useState<number>();
   const [pageAdmin, setPageAdmin] = useState(1);
 
   const fetchAdmins = async () => {
@@ -29,6 +28,17 @@ export default function AdminPage() {
       setAdmins(res);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleDeleteAdm = async (id: number) => {
+    try {
+      await AdministratorService.Delete(id);
+      toast.success("Administrador excluído com sucesso");
+      fetchAdmins();
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao excluir administrador");
     }
   };
 
@@ -110,6 +120,7 @@ export default function AdminPage() {
               setPage={(x: number) => {
                 setPageAdmin(x);
               }}
+              handleDelete={handleDeleteAdm}
             />
           </TabsContent>
         </section>

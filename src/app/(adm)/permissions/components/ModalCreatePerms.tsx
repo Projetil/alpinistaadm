@@ -6,9 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import PermissionService from "@/services/PermissionService";
+import { IPermission } from "@/types/IPermission";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -45,10 +46,15 @@ export type DataCompany = z.infer<typeof schemaCompany>;
 const ModalCreatePerms = ({
   open,
   setOpen,
+  permissionId,
+  setPermissionId,
 }: {
   open: boolean;
   setOpen: () => void;
+  permissionId?: number;
+  setPermissionId: (x: number) => void;
 }) => {
+  const [permission, setPermission] = useState<IPermission>();
   const {
     register,
     handleSubmit,
@@ -80,62 +86,438 @@ const ModalCreatePerms = ({
   const ambienteDeleteField = watch("ambienteDelete");
 
   const onSubmit = async (data: DataCompany) => {
-    console.log(data);
     try {
-      await PermissionService.Post({
-        profileName: data.profileName,
-        profileType: Number(data.profileType),
-        dashboard: dashboardField,
-        dashboardAtt: dashboardAttField,
-        ativos: ativosField,
-        ativosFilter: ativosFilterField,
-        pentest: pentestField,
-        pentestCreate: pentestCreateField,
-        pentestEdit: pentestEditField,
-        pentestSend: pentestSendField,
-        issues: issuesField,
-        issuesFilter: issuesFilterField,
-        issuesExport: issuesExportField,
-        issuesClassify: issuesClassifyField,
-        questionario: questionarioField,
-        questionarioCreate: questionarioCreateField,
-        questionarioShare: questionarioShareField,
-        ambiente: ambienteField,
-        ambienteCreate: ambienteCreateField,
-        ambienteEdit: ambienteEditField,
-        ambienteDelete: ambienteDeleteField,
-      });
-      toast.success("Empresa cadastrada com sucesso");
-      setOpen();
+      if (permissionId && permissionId > 0) {
+        const newPermission: IPermission = {
+          id: permissionId,
+          name: data.profileName,
+          type: Number(data.profileType),
+          permissionPages: [
+            {
+              id:
+                permission?.permissionPages?.find((x) => x.name == "Dashboard")
+                  ?.id || 0,
+              name: "Dashboard",
+              profileId:
+                permission?.permissionPages?.find((x) => x.name == "Dashboard")
+                  ?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Dashboard")
+                      ?.funcs?.find((x) => x.name == "Alterar Serviços")?.id ||
+                    0,
+                  name: "Alterar Serviços",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Dashboard"
+                    )?.id || 0,
+                  hasAcess: dashboardAttField,
+                },
+              ],
+              hasAcess: dashboardField,
+            },
+            {
+              id:
+                permission?.permissionPages?.find((x) => x.name == "Ativos")
+                  ?.id || 0,
+              name: "Ativos",
+              profileId:
+                permission?.permissionPages?.find((x) => x.name == "Ativos")
+                  ?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Ativos")
+                      ?.funcs?.find((x) => x.name == "Filtrar")?.id || 0,
+                  name: "Filtrar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find((x) => x.name == "Ativos")
+                      ?.id || 0,
+                  hasAcess: ativosFilterField,
+                },
+              ],
+              hasAcess: ativosField,
+            },
+            {
+              id:
+                permission?.permissionPages?.find((x) => x.name == "Pentest")
+                  ?.id || 0,
+              name: "Pentest",
+              profileId:
+                permission?.permissionPages?.find((x) => x.name == "Pentest")
+                  ?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Pentest")
+                      ?.funcs?.find((x) => x.name == "Criar Pentest")?.id || 0,
+                  name: "Criar Pentest",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Pentest"
+                    )?.id || 0,
+                  hasAcess: pentestCreateField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Pentest")
+                      ?.funcs?.find((x) => x.name == "Editar")?.id || 0,
+                  name: "Editar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Pentest"
+                    )?.id || 0,
+                  hasAcess: pentestEditField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Pentest")
+                      ?.funcs?.find((x) => x.name == "Enviar")?.id || 0,
+                  name: "Enviar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Pentest"
+                    )?.id || 0,
+                  hasAcess: pentestSendField,
+                },
+              ],
+              hasAcess: pentestField,
+            },
+            {
+              id:
+                permission?.permissionPages?.find((x) => x.name == "Issues")
+                  ?.id || 0,
+              name: "Issues",
+              profileId:
+                permission?.permissionPages?.find((x) => x.name == "Issues")
+                  ?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Issues")
+                      ?.funcs?.find((x) => x.name == "Filtrar")?.id || 0,
+                  name: "Filtrar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find((x) => x.name == "Issues")
+                      ?.id || 0,
+                  hasAcess: issuesFilterField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Issues")
+                      ?.funcs?.find((x) => x.name == "Exportar")?.id || 0,
+                  name: "Exportar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find((x) => x.name == "Issues")
+                      ?.id || 0,
+                  hasAcess: issuesExportField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Issues")
+                      ?.funcs?.find((x) => x.name == "Classificar")?.id || 0,
+                  name: "Classificar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find((x) => x.name == "Issues")
+                      ?.id || 0,
+                  hasAcess: issuesClassifyField,
+                },
+              ],
+              hasAcess: issuesField,
+            },
+            {
+              id:
+                permission?.permissionPages?.find(
+                  (x) => x.name == "Questionários"
+                )?.id || 0,
+              name: "Questionários",
+              profileId:
+                permission?.permissionPages?.find(
+                  (x) => x.name == "Questionários"
+                )?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Questionários")
+                      ?.funcs?.find((x) => x.name == "Criar")?.id || 0,
+                  name: "Criar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Questionários"
+                    )?.id || 0,
+                  hasAcess: questionarioCreateField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Questionários")
+                      ?.funcs?.find((x) => x.name == "Compartilhar")?.id || 0,
+                  name: "Compartilhar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Questionários"
+                    )?.id || 0,
+                  hasAcess: questionarioShareField,
+                },
+              ],
+              hasAcess: questionarioField,
+            },
+            {
+              id:
+                permission?.permissionPages?.find((x) => x.name == "Ambientes")
+                  ?.id || 0,
+              name: "Ambientes",
+              profileId:
+                permission?.permissionPages?.find((x) => x.name == "Ambientes")
+                  ?.profileId || 0,
+              funcs: [
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Ambientes")
+                      ?.funcs?.find((x) => x.name == "Criar Ambientes")?.id ||
+                    0,
+                  name: "Criar Ambientes",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Ambientes"
+                    )?.id || 0,
+                  hasAcess: ambienteCreateField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Ambientes")
+                      ?.funcs?.find((x) => x.name == "Editar")?.id || 0,
+                  name: "Editar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Ambientes"
+                    )?.id || 0,
+                  hasAcess: ambienteEditField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Ambientes")
+                      ?.funcs?.find((x) => x.name == "Excluir")?.id || 0,
+                  name: "Excluir",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find(
+                      (x) => x.name == "Ambientes"
+                    )?.id || 0,
+                  hasAcess: ambienteDeleteField,
+                },
+              ],
+              hasAcess: ambienteField,
+            },
+          ],
+        };
+
+        await PermissionService.Put(permissionId, newPermission);
+        toast.success("Empresa atualizada com sucesso");
+        setOpen();
+      } else {
+        await PermissionService.Post({
+          profileName: data.profileName,
+          profileType: Number(data.profileType),
+          dashboard: dashboardField,
+          dashboardAtt: dashboardAttField,
+          ativos: ativosField,
+          ativosFilter: ativosFilterField,
+          pentest: pentestField,
+          pentestCreate: pentestCreateField,
+          pentestEdit: pentestEditField,
+          pentestSend: pentestSendField,
+          issues: issuesField,
+          issuesFilter: issuesFilterField,
+          issuesExport: issuesExportField,
+          issuesClassify: issuesClassifyField,
+          questionario: questionarioField,
+          questionarioCreate: questionarioCreateField,
+          questionarioShare: questionarioShareField,
+          ambiente: ambienteField,
+          ambienteCreate: ambienteCreateField,
+          ambienteEdit: ambienteEditField,
+          ambienteDelete: ambienteDeleteField,
+        });
+        toast.success("Empresa cadastrada com sucesso");
+        setOpen();
+      }
     } catch (err) {
       toast.error("Erro ao cadastrar empresa");
       console.log(err);
     }
   };
 
+  const fetchPermission = async () => {
+    try {
+      const res = await PermissionService.GetById(permissionId || 0);
+      setPermission(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    reset({
-      dashboard: false,
-      dashboardAtt: false,
-      ativos: false,
-      ativosFilter: false,
-      pentest: false,
-      pentestCreate: false,
-      pentestEdit: false,
-      pentestSend: false,
-      issues: false,
-      issuesFilter: false,
-      issuesExport: false,
-      issuesClassify: false,
-      questionario: false,
-      questionarioCreate: false,
-      questionarioShare: false,
-      ambiente: false,
-      ambienteCreate: false,
-      ambienteEdit: false,
-      ambienteDelete: false,
-    });
+    if (!open) {
+      setPermissionId(0);
+      reset({
+        dashboard: false,
+        dashboardAtt: false,
+        ativos: false,
+        ativosFilter: false,
+        pentest: false,
+        pentestCreate: false,
+        pentestEdit: false,
+        pentestSend: false,
+        issues: false,
+        issuesFilter: false,
+        issuesExport: false,
+        issuesClassify: false,
+        questionario: false,
+        questionarioCreate: false,
+        questionarioShare: false,
+        ambiente: false,
+        ambienteCreate: false,
+        ambienteEdit: false,
+        ambienteDelete: false,
+      });
+    }
   }, [open]);
+
+  useMemo(() => {
+    if (permissionId && permissionId > 0) {
+      fetchPermission();
+    }
+  }, [permissionId]);
+
+  useMemo(() => {
+    if (permission) {
+      reset({
+        profileName: permission.name,
+        profileType: String(permission.type),
+      });
+      setValue(
+        "dashboard",
+        permission.permissionPages.find((x) => x.name == "Dashboard")
+          ?.hasAcess || false
+      );
+      setValue(
+        "dashboardAtt",
+        permission.permissionPages
+          .find((x) => x.name == "Dashboard")
+          ?.funcs.find((x) => x.name == "Alterar Serviços")?.hasAcess || false
+      );
+      setValue(
+        "ativos",
+        permission.permissionPages.find((x) => x.name == "Ativos")?.hasAcess ||
+          false
+      );
+      setValue(
+        "ativosFilter",
+        permission.permissionPages
+          .find((x) => x.name == "Ativos")
+          ?.funcs.find((x) => x.name == "Filtrar")?.hasAcess || false
+      );
+      setValue(
+        "pentest",
+        permission.permissionPages.find((x) => x.name == "Pentest")?.hasAcess ||
+          false
+      );
+      setValue(
+        "pentestCreate",
+        permission.permissionPages
+          .find((x) => x.name == "Pentest")
+          ?.funcs.find((x) => x.name == "Criar Pentest")?.hasAcess || false
+      );
+      setValue(
+        "pentestEdit",
+        permission.permissionPages
+          .find((x) => x.name == "Pentest")
+          ?.funcs.find((x) => x.name == "Editar")?.hasAcess || false
+      );
+      setValue(
+        "pentestSend",
+        permission.permissionPages
+          .find((x) => x.name == "Pentest")
+          ?.funcs.find((x) => x.name == "Enviar")?.hasAcess || false
+      );
+      setValue(
+        "issues",
+        permission.permissionPages.find((x) => x.name == "Issues")?.hasAcess ||
+          false
+      );
+      setValue(
+        "issuesFilter",
+        permission.permissionPages
+          .find((x) => x.name == "Issues")
+          ?.funcs.find((x) => x.name == "Filtrar")?.hasAcess || false
+      );
+      setValue(
+        "issuesExport",
+        permission.permissionPages
+          .find((x) => x.name == "Issues")
+          ?.funcs.find((x) => x.name == "Exportar")?.hasAcess || false
+      );
+      setValue(
+        "issuesClassify",
+        permission.permissionPages
+          .find((x) => x.name == "Issues")
+          ?.funcs.find((x) => x.name == "Classificar")?.hasAcess || false
+      );
+      setValue(
+        "questionario",
+        permission.permissionPages.find((x) => x.name == "Questionários")
+          ?.hasAcess || false
+      );
+      setValue(
+        "questionarioCreate",
+        permission.permissionPages
+          .find((x) => x.name == "Questionários")
+          ?.funcs.find((x) => x.name == "Criar")?.hasAcess || false
+      );
+      setValue(
+        "questionarioShare",
+        permission.permissionPages
+          .find((x) => x.name == "Questionários")
+          ?.funcs.find((x) => x.name == "Compartilhar")?.hasAcess || false
+      );
+      setValue(
+        "ambiente",
+        permission.permissionPages.find((x) => x.name == "Ambientes")
+          ?.hasAcess || false
+      );
+      setValue(
+        "ambienteCreate",
+        permission.permissionPages
+          .find((x) => x.name == "Ambientes")
+          ?.funcs.find((x) => x.name == "Criar Ambientes")?.hasAcess || false
+      );
+      setValue(
+        "ambienteEdit",
+        permission.permissionPages
+          .find((x) => x.name == "Ambientes")
+          ?.funcs.find((x) => x.name == "Editar")?.hasAcess || false
+      );
+      setValue(
+        "ambienteDelete",
+        permission.permissionPages
+          .find((x) => x.name == "Ambientes")
+          ?.funcs.find((x) => x.name == "Excluir")?.hasAcess || false
+      );
+    }
+  }, [permission]);
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
@@ -194,6 +576,7 @@ const ModalCreatePerms = ({
                   Dashboard
                 </Label>
                 <Switch
+                  checked={dashboardField}
                   {...register("dashboard")}
                   onClick={() => {
                     setValue("dashboard", !dashboardField);
@@ -226,6 +609,7 @@ const ModalCreatePerms = ({
                   Ativos
                 </Label>
                 <Switch
+                  checked={ativosField}
                   {...register("ativos")}
                   onClick={() => {
                     setValue("ativos", !ativosField);
@@ -257,6 +641,7 @@ const ModalCreatePerms = ({
                   Pentest
                 </Label>
                 <Switch
+                  checked={pentestField}
                   {...register("pentest")}
                   onClick={() => {
                     setValue("pentest", !pentestField);
@@ -321,6 +706,7 @@ const ModalCreatePerms = ({
                   Issues/Riscos
                 </Label>
                 <Switch
+                  checked={issuesField}
                   {...register("issues")}
                   onClick={() => {
                     setValue("issues", !issuesField);
@@ -389,6 +775,7 @@ const ModalCreatePerms = ({
                   Questionários
                 </Label>
                 <Switch
+                  checked={questionarioField}
                   {...register("questionario")}
                   onClick={() => {
                     setValue("questionario", !questionarioField);
@@ -446,6 +833,7 @@ const ModalCreatePerms = ({
                   Ambientes (Detalhamento)
                 </Label>
                 <Switch
+                  checked={ambienteField}
                   {...register("ambiente")}
                   onClick={() => {
                     setValue("ambiente", !ambienteField);

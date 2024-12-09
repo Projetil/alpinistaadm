@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import CompanyService from "@/services/CompanyService";
 import { useRouter } from "next/navigation";
+import { ICompany } from "@/types/ICompany";
+import { useMemo, useState } from "react";
 
 const schemaCompany = z.object({
   razaoSocial: z
@@ -40,15 +42,19 @@ const schemaCompany = z.object({
 export type DataCompany = z.infer<typeof schemaCompany>;
 
 const CompanyForm = ({
+  editId,
   addStep,
   setCompany,
 }: {
   addStep: () => void;
   setCompany: (x: number) => void;
+  editId: string;
 }) => {
   const navigation = useRouter();
+  const [companyEdit, setCompanyEdit] = useState<ICompany>();
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<DataCompany>({
@@ -56,24 +62,76 @@ const CompanyForm = ({
   });
 
   const onSubmit = async (data: DataCompany) => {
-    try {
-      const res = await CompanyService.Post({
-        name: data.razaoSocial,
-        cnpj: data.cnpj,
-        status: Number(data.status),
-        commercialContactName: data.contatoComercialNome,
-        commercialContactEmail: data.contatoComercialEmail,
-        technicalContactName: data.contatoTecnicoNome,
-        technicalContactEmail: data.contatoTecnicoEmail,
-      });
-      setCompany(res.id);
-      toast.success("Empresa cadastrada com sucesso");
-      addStep();
-    } catch (err) {
-      toast.error("Erro ao cadastrar empresa");
-      console.log(err);
+    if (editId && editId !== "") {
+      try {
+        await CompanyService.Put(
+          {
+            name: data.razaoSocial,
+            cnpj: data.cnpj,
+            status: Number(data.status),
+            commercialContactName: data.contatoComercialNome,
+            commercialContactEmail: data.contatoComercialEmail,
+            technicalContactName: data.contatoTecnicoNome,
+            technicalContactEmail: data.contatoTecnicoEmail,
+          },
+          Number(editId)
+        );
+        toast.success("Empresa atualizada com sucesso");
+        addStep();
+      } catch (err) {
+        toast.error("Erro ao atualizar empresa");
+        console.log(err);
+      }
+      return;
+    } else {
+      try {
+        const res = await CompanyService.Post({
+          name: data.razaoSocial,
+          cnpj: data.cnpj,
+          status: Number(data.status),
+          commercialContactName: data.contatoComercialNome,
+          commercialContactEmail: data.contatoComercialEmail,
+          technicalContactName: data.contatoTecnicoNome,
+          technicalContactEmail: data.contatoTecnicoEmail,
+        });
+        setCompany(res.id);
+        toast.success("Empresa cadastrada com sucesso");
+        addStep();
+      } catch (err) {
+        toast.error("Erro ao cadastrar empresa");
+        console.log(err);
+      }
     }
   };
+
+  const fetchCompany = async () => {
+    try {
+      const res = await CompanyService.GetById(Number(editId));
+      setCompanyEdit(res);
+    } catch (erro) {
+      console.log(erro);
+    }
+  };
+
+  useMemo(() => {
+    if (editId && editId !== "") {
+      fetchCompany();
+    }
+  }, [editId]);
+
+  useMemo(() => {
+    if (companyEdit) {
+      reset({
+        razaoSocial: companyEdit.name,
+        cnpj: companyEdit.cnpj,
+        status: companyEdit.status.toString(),
+        contatoComercialNome: companyEdit.commercialContactName,
+        contatoComercialEmail: companyEdit.commercialContactEmail,
+        contatoTecnicoNome: companyEdit.technicalContactName,
+        contatoTecnicoEmail: companyEdit.technicalContactEmail,
+      });
+    }
+  }, [companyEdit]);
 
   return (
     <form

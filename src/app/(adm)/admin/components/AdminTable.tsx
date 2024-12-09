@@ -4,7 +4,6 @@ import { FaArrowsAltV } from "react-icons/fa";
 import { IPagedAdministrator } from "@/types/IAdministrator";
 import CardAdminMobile from "./CardAdminMobile";
 import PopoverAdm from "./PopoverAdm";
-import AdministratorService from "@/services/AdministratorService";
 
 const AdminTable = ({
   administrators,
@@ -12,22 +11,15 @@ const AdminTable = ({
   setPage,
   setAdmId,
   setOpenModal,
+  handleDelete,
 }: {
   administrators?: IPagedAdministrator;
   page: number;
   setPage: (x: number) => void;
   setAdmId: (x: number) => void;
   setOpenModal: () => void;
+  handleDelete: (x: number) => void;
 }) => {
-  const handleDeleteAdm = async (id: number) => {
-    try {
-      await AdministratorService.Delete(id);
-      setPage(1);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -82,7 +74,7 @@ const AdminTable = ({
                   <PopoverAdm
                     admId={row.id}
                     onEditAdm={(x: number) => setAdmId(x)}
-                    onDeleteAdm={(x: number) => handleDeleteAdm(x)}
+                    onDeleteAdm={(x: number) => handleDelete(x)}
                     setOpenModal={setOpenModal}
                   />
                 </td>

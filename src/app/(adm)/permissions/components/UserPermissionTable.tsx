@@ -1,11 +1,25 @@
 "use client";
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
-import { SlOptionsVertical } from "react-icons/sl";
 import CardPermission from "./CardPermissionTableMobile";
 import { IPermission } from "@/types/IPermission";
+import PopoverPermission from "./PopoverPermission";
 
-const UserPermissionTable = ({ perms }: { perms: IPermission[] }) => {
+const UserPermissionTable = ({
+  perms,
+  page,
+  setPage,
+  setPermissionId,
+  setOpenModal,
+  handleDelete,
+}: {
+  perms?: IPermission[];
+  page: number;
+  setPage: (x: number) => void;
+  setPermissionId: (x: number) => void;
+  setOpenModal: () => void;
+  handleDelete: (x: number) => void;
+}) => {
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -30,7 +44,7 @@ const UserPermissionTable = ({ perms }: { perms: IPermission[] }) => {
           </tr>
         </thead>
         <tbody>
-          {perms.map((row, index) => (
+          {perms?.map((row, index) => (
             <tr
               key={index}
               className={`${
@@ -60,14 +74,19 @@ const UserPermissionTable = ({ perms }: { perms: IPermission[] }) => {
               </td>
 
               <td className="py-3 px-4 flex items-center justify-center">
-                <SlOptionsVertical className="cursor-pointer text-[#1A69C4]" />
+                <PopoverPermission
+                  permissionId={row.id}
+                  onDeletePermission={(x: number) => handleDelete(x)}
+                  onEditPermission={(x: number) => setPermissionId(x)}
+                  setOpenModal={setOpenModal}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {perms.map((x, index) => {
+        {perms?.map((x, index) => {
           const perms =
             x.permissionPages
               .map((x) => x.funcs.map((x) => x.name).join(", "))
@@ -90,10 +109,10 @@ const UserPermissionTable = ({ perms }: { perms: IPermission[] }) => {
         })}
       </div>
       <Pagination
-        pageIndex={1}
+        pageIndex={page}
         perPage={10}
-        handlePage={() => {}}
-        totalCount={10}
+        handlePage={setPage}
+        totalCount={20}
       />
     </div>
   );

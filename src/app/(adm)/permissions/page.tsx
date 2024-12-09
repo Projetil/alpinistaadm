@@ -3,14 +3,17 @@ import { Button } from "@/components/ui/button";
 import { PiFolderUserFill } from "react-icons/pi";
 import UserPermissionTable from "./components/UserPermissionTable";
 import { useEffect, useState } from "react";
-import { IPermission } from "@/types/IPermission";
 import PermissionService from "@/services/PermissionService";
 import ModalCreatePerms from "./components/ModalCreatePerms";
+import { IPermission } from "@/types/IPermission";
+import { toast } from "react-toastify";
 export default function UserPermissionPage() {
   const [usersPerms, setUsersPerms] = useState<IPermission[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [editId, setEditId] = useState<number>();
 
   const fetchPerms = async () => {
     setLoading(true);
@@ -24,9 +27,20 @@ export default function UserPermissionPage() {
     }
   };
 
+  const handleDeletePermission = async (id: number) => {
+    try {
+      await PermissionService.Delete(id);
+      toast.success("Permissão excluído com sucesso");
+      fetchPerms();
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao excluir Permissão");
+    }
+  };
+
   useEffect(() => {
     fetchPerms();
-  }, [openModal]);
+  }, [openModal, page]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -46,8 +60,17 @@ export default function UserPermissionPage() {
           </div>
         </div>
       </section>
-      <UserPermissionTable perms={usersPerms} />
+      <UserPermissionTable
+        page={page}
+        setPage={(x: number) => setPage(x)}
+        perms={usersPerms}
+        setPermissionId={(x: number) => setEditId(x)}
+        setOpenModal={() => setOpenModal(!openModal)}
+        handleDelete={handleDeletePermission}
+      />
       <ModalCreatePerms
+        permissionId={editId}
+        setPermissionId={(x: number) => setEditId(x)}
         open={openModal}
         setOpen={() => setOpenModal(!openModal)}
       />

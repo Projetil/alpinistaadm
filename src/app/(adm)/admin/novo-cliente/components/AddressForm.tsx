@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CompanyAddressAssetsService from "@/services/CompanyAddressAssetsService";
+import { ICompanyAddressAssets } from "@/types/ICompanyAddressAssets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -33,38 +34,90 @@ export type AddressFormValues = z.infer<typeof AddressSchema>;
 const AddressForm = ({
   addStep,
   companyId,
+  editId,
 }: {
   addStep: () => void;
   companyId: number;
+  editId: string;
 }) => {
+  const [adressRes, setAdressRes] = useState<ICompanyAddressAssets[]>();
   const navigation = useRouter();
   const [addressSize, setAddressSize] = useState(1);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
   });
 
   const onSubmit = (data: AddressFormValues) => {
+    if (editId && editId !== "") {
+      try {
+        data.addresses.forEach(async (address) => {
+          await CompanyAddressAssetsService.Put(
+            {
+              companyId: Number(editId),
+              addressIp: address.addressIp,
+              addressBlock: address.addressBlock,
+            },
+            Number(editId)
+          );
+        });
+        toast.success("Endereços IP editados com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao editar endereços IP");
+        console.log(error);
+      }
+    } else {
+      try {
+        data.addresses.forEach(async (address) => {
+          const res = await CompanyAddressAssetsService.Post({
+            companyId: companyId,
+            addressIp: address.addressIp,
+            addressBlock: address.addressBlock,
+          });
+          if (!res) throw new Error("Erro ao adicionar endereço IP");
+        });
+        toast.success("Endereços IP adicionados com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao adicionar endereços IP");
+        console.log(error);
+      }
+    }
+  };
+
+  const fetchCompanyAddres = async () => {
     try {
-      data.addresses.forEach(async (address) => {
-        const res = await CompanyAddressAssetsService.Post({
-          companyId: companyId,
+      const res = await CompanyAddressAssetsService.GetByCompanyId(
+        Number(editId)
+      );
+      setAdressRes(res);
+    } catch (erro) {
+      console.log(erro);
+    }
+  };
+
+  useMemo(() => {
+    if (editId && editId !== "") {
+      fetchCompanyAddres();
+    }
+  }, [editId]);
+
+  useMemo(() => {
+    if (adressRes) {
+      reset({
+        addresses: adressRes.map((address) => ({
           addressIp: address.addressIp,
           addressBlock: address.addressBlock,
-        });
-        if (!res) throw new Error("Erro ao adicionar endereço IP");
+        })),
       });
-      toast.success("Endereços IP adicionados com sucesso");
-      addStep();
-    } catch (error) {
-      toast.error("Erro ao adicionar endereços IP");
-      console.log(error);
+      setAddressSize(adressRes.length);
     }
-    /* addStep(); */
-  };
+  }, [adressRes]);
 
   return (
     <form

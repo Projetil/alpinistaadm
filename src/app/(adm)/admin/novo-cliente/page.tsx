@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { MdSecurity } from "react-icons/md";
 import CompanyForm from "./components/CompanyForm";
 import DominiosForm from "./components/DominiosForm";
 import AddressForm from "./components/AddressForm";
 import SocialMediaForm from "./components/SocialMediaForm";
 import AppMobileForm from "./components/AppMobileForm";
+import { useSearchParams } from "next/navigation";
 
-export default function NovoClientePage() {
+export default function AdminNovoCliente() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NovoClientePage />
+    </Suspense>
+  );
+}
+
+function NovoClientePage() {
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("id") ?? "";
   const [steps, setSteps] = useState(1);
   const [companyId, setCompanyId] = useState(0);
 
@@ -100,18 +111,29 @@ export default function NovoClientePage() {
         </div>
         {steps == 1 && (
           <CompanyForm
+            editId={editId}
             addStep={() => setSteps(2)}
             setCompany={(x: number) => setCompanyId(x)}
           />
         )}
-        {steps == 2 && <DominiosForm addStep={() => setSteps(3)} />}
+        {steps == 2 && (
+          <DominiosForm editId={editId} addStep={() => setSteps(3)} />
+        )}
         {steps == 3 && (
-          <AddressForm addStep={() => setSteps(4)} companyId={companyId} />
+          <AddressForm
+            editId={editId}
+            addStep={() => setSteps(4)}
+            companyId={companyId}
+          />
         )}
         {steps == 4 && (
-          <SocialMediaForm addStep={() => setSteps(5)} companyId={companyId} />
+          <SocialMediaForm
+            editId={editId}
+            addStep={() => setSteps(5)}
+            companyId={companyId}
+          />
         )}
-        {steps == 5 && <AppMobileForm companyId={companyId} />}
+        {steps == 5 && <AppMobileForm editId={editId} companyId={companyId} />}
       </section>
     </main>
   );

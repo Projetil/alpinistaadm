@@ -15,7 +15,14 @@ const domainSchema = z.object({
 
 type DomainFormValues = z.infer<typeof domainSchema>;
 
-const DominiosForm = ({ addStep }: { addStep: () => void }) => {
+const DominiosForm = ({
+  addStep,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  editId,
+}: {
+  addStep: () => void;
+  editId: string;
+}) => {
   const navigation = useRouter();
   const [domainSize, setDomainSize] = useState(1);
   const {

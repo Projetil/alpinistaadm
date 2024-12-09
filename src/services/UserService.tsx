@@ -30,7 +30,7 @@ const UserService = {
       }
     }
   },
-  Put: async (data: ICreateUser, id: number) => {
+  Put: async (data: Partial<ICreateUser>, id: number) => {
     try {
       await api.put(`/User/${id}`, data, {
         headers: {

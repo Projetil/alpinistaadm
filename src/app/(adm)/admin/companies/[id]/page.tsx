@@ -3,39 +3,49 @@ import { Pagination } from "@/components/default/Pagination";
 import { Button } from "@/components/ui/button";
 import CompanyService from "@/services/CompanyService";
 import CustomerService from "@/services/CustomerService";
-import { ICustomer } from "@/types/ICustomer";
+import { IPagedCustomer } from "@/types/ICustomer";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsChevronLeft } from "react-icons/bs";
 import { FaArrowsAltV } from "react-icons/fa";
 import { MdSecurity } from "react-icons/md";
-import { SlOptionsVertical } from "react-icons/sl";
 import CardCustomerMobile from "./components/CardCustomerMobile";
 import ModalCreateCustomer from "./components/ModalCreateCustomer";
+import PopoverCustomer from "./components/PopoverCustomer";
+import { toast } from "react-toastify";
 
 export default function Companies() {
   const { id } = useParams();
   const [open, setOpen] = useState(false);
-  const [customers, setCustomers] = useState<ICustomer[]>([]);
+  const [customers, setCustomers] = useState<IPagedCustomer>();
   const [companyName, setCompanyName] = useState<string>("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const navigation = useRouter();
+  const [editCustomerId, setEditCustomerId] = useState<number>();
+
+  const handleDeleteCustomer = async (id: number) => {
+    try {
+      await CustomerService.Delete(id);
+      toast.success("Administrador excluído com sucesso");
+      fetchCompany();
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao excluir administrador");
+    }
+  };
 
   const fetchCompany = async () => {
     try {
-      setLoading(true);
-      const res = await CustomerService.GetByCompanyId(Number(id));
+      const res = await CustomerService.GetAllByCompanyId(page, 10, Number(id));
       const resCompany = await CompanyService.GetById(Number(id));
       setCompanyName(resCompany.name);
       setCustomers(res);
     } catch (error) {
       console.log(error);
-      setLoading(true);
-    } finally {
-      setLoading(false);
     }
   };
+
+  console.log(editCustomerId);
 
   useEffect(() => {
     fetchCompany();
@@ -99,7 +109,7 @@ export default function Companies() {
           </thead>
           <tbody>
             {customers &&
-              customers.map((row, index) => (
+              customers.items.map((row, index) => (
                 <tr
                   key={index}
                   className={`${
@@ -114,7 +124,7 @@ export default function Companies() {
                   </td>
                   <td className="py-5 px-4 text-sm">
                     <div className="flex">
-                      {row.profileId == 1 ? "Ativo" : "Inativo"}
+                      {row.profileId == 1 ? "Comum" : "Gestor"}
                     </div>
                   </td>
                   <td className="py-5 px-4 text-sm">
@@ -124,14 +134,19 @@ export default function Companies() {
                     <div className="flex">{row.email}</div>
                   </td>
                   <td className="py-5 px-4 flex items-center justify-center">
-                    <SlOptionsVertical className="cursor-pointer text-[#1A69C4]" />
+                    <PopoverCustomer
+                      customerId={row.id ?? 0}
+                      onDeleteCustomer={(x: number) => handleDeleteCustomer(x)}
+                      onEditCustomer={(x: number) => setEditCustomerId(x)}
+                      setOpenModal={() => setOpen(!open)}
+                    />
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
         <div className="flex flex-col gap-4 md:hidden p-4">
-          {customers.map((x, index) => {
+          {customers?.items.map((x, index) => {
             return (
               <CardCustomerMobile
                 key={index}
@@ -145,15 +160,17 @@ export default function Companies() {
           })}
         </div>
         <Pagination
-          pageIndex={1}
+          pageIndex={page}
           perPage={10}
-          handlePage={() => {}}
-          totalCount={10}
+          handlePage={setPage}
+          totalCount={customers?.totalItems}
         />
         <ModalCreateCustomer
           open={open}
           setOpen={() => setOpen(!open)}
           companyId={Number(id)}
+          customerId={editCustomerId}
+          setCustomerId={(x: number) => setEditCustomerId(x)}
         />
       </section>
     </main>

@@ -26,6 +26,22 @@ const PermissionService = {
       }
     }
   },
+  GetById: async (id: number) => {
+    try {
+      const res = await api.get(`${endpoint}/${id}`);
+      return res.data as IPermission;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
   Post: async (data: ICreatePermissionFront) => {
     const dataSent: ICreatePermission = {
       name: data.profileName,
@@ -88,7 +104,7 @@ const PermissionService = {
           hasAcess: data.issues,
         },
         {
-          name: "Questionário",
+          name: "Questionários",
           funcs: [
             {
               name: "Criar",
@@ -102,7 +118,7 @@ const PermissionService = {
           hasAcess: data.questionario,
         },
         {
-          name: "Ambiente",
+          name: "Ambientes",
           funcs: [
             {
               name: "Criar Ambientes",
@@ -125,6 +141,36 @@ const PermissionService = {
     try {
       const res = await api.post(`${endpoint}`, dataSent);
       return res.data as IPermission;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Put: async (id: number, data?: IPermission) => {
+    try {
+      await api.put(`${endpoint}/${id}`, data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Delete: async (id: number) => {
+    try {
+      await api.delete(`${endpoint}/${id}`);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {

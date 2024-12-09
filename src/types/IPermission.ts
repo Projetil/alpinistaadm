@@ -5,6 +5,11 @@ export interface IPermission {
   permissionPages: IPermissionPage[];
 }
 
+export interface IPagedPermission {
+  totalItems: number;
+  items: IPermission[];
+}
+
 export interface IPermissionPage {
   id: number;
   profileId: number;

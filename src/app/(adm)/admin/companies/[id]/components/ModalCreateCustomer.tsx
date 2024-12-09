@@ -4,9 +4,13 @@ import Modal from "@/components/default/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CustomerService from "@/services/CustomerService";
+import PermissionService from "@/services/PermissionService";
 import UserService from "@/services/UserService";
+import { ICustomer } from "@/types/ICustomer";
+import { IPermission } from "@/types/IPermission";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -38,13 +42,20 @@ const ModalCreateCustomer = ({
   open,
   setOpen,
   companyId,
+  customerId,
+  setCustomerId,
 }: {
   open: boolean;
   setOpen: () => void;
   companyId: number;
+  customerId?: number;
+  setCustomerId: (x: number) => void;
 }) => {
+  const [customer, setCustomer] = useState<ICustomer>();
+  const [permission, setPermission] = useState<IPermission[]>([]);
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<DataCompany>({
@@ -53,31 +64,111 @@ const ModalCreateCustomer = ({
 
   const onSubmit = async (data: DataCompany) => {
     try {
-      console.log(data);
+      if (customerId && customerId > 0) {
+        await UserService.Put(
+          {
+            email: data.email,
+            password: data.senha,
+            type: Number(data.profileType),
+          },
+          customer?.userId ?? 0
+        );
 
-      const resUser = await UserService.Post({
-        email: data.email,
-        password: data.senha,
-        type: Number(data.profileType),
-      });
+        await CustomerService.Put(
+          {
+            name: data.userName,
+            email: data.email,
+            number: Number(data.telefone),
+            position: data.cargo,
+            password: data.senha,
+            profileId: Number(data.profileType),
+            userId: customer?.userId ?? 0,
+            companyId: companyId,
+          },
+          customerId
+        );
+        toast.success("Empresa atualizada com sucesso");
+      } else {
+        const resUser = await UserService.Post({
+          email: data.email,
+          password: data.senha,
+          type: Number(data.profileType),
+        });
 
-      await CustomerService.Post({
-        name: data.userName,
-        email: data.email,
-        number: Number(data.telefone),
-        position: data.cargo,
-        password: data.senha,
-        profileId: Number(data.profileType),
-        userId: resUser.id,
-        companyId: companyId,
-      });
-      toast.success("Empresa cadastrada com sucesso");
+        await CustomerService.Post({
+          name: data.userName,
+          email: data.email,
+          number: Number(data.telefone),
+          position: data.cargo,
+          password: data.senha,
+          profileId: Number(data.profileType),
+          userId: resUser.id,
+          companyId: companyId,
+        });
+        toast.success("Empresa cadastrada com sucesso");
+      }
+
       setOpen();
     } catch (err) {
       toast.error("Erro ao cadastrar empresa");
       console.log(err);
     }
   };
+
+  const fetchPermissions = async () => {
+    try {
+      const res = await PermissionService.GetAll();
+      setPermission(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const fetchCustomer = async () => {
+    try {
+      const res = await CustomerService.GetById(customerId || 0);
+      setCustomer(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setCustomerId(0);
+      reset({
+        userName: "",
+        profileType: "",
+        email: "",
+        telefone: "",
+        cargo: "",
+        senha: "",
+      });
+    }
+  }, [open]);
+
+  useMemo(() => {
+    if (customerId && customerId > 0) {
+      fetchCustomer();
+    }
+  }, [customerId]);
+
+  useMemo(() => {
+    if (customer) {
+      reset({
+        userName: customer.name,
+        profileType: customer.profileId.toString(),
+        email: customer.email,
+        telefone: String(customer.number),
+        cargo: customer.position,
+        senha: customer.password,
+      });
+    }
+  }, [customer]);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
@@ -114,8 +205,11 @@ const ModalCreateCustomer = ({
                 className="bg-transparent py-2 rounded-md px-2 border border-[#DFDFE2] mt-2"
                 {...register("profileType")}
               >
-                <option value="1">Comum</option>
-                <option value="3">Gerente</option>
+                {permission.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
               {errors.profileType && (
                 <span className="text-red-500">
@@ -189,6 +283,7 @@ const ModalCreateCustomer = ({
           <div className="flex w-full gap-4 justify-end items-center mt-2">
             <Button
               variant={"outline"}
+              onClick={setOpen}
               className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
               type="button"
             >

@@ -20,3 +20,8 @@ export interface ICreateCustomer {
   password: string;
   profileId: number;
 }
+
+export interface IPagedCustomer {
+  totalItems: number;
+  items: ICustomer[];
+}
