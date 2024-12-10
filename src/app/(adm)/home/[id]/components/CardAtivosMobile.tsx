@@ -5,7 +5,13 @@
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
-const CardAtivosMobile = ({ name }: { name: string }) => {
+const CardAtivosMobile = ({
+  name,
+  openModalDetails,
+}: {
+  name: string;
+  openModalDetails: () => void;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCard = () => {
@@ -31,7 +37,10 @@ const CardAtivosMobile = ({ name }: { name: string }) => {
         />
       </button>
       {isOpen && (
-        <div className="pt-4 space-y-2 bg-white rounded-lg shadow-sm text-sm">
+        <div
+          onClick={() => openModalDetails()}
+          className="pt-4 space-y-2 bg-white rounded-lg shadow-sm text-sm"
+        >
           <div className="flex flex-col">
             <p className="text-[#818086] ">Grau de severidade:</p>
             <div className={`py-3 px-4 text-sm flex gap-2 flex-wrap`}>

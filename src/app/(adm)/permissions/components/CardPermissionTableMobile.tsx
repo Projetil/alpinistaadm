@@ -8,12 +8,20 @@ interface CompanyCardProps {
   name: string;
   type: string;
   permission: string;
+  permissionId: number;
+  onDeletePermission: (x: number) => void;
+  onEditPermission: (x: number) => void;
+  setOpenModal: () => void;
 }
 
 const CardPermission: React.FC<CompanyCardProps> = ({
   name,
   type,
   permission,
+  permissionId,
+  onDeletePermission,
+  onEditPermission,
+  setOpenModal,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,12 +57,21 @@ const CardPermission: React.FC<CompanyCardProps> = ({
             </div>
           </div>
           <div className="flex justify-between items-center pt-5 font-bold">
-            <a href="#" className="text-[#050506]">
+            <button
+              onClick={() => {
+                onEditPermission(permissionId);
+                setOpenModal();
+              }}
+              className="text-[#050506]"
+            >
               Editar
-            </a>
-            <a href="#" className="text-[#B3001E]">
+            </button>
+            <button
+              onClick={() => onDeletePermission(permissionId)}
+              className="text-[#B3001E]"
+            >
               Excluir
-            </a>
+            </button>
           </div>
         </div>
       )}

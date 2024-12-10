@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import AdministratorService from "@/services/AdministratorService";
 import UserService from "@/services/UserService";
 import { IAdministrator } from "@/types/IAdministrator";
+import { formatPhone } from "@/utils/formatString";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
 import { useEffect, useMemo, useState } from "react";
@@ -73,7 +74,7 @@ const ModalCreateAdmin = ({
           {
             name: data.userName,
             email: data.email,
-            phone: Number(data.telefone),
+            phone: Number(data.telefone.replace(/\D/g, "")),
             position: data.cargo,
             password: data.senha,
             userId: adm?.userId ?? 0,
@@ -91,7 +92,7 @@ const ModalCreateAdmin = ({
         await AdministratorService.Post({
           name: data.userName,
           email: data.email,
-          phone: Number(data.telefone),
+          phone: Number(data.telefone.replace(/\D/g, "")),
           position: data.cargo,
           password: data.senha,
           userId: resUser.id,
@@ -217,6 +218,11 @@ const ModalCreateAdmin = ({
                 placeholder="Telefone"
                 className="font-normal border-[#D7D7DA] bg-transparent mt-2"
                 {...register("telefone")}
+                onChange={(e) => {
+                  const formattedValue = formatPhone(e.target.value);
+                  e.target.value = formattedValue;
+                  register("telefone").onChange(e);
+                }}
               />
               {errors.telefone && (
                 <span className="text-red-500">{errors.telefone.message}</span>

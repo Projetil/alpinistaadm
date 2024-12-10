@@ -101,7 +101,7 @@ const ModalNewRisk = ({
           status: Number(risk?.state) ?? 0,
           riskSeverity: risk ? Number(risk.severity) : 0,
           active: risk ? risk.isActive : "",
-          limitDate: limitDate ? limitDate : "",
+          limitDate: limitDate ? limitDate : undefined,
           name: risk ? risk.name : "",
           description: risk ? risk.description : "",
           observations: data.observations,
@@ -195,7 +195,7 @@ const ModalNewRisk = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen md:w-auto w-full">
+      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen md:w-auto w-full md:min-w-[600px]">
         <h3 className="font-bold text-2xl text-[#0D3C73]">Novo Risco</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <button
@@ -343,9 +343,7 @@ const ModalNewRisk = ({
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <Label className="">
-                  Data limite <span className="text-red-500">*</span>
-                </Label>
+                <Label className="">Data limite</Label>
                 <DatePicker
                   date={limitDate}
                   setDate={(date: Date) =>

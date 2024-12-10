@@ -105,7 +105,7 @@ const AtivosTable = ({
               } text-[#636267] text-center`}
             >
               <td className="py-3 px-4 text-sm max-w-[200px]">
-                <div className="flex">{row.name}</div>
+                <div className="flex">{row.active}</div>
               </td>
               <td className="py-3 px-4 text-sm">
                 <div className="flex">00</div>
@@ -183,7 +183,14 @@ const AtivosTable = ({
 
       <div className="flex flex-col gap-4 md:hidden p-4">
         {risks?.items.map((x, index) => (
-          <CardAtivosMobile key={index} name={x.name} />
+          <CardAtivosMobile
+            openModalDetails={() => {
+              openModal();
+              setRiskId(x.id);
+            }}
+            key={index}
+            name={x.name}
+          />
         ))}
       </div>
       <Pagination

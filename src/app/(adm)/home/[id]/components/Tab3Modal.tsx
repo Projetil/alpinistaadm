@@ -53,7 +53,7 @@ const Tab3Modal = ({
       <div
         className={`${
           hideComment ? "flex md:flex" : "hidden md:flex"
-        } flex-col w-full md:w-auto md:max-w-[400px] bg-[#F8F7F9] p-3 rounded-lg`}
+        } flex-col w-full  bg-[#F8F7F9] p-3 rounded-lg`}
       >
         <div className="flex w-full justify-between mb-8">
           <h4 className="font-semibold text-[#050506]">Histórico</h4>
@@ -72,7 +72,7 @@ const Tab3Modal = ({
       <div
         className={`${
           hideComment ? "hidden md:flex" : "flex md:flex"
-        }  flex-col w-full md:w-auto md:max-w-[400px] bg-[#F8F7F9] h-full p-3 rounded-lg`}
+        }  flex-col w-full  bg-[#F8F7F9] h-full p-3 rounded-lg`}
       >
         <div className="flex w-full justify-between mb-8">
           <h4 className="font-semibold text-[#050506]">Comentário</h4>

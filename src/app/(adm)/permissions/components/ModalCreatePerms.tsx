@@ -896,6 +896,7 @@ const ModalCreatePerms = ({
 
           <div className="flex w-full gap-4 justify-end items-center mt-2">
             <Button
+              onClick={() => setOpen()}
               variant={"outline"}
               className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
               type="button"

@@ -1,19 +1,24 @@
 // components/CardAccountMobile.tsx
 
 "use client";
-
-import { ITableAccount } from "@/data/tableAccount";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
 const CardAccountMobile = ({
   id,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   name,
   active,
+  openModalDetails,
   state,
   severidade,
-}: ITableAccount) => {
+}: {
+  id: number;
+  name: string;
+  active: string;
+  state: string;
+  openModalDetails: () => void;
+  severidade: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCard = () => {
@@ -27,7 +32,7 @@ const CardAccountMobile = ({
         className="flex justify-between items-center w-full text-left "
       >
         <div className="flex flex-col gap-3">
-          <p className="font-semibold">Dispout 1923923324</p>
+          <p className="font-semibold">{name}</p>
           <p className="text-sm text-[#8C8B91]">ID: {id}</p>
         </div>
         <ChevronDownIcon
@@ -39,7 +44,10 @@ const CardAccountMobile = ({
         />
       </button>
       {isOpen && (
-        <div className="pt-4 space-y-2 bg-white rounded-lg shadow-sm text-sm">
+        <div
+          onClick={() => openModalDetails()}
+          className="pt-4 space-y-2 bg-white rounded-lg shadow-sm text-sm"
+        >
           <div>
             <p className="text-[#818086] ">Ativo:</p>
             <span className="font-semibold ">{active}</span>

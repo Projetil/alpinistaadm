@@ -7,7 +7,7 @@ interface PrivateLayoutProps {
 
 export default async function AdmLayout({ children }: PrivateLayoutProps) {
   return (
-    <div className="flex flex-col w-full bg-[#F8F7F9]">
+    <div className="flex flex-col w-full bg-[#F8F7F9] min-h-screen">
       <Header />
       <div className="flex gap-6">
         <Sidebar />

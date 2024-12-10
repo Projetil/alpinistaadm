@@ -119,7 +119,7 @@ const AccountTable = ({
                 <div className="flex">{row.name}</div>
               </td>
               <td className="py-3 px-4 text-sm">
-                <div className="flex">{row.active ? "Yes" : "No"}</div>
+                <div className="flex">{row.active ? "Sim" : "Não"}</div>
               </td>
               <td className="py-3 px-4 text-sm">
                 <div className="flex">{riskStatus[Number(row.status)]}</div>
@@ -135,11 +135,15 @@ const AccountTable = ({
       </table>
 
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {risks?.items.map((x, index) => (
+        {sortedRisks.map((x, index) => (
           <CardAccountMobile
+            openModalDetails={() => {
+              openModal();
+              setRiskId(x.id);
+            }}
             key={index}
             id={x.id}
-            name={x.name}
+            name={"teste"}
             active={x.active}
             state={riskStatus[Number(x.status)]}
             severidade={riskSeverity[Number(x.riskSeverity)]}

@@ -22,7 +22,9 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Data limite</p>
             <p>
-              {currentRisk ? formatDateToDDMMYYYY(currentRisk.limitDate) : ""}
+              {currentRisk && currentRisk.limitDate
+                ? formatDateToDDMMYYYY(currentRisk.limitDate)
+                : ""}
             </p>
           </div>
         </div>
@@ -39,7 +41,9 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
             <p className="font-semibold text-[#40414A]">Data de correção</p>
             <p>
               {" "}
-              {currentRisk ? formatDateToDDMMYYYY(currentRisk.limitDate) : ""}
+              {currentRisk && currentRisk.limitDate
+                ? formatDateToDDMMYYYY(currentRisk.limitDate)
+                : ""}
             </p>
           </div>
         </div>

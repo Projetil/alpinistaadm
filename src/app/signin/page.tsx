@@ -155,12 +155,6 @@ export default function SignIn() {
                     Esqueci minha senha
                   </a>
                 </div>
-                <div className="flex gap-1">
-                  <p className="text-sm text-[#636267]">Não tem conta ainda?</p>
-                  <a href="#" className="font-semibold text-sm text-[#3088EE]">
-                    Cadastre-se
-                  </a>
-                </div>
               </form>
             </div>
           </div>
