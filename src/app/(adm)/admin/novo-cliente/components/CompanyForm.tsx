@@ -19,7 +19,7 @@ const schemaCompany = z.object({
     .max(300, "Razão social deve ter no máximo 300 caracteres"),
   cnpj: z
     .string()
-    .min(3, "CNPJ é obrigatório")
+    .min(18, "CNPJ é obrigatório")
     .max(18, "CNPJ deve ter no máximo 14 caracteres"),
   status: z.string(),
   contatoComercialNome: z

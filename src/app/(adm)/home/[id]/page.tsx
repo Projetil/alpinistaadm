@@ -55,10 +55,7 @@ export default function CompanyIndPage() {
             </Button>
           )}
           {selected == "Ativos" && (
-            <Button
-              onClick={() => setOpenModal(!openModal)}
-              className="text-white bg-[#3088EE] border-none items-center"
-            >
+            <Button className="text-white bg-[#3088EE] border-none items-center">
               <GoChecklist /> Exportar
             </Button>
           )}
@@ -98,7 +95,7 @@ export default function CompanyIndPage() {
       {selected == "Padrão" && (
         <>
           <button
-            onClick={() => setOpenModal(!open)}
+            onClick={() => setOpenModal(!openModal)}
             className="fixed bottom-10 right-10 md:hidden bg-[#3088EE] w-12 h-12 rounded-xl flex items-center justify-center"
           >
             <Plus color="#F8F8F8" size={30} />

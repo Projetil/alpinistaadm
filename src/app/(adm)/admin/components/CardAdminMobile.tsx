@@ -9,6 +9,10 @@ interface CompanyCardProps {
   phone: string;
   email: string;
   cargo: string;
+  admId: number;
+  onDeleteAdm: (x: number) => void;
+  onEditAdm: (x: number) => void;
+  setOpenModal: () => void;
 }
 
 const CardAdminMobile: React.FC<CompanyCardProps> = ({
@@ -16,6 +20,10 @@ const CardAdminMobile: React.FC<CompanyCardProps> = ({
   phone,
   email,
   cargo,
+  admId,
+  onDeleteAdm,
+  onEditAdm,
+  setOpenModal,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,12 +63,21 @@ const CardAdminMobile: React.FC<CompanyCardProps> = ({
             </div>
           </div>
           <div className="flex justify-between items-center py-3 font-bold">
-            <a href="#" className="text-[#050506]">
+            <button
+              onClick={() => {
+                onEditAdm(admId);
+                setOpenModal();
+              }}
+              className="text-[#050506]"
+            >
               Editar
-            </a>
-            <a href="#" className="text-[#B3001E]">
+            </button>
+            <button
+              onClick={() => onDeleteAdm(admId)}
+              className="text-[#B3001E]"
+            >
               Excluir
-            </a>
+            </button>
           </div>
         </div>
       )}

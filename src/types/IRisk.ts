@@ -27,7 +27,7 @@ export interface ICreateRisk {
   riskSeverity: number;
   responsibleCustomerId?: number;
   active: string;
-  limitDate: string;
+  limitDate?: string;
   description: string;
   observations: string;
   actionPlan: string;

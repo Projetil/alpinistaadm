@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 const domainSchema = z.object({
-  domains: z.array(z.string().min(1, "Campo obrigatório").url("URL inválida")),
+  domains: z.array(z.string().min(1, "Campo obrigatório")),
 });
 
 type DomainFormValues = z.infer<typeof domainSchema>;
@@ -69,18 +69,30 @@ const DominiosForm = ({
           )}
         </div>
       ))}
-
-      <Button
-        type="button"
-        onClick={() => {
-          setDomainSize(domainSize + 1);
-        }}
-        variant={"ghost"}
-        className="text-[#1F4C85] font-semibold justify-start"
-      >
-        <Plus />
-        Adicionar outro domínio
-      </Button>
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+        <Button
+          type="button"
+          onClick={() => {
+            setDomainSize(domainSize + 1);
+          }}
+          variant={"ghost"}
+          className="text-[#1F4C85] font-semibold justify-start"
+        >
+          <Plus />
+          Adicionar outro aplicativo
+        </Button>
+        <Button
+          type="button"
+          onClick={() => {
+            if (domainSize > 0) setDomainSize(domainSize - 1);
+          }}
+          variant="ghost"
+          className="text-red-500 flex items-center gap-2"
+        >
+          <Minus />
+          Remover aplicativo
+        </Button>
+      </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
           onClick={() => navigation.push("/admin")}

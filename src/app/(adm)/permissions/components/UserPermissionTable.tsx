@@ -147,6 +147,10 @@ const UserPermissionTable = ({
           return (
             <CardPermission
               key={index}
+              permissionId={x.id}
+              onDeletePermission={(x: number) => handleDelete(x)}
+              onEditPermission={(x: number) => setPermissionId(x)}
+              setOpenModal={setOpenModal}
               name={x.name}
               type={x.type === 1 ? "Comum" : "Moderador"}
               permission={perms}

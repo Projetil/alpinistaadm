@@ -138,6 +138,10 @@ const AdminTable = ({
         {administrators?.items.map((x, index) => (
           <CardAdminMobile
             key={index}
+            admId={x.id}
+            onEditAdm={(x: number) => setAdmId(x)}
+            onDeleteAdm={(x: number) => handleDelete(x)}
+            setOpenModal={setOpenModal}
             companyName={x.name}
             phone={x.phone.toString()}
             email={x.email}

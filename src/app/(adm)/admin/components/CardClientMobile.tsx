@@ -9,6 +9,8 @@ interface CompanyCardProps {
   cnpj: string;
   status: string;
   registrationDate: string;
+  clientId: number;
+  handleDelete: (id: number) => void;
 }
 
 const CardClientMobile: React.FC<CompanyCardProps> = ({
@@ -16,6 +18,8 @@ const CardClientMobile: React.FC<CompanyCardProps> = ({
   cnpj,
   status,
   registrationDate,
+  clientId,
+  handleDelete,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,13 +59,19 @@ const CardClientMobile: React.FC<CompanyCardProps> = ({
             </div>
           </div>
           <div className="flex justify-between items-center py-3 font-bold">
-            <a href="#" className="text-[#050506]">
+            <a
+              href={`/admin/novo-cliente?id=${clientId}`}
+              className="text-[#050506]"
+            >
               Editar
             </a>
-            <a href="#" className="text-[#B3001E]">
+            <button
+              onClick={() => handleDelete(clientId)}
+              className="text-[#B3001E]"
+            >
               Excluir
-            </a>
-            <a href="#" className="text-[#1A69C4]">
+            </button>
+            <a href={`/admin/companies/${clientId}`} className="text-[#1A69C4]">
               Ver contas
             </a>
           </div>

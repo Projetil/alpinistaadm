@@ -133,6 +133,8 @@ const ClientTable = ({
         {companies?.items.map((x, index) => (
           <CardClientMobile
             key={index}
+            handleDelete={handleDelete}
+            clientId={x.id}
             companyName={x.name}
             status={x.status === 1 ? "Ativo" : "Inativo"}
             registrationDate={formatDateString(x.createdAt)}
