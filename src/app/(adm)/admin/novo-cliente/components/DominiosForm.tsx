@@ -5,9 +5,11 @@ import { Minus, Plus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { ICompanyDomainAssets } from "@/types/ICompanyDomainAssets";
+import CompanyDomainAssetsService from "@/services/CompanyDomainService";
 
 const domainSchema = z.object({
   domains: z.array(z.string().min(1, "Campo obrigatório")),
@@ -17,17 +19,20 @@ type DomainFormValues = z.infer<typeof domainSchema>;
 
 const DominiosForm = ({
   addStep,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  companyId,
   editId,
 }: {
   addStep: () => void;
   editId: string;
+  companyId: number;
 }) => {
   const navigation = useRouter();
   const [domainSize, setDomainSize] = useState(1);
+  const [domainsData, setDomainsData] = useState<ICompanyDomainAssets[]>();
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<DomainFormValues>({
     resolver: zodResolver(domainSchema),
@@ -37,10 +42,66 @@ const DominiosForm = ({
   });
 
   const onSubmit = (data: DomainFormValues) => {
-    console.log(data);
-    toast.success("Domínios cadastrados com sucesso");
-    addStep();
+    if (editId && editId !== "") {
+      try {
+        data.domains.forEach(async (domain) => {
+          await CompanyDomainAssetsService.Put(
+            {
+              companyId: Number(editId),
+              domain: domain,
+            },
+            Number(editId)
+          );
+        });
+        toast.success("Domínios cadastrados com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao editar domínios");
+        console.log(error);
+      }
+    } else {
+      try {
+        data.domains.forEach(async (domain) => {
+          const res = await CompanyDomainAssetsService.Post({
+            companyId: companyId,
+            domain: domain,
+          });
+          if (!res) throw new Error("Erro ao adicionar endereço IP");
+        });
+        toast.success("Endereços IP adicionados com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao adicionar endereços IP");
+        console.log(error);
+      }
+    }
   };
+
+  const fetchDomains = async () => {
+    try {
+      const res = await CompanyDomainAssetsService.GetByCompanyId(
+        Number(editId)
+      );
+      setDomainsData(res);
+    } catch (erro) {
+      console.log(erro);
+    }
+  };
+
+  useMemo(() => {
+    if (editId && editId !== "") {
+      fetchDomains();
+    }
+  }, [editId]);
+
+  useMemo(() => {
+    if (domainsData) {
+      reset({
+        domains: domainsData.map((domain) => domain.domain),
+      });
+      setDomainSize(domainsData.length);
+    }
+  }, [domainsData]);
 
   return (
     <form

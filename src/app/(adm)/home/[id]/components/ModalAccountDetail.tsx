@@ -2,7 +2,7 @@
 
 import Modal from "@/components/default/Modal";
 import { MdBugReport } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Tab1Modal from "./Tab1Modal";
@@ -11,6 +11,12 @@ import Tab3Modal from "./Tab3Modal";
 import { IRisk } from "@/types/IRisk";
 import RisksService from "@/services/RisksService";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import RisksCommentService from "@/services/RisksCommentService";
+import RisksHistoricalService from "@/services/RisksHistoricalService";
+import { IPagedRisksHistorical } from "@/types/IRisksHistorical";
+import { IPagedRisksComment } from "@/types/IRisksComment";
 
 const ModalAccountDetail = ({
   open,
@@ -29,6 +35,26 @@ const ModalAccountDetail = ({
   const [tabs, setTabs] = useState(1);
   const [hideComment, setHideComment] = useState(true);
   const [risk, setRisk] = useState<IRisk>();
+  const exportRef = useRef<HTMLDivElement>(null);
+  const [historicalData, setHistoricalData] = useState<IPagedRisksHistorical>();
+  const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
+
+  const exportToPDF = async () => {
+    if (!exportRef.current) return;
+
+    const canvas = await html2canvas(exportRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const x = (pdf.internal.pageSize.getWidth() - pdfWidth) / 2;
+    const y = (pdf.internal.pageSize.getHeight() - pdfHeight) / 2;
+
+    pdf.addImage(imgData, "PNG", x, y, pdfWidth, pdfHeight);
+    pdf.save("tabs_content.pdf");
+  };
 
   const fetchRisk = async () => {
     try {
@@ -39,8 +65,30 @@ const ModalAccountDetail = ({
     }
   };
 
-  useEffect(() => {
-    if (riskId) fetchRisk();
+  const fetchComments = async (id: number) => {
+    try {
+      const res = await RisksCommentService.Get(0, 0, id);
+      setCommentsData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchHistorical = async (id: number) => {
+    try {
+      const res = await RisksHistoricalService.Get(0, 0, id);
+      setHistoricalData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useMemo(() => {
+    if (riskId) {
+      fetchRisk();
+      fetchComments(riskId);
+      fetchHistorical(riskId);
+    }
   }, [riskId, open]);
 
   return (
@@ -67,7 +115,10 @@ const ModalAccountDetail = ({
             </div>
           </div>
           <div className="flex gap-4">
-            <Button className="border-none text-white bg-[#1A69C4]">
+            <Button
+              onClick={exportToPDF}
+              className="border-none text-white bg-[#1A69C4]"
+            >
               Exportar
             </Button>
             <Button
@@ -135,16 +186,24 @@ const ModalAccountDetail = ({
             </Button>
           </div>
         </div>
+
         {tabs == 1 && <Tab1Modal currentRisk={risk} />}
         {tabs == 2 && <Tab2Modal currentRisk={risk} />}
         {tabs == 3 && (
           <Tab3Modal
             currentRisk={risk}
             hideComment={hideComment}
+            commentsData={commentsData}
+            historicalData={historicalData}
             handleComment={() => setHideComment(!hideComment)}
           />
         )}
       </div>
+      {/*  <div>
+        <div ref={exportRef}>
+          <DownloadRisk currentRisk={risk} />
+        </div>
+      </div> */}
     </Modal>
   );
 };

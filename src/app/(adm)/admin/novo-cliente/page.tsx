@@ -117,7 +117,11 @@ function NovoClientePage() {
           />
         )}
         {steps == 2 && (
-          <DominiosForm editId={editId} addStep={() => setSteps(3)} />
+          <DominiosForm
+            editId={editId}
+            companyId={companyId}
+            addStep={() => setSteps(3)}
+          />
         )}
         {steps == 3 && (
           <AddressForm

@@ -55,7 +55,7 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
 
 export default Tab2Modal;
 
-const AccordingTab2 = ({
+export const AccordingTab2 = ({
   title,
   descript,
 }: {

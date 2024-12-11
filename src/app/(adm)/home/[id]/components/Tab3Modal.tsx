@@ -7,47 +7,20 @@ import {
   IPagedRisksHistorical,
   IRiskHistorical,
 } from "@/types/IRisksHistorical";
-import { useMemo, useState } from "react";
 import { IPagedRisksComment } from "@/types/IRisksComment";
-import RisksCommentService from "@/services/RisksCommentService";
-import RisksHistoricalService from "@/services/RisksHistoricalService";
 
 const Tab3Modal = ({
   hideComment,
   currentRisk,
+  commentsData,
+  historicalData,
 }: {
   hideComment: boolean;
   handleComment: () => void;
   currentRisk?: IRisk;
+  commentsData?: IPagedRisksComment;
+  historicalData?: IPagedRisksHistorical;
 }) => {
-  const [historicalData, setHistoricalData] = useState<IPagedRisksHistorical>();
-  const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
-
-  const fetchComments = async (id: number) => {
-    try {
-      const res = await RisksCommentService.Get(0, 0, id);
-      setCommentsData(res);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchHistorical = async (id: number) => {
-    try {
-      const res = await RisksHistoricalService.Get(0, 0, id);
-      setHistoricalData(res);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useMemo(() => {
-    if (currentRisk) {
-      fetchComments(currentRisk.id);
-      fetchHistorical(currentRisk.id);
-    }
-  }, [currentRisk]);
-
   return (
     <div className="flex justify-between gap-2">
       <div
@@ -86,7 +59,7 @@ const Tab3Modal = ({
 
 export default Tab3Modal;
 
-const HistoricalCard = ({ text }: { text: string }) => {
+export const HistoricalCard = ({ text }: { text: string }) => {
   return (
     <div className="flex flex-col gap-4 bg-[#FFFFFF] p-2">
       <div className="flex gap-4">

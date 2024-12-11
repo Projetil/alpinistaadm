@@ -304,9 +304,7 @@ const ModalNewRisk = ({
             </div>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex flex-col gap-2">
-                <Label className="">
-                  Responsável <span className="text-red-500">*</span>
-                </Label>
+                <Label className="">Responsável</Label>
                 <select
                   {...register1("responsible")}
                   className="h-10 flex border rounded-md placeholder:text-[#8C8B91] text-[#8C8B91]"
