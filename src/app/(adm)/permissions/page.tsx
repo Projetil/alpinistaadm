@@ -48,7 +48,7 @@ export default function UserPermissionPage() {
         <div className="hidden md:flex gap-4 w-full justify-between items-center text-[#050506]">
           <div className="flex items-center space-x-3">
             <PiFolderUserFill color="#3088EE" size={28} />
-            <h2 className="font-semibold md:text-3xl">Usuários e Permissões</h2>
+            <h2 className="font-semibold md:text-3xl">Perfis de Acesso</h2>
           </div>
           <div>
             <Button

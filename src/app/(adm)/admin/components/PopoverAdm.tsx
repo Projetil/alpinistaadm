@@ -29,14 +29,14 @@ const PopoverAdm = ({
             onEditAdm(admId);
             setOpenModal();
           }}
-          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
+          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center hover:font-semibold rounded-lg w-full"
         >
           {" "}
           <HiOutlinePencil size={25} /> Editar
         </button>
         <button
           onClick={() => onDeleteAdm(admId)}
-          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
+          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center  hover:font-semibold rounded-lg w-full"
         >
           <FaRegTrashAlt size={25} /> Excluir
         </button>

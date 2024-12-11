@@ -585,7 +585,7 @@ const ModalCreatePerms = ({
                   {...register("dashboard")}
                   onClick={() => {
                     setValue("dashboard", !dashboardField);
-                    setValue("dashboardAtt", false);
+                    setValue("dashboardAtt", !dashboardAttField);
                   }}
                   id="dashboard"
                 />
@@ -618,7 +618,7 @@ const ModalCreatePerms = ({
                   {...register("ativos")}
                   onClick={() => {
                     setValue("ativos", !ativosField);
-                    setValue("ativosFilter", false);
+                    setValue("ativosFilter", !ativosField);
                   }}
                   id="ativos"
                 />
@@ -650,9 +650,9 @@ const ModalCreatePerms = ({
                   {...register("pentest")}
                   onClick={() => {
                     setValue("pentest", !pentestField);
-                    setValue("pentestCreate", false);
-                    setValue("pentestEdit", false);
-                    setValue("pentestSend", false);
+                    setValue("pentestCreate", !pentestCreateField);
+                    setValue("pentestEdit", !pentestEditField);
+                    setValue("pentestSend", !pentestSendField);
                   }}
                   id="pentest"
                 />
@@ -715,9 +715,9 @@ const ModalCreatePerms = ({
                   {...register("issues")}
                   onClick={() => {
                     setValue("issues", !issuesField);
-                    setValue("issuesFilter", false);
-                    setValue("issuesExport", false);
-                    setValue("issuesClassify", false);
+                    setValue("issuesFilter", !issuesFilterField);
+                    setValue("issuesExport", !issuesExportField);
+                    setValue("issuesClassify", !issuesClassifyField);
                   }}
                   id="issues"
                 />
@@ -784,8 +784,8 @@ const ModalCreatePerms = ({
                   {...register("questionario")}
                   onClick={() => {
                     setValue("questionario", !questionarioField);
-                    setValue("questionarioCreate", false);
-                    setValue("questionarioShare", false);
+                    setValue("questionarioCreate", !questionarioCreateField);
+                    setValue("questionarioShare", !questionarioShareField);
                   }}
                   id="questionario"
                 />
@@ -842,9 +842,9 @@ const ModalCreatePerms = ({
                   {...register("ambiente")}
                   onClick={() => {
                     setValue("ambiente", !ambienteField);
-                    setValue("ambienteCreate", false);
-                    setValue("ambienteEdit", false);
-                    setValue("ambienteDelete", false);
+                    setValue("ambienteCreate", !ambienteCreateField);
+                    setValue("ambienteEdit", !ambienteEditField);
+                    setValue("ambienteDelete", !ambienteDeleteField);
                   }}
                   id="ambiente"
                 />

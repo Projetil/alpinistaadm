@@ -84,7 +84,7 @@ export const AccordingTab2 = ({
       </button>
       {isOpen && (
         <div className="p-4 mt-2 space-y-2  rounded-lg ">
-          <p className="font-light text-[#636267]">{descript}</p>
+          <p className="font-light text-[#636267] break-all">{descript}</p>
           <div></div>
         </div>
       )}

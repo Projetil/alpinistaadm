@@ -54,7 +54,6 @@ const SocialMediaForm = ({
           },
           Number(editId)
         );
-        toast.success("Rede sociais editado com sucesso");
         addStep();
       } catch (error) {
         toast.error("Erro ao adicionar rede socias");

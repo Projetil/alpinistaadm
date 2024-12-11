@@ -5,7 +5,6 @@ import Editor from "@/components/default/TextAreaInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import CustomerService from "@/services/CustomerService";
 import RisksService from "@/services/RisksService";
 import { ICustomer } from "@/types/ICustomer";
@@ -57,6 +56,7 @@ const ModalNewRisk = ({
   const {
     register: register1,
     reset: reset1,
+    control: control2,
     handleSubmit: handleSubmit1,
     formState: { errors: errors1 },
   } = useForm<RiskFormInputs1>({
@@ -195,7 +195,7 @@ const ModalNewRisk = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen md:w-auto w-full md:min-w-[600px]">
+      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen w-full md:w-[1000px]">
         <h3 className="font-bold text-2xl text-[#0D3C73]">Novo Risco</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <button
@@ -233,7 +233,7 @@ const ModalNewRisk = ({
             className="text-[#050506] flex flex-col gap-6"
           >
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-fit">
                 <Label className="">
                   ID <span className="text-red-500">*</span>
                 </Label>
@@ -245,7 +245,7 @@ const ModalNewRisk = ({
                   className="placeholder:text-[#8C8B91] text-[#636267]"
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <Label className="">
                   Nome <span className="text-red-500">*</span>
                 </Label>
@@ -340,7 +340,7 @@ const ModalNewRisk = ({
                   <p className="text-red-500">{errors1.isActive?.message}</p>
                 )}
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 md:w-1/3">
                 <Label className="">Data limite</Label>
                 <DatePicker
                   date={limitDate}
@@ -354,10 +354,24 @@ const ModalNewRisk = ({
               <Label className="">
                 Descrição <span className="text-red-500">*</span>
               </Label>
-              <Textarea
+              {/*               <Textarea
                 {...register1("description")}
                 placeholder="Descrição"
                 className="placeholder:text-[#8C8B91] text-[#636267] w-full"
+              /> */}
+              <Controller
+                name="description"
+                control={control2}
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Editor
+                    styling="30rem"
+                    contentDescription={value}
+                    setContentDescription={onChange}
+                  />
+                )}
               />
               {errors1.description && errors1.description && (
                 <p className="text-red-500">{errors1.description?.message}</p>
@@ -407,7 +421,7 @@ const ModalNewRisk = ({
                 <p className="text-red-500">{errors2.observations?.message}</p>
               )}
             </div>
-            <div>
+            <div className="">
               <Label className="">
                 Plano de ação <span className="text-red-500">*</span>
               </Label>

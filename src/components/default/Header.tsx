@@ -80,7 +80,7 @@ const Header = () => {
                     className="flex items-center justify-start gap-2"
                   >
                     <RiFolderUserFill size={22} />
-                    <span>Usuário e Permissões</span>
+                    <span>Perfis de Acesso</span>
                   </Link>
                 </li>
               </ul>

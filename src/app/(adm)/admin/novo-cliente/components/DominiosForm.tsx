@@ -12,7 +12,7 @@ import { ICompanyDomainAssets } from "@/types/ICompanyDomainAssets";
 import CompanyDomainAssetsService from "@/services/CompanyDomainService";
 
 const domainSchema = z.object({
-  domains: z.array(z.string().min(1, "Campo obrigatório")),
+  domains: z.array(z.string().min(1, "Apenas domínio root")),
 });
 
 type DomainFormValues = z.infer<typeof domainSchema>;
@@ -53,7 +53,6 @@ const DominiosForm = ({
             Number(editId)
           );
         });
-        toast.success("Domínios cadastrados com sucesso");
         addStep();
       } catch (error) {
         toast.error("Erro ao editar domínios");
@@ -66,12 +65,12 @@ const DominiosForm = ({
             companyId: companyId,
             domain: domain,
           });
-          if (!res) throw new Error("Erro ao adicionar endereço IP");
+          if (!res) throw new Error("Erro ao adicionar domínios");
         });
-        toast.success("Endereços IP adicionados com sucesso");
+        toast.success("Domínios adicionados com sucesso");
         addStep();
       } catch (error) {
-        toast.error("Erro ao adicionar endereços IP");
+        toast.error("Erro ao adicionar domínios");
         console.log(error);
       }
     }
@@ -111,7 +110,7 @@ const DominiosForm = ({
       {[...Array(domainSize)].map((field, index) => (
         <div className="text-[#050506] w-full" key={index}>
           <Label className="font-semibold text-lg">
-            Dominio <span className="text-red-500 ">*</span>
+            Domínio <span className="text-red-500 ">*</span>
           </Label>
           <Controller
             name={`domains.${index}`}
@@ -140,7 +139,7 @@ const DominiosForm = ({
           className="text-[#1F4C85] font-semibold justify-start"
         >
           <Plus />
-          Adicionar outro aplicativo
+          Adicionar outro domínio
         </Button>
         <Button
           type="button"
@@ -151,7 +150,7 @@ const DominiosForm = ({
           className="text-red-500 flex items-center gap-2"
         >
           <Minus />
-          Remover aplicativo
+          Remover domínio
         </Button>
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">

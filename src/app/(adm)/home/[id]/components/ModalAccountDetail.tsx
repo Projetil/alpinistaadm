@@ -2,7 +2,7 @@
 
 import Modal from "@/components/default/Modal";
 import { MdBugReport } from "react-icons/md";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Tab1Modal from "./Tab1Modal";
@@ -11,8 +11,6 @@ import Tab3Modal from "./Tab3Modal";
 import { IRisk } from "@/types/IRisk";
 import RisksService from "@/services/RisksService";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import RisksCommentService from "@/services/RisksCommentService";
 import RisksHistoricalService from "@/services/RisksHistoricalService";
 import { IPagedRisksHistorical } from "@/types/IRisksHistorical";
@@ -35,10 +33,10 @@ const ModalAccountDetail = ({
   const [tabs, setTabs] = useState(1);
   const [hideComment, setHideComment] = useState(true);
   const [risk, setRisk] = useState<IRisk>();
-  const exportRef = useRef<HTMLDivElement>(null);
   const [historicalData, setHistoricalData] = useState<IPagedRisksHistorical>();
   const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
 
+  /*  const exportRef = useRef<HTMLDivElement>(null);
   const exportToPDF = async () => {
     if (!exportRef.current) return;
 
@@ -54,7 +52,7 @@ const ModalAccountDetail = ({
 
     pdf.addImage(imgData, "PNG", x, y, pdfWidth, pdfHeight);
     pdf.save("tabs_content.pdf");
-  };
+  }; */
 
   const fetchRisk = async () => {
     try {
@@ -93,7 +91,7 @@ const ModalAccountDetail = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-6 px-6 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-auto md:w-auto w-full max-w-[800px]">
+      <div className="bg-white py-6 px-3 md:px-10 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-auto md:w-auto w-full md:min-w-[800px]">
         <div
           onClick={setOpen}
           className="flex w-full justify-between md:justify-end"
@@ -115,12 +113,12 @@ const ModalAccountDetail = ({
             </div>
           </div>
           <div className="flex gap-4">
-            <Button
+            {/*  <Button
               onClick={exportToPDF}
               className="border-none text-white bg-[#1A69C4]"
             >
               Exportar
-            </Button>
+            </Button> */}
             <Button
               onClick={() => {
                 console.log(riskId);
