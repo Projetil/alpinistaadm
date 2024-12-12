@@ -172,11 +172,13 @@ const Editor = ({
           />
         </label>
       </div>
-      <EditorContent
-        placeholder="Digite aqui..."
-        className={`EditorContent overflow-y-auto p-2 max-h-24 break-words h-34 max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
-        editor={editor}
-      />
+      <div className="h-[80px]">
+        <EditorContent
+          placeholder="Digite aqui..."
+          className={`EditorContent overflow-y-auto p-2 max-h-24 break-words max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
+          editor={editor}
+        />
+      </div>
       {files.length > 0 && (
         <div className="mt-2">
           <h4 className="text-sm font-medium">Arquivos:</h4>
