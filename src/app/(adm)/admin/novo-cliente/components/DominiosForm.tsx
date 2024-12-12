@@ -160,7 +160,7 @@ const DominiosForm = ({
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
         >
-          {editId ? "Cancelar" : "Voltar"}
+          Voltar
         </Button>
         <Button className="text-white bg-[#3088EE] font-semibold" type="submit">
           Avançar

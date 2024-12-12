@@ -61,8 +61,23 @@ const Sidebar = () => {
               : "text-[#8C8B91]"
           }`}
         >
-          <Link href="/home" className="flex items-center justify-start gap-2">
-            <GoHomeFill size={22} />
+          <Link
+            href="/home"
+            className={`flex items-center ${
+              isCollapsed ? "justify-center" : "justify-start"
+            }  gap-2`}
+          >
+            {isCollapsed ? (
+              <Image
+                src="/logo-small-sidebar.svg"
+                alt=""
+                className="w-full h-full"
+                width={500}
+                height={500}
+              />
+            ) : (
+              <GoHomeFill size={22} />
+            )}
             <span className={isCollapsed ? "hidden" : "block"}>Home</span>
           </Link>
         </li>
@@ -73,7 +88,12 @@ const Sidebar = () => {
               : "text-[#8C8B91]"
           }`}
         >
-          <Link href="/admin" className="flex items-center justify-start gap-2">
+          <Link
+            href="/admin"
+            className={`flex items-center ${
+              isCollapsed ? "justify-center" : "justify-start"
+            }  gap-2`}
+          >
             <RiShieldUserFill size={22} />
             <span className={isCollapsed ? "hidden" : "block"}>
               Administração
@@ -89,7 +109,9 @@ const Sidebar = () => {
         >
           <Link
             href="/permissions"
-            className="flex items-center justify-start gap-2"
+            className={`flex items-center ${
+              isCollapsed ? "justify-center" : "justify-start"
+            }  gap-2`}
           >
             <RiFolderUserFill size={22} />
             <span className={isCollapsed ? "hidden" : "block"}>
