@@ -126,8 +126,65 @@ export default function CompanyIndPage() {
             currentPage={page}
             setCurrentPage={setPage}
             setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"NOME DO ATIVO"}
+            columnType={"active"}
           />
         </div>
+      )}
+      {selected == "Ambiente" && (
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+          columnName={"NOME DO AMBIENTE"}
+          columnType={"environment"}
+        />
+      )}
+      {selected == "Severidade" && (
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+          columnName={"SEVERIDADE"}
+          columnType={"riskSeverity"}
+        />
+      )}
+      {selected == "Responsável" && (
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+          columnName={"RESPONSAVEL"}
+          columnType={"responsibleCustomerId"}
+        />
+      )}
+      {selected == "Origem" && (
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+          columnName={"ORIGEM"}
+          columnType={""}
+        />
+      )}
+      {selected == "Estado" && (
+        <AtivosTable
+          risks={risks}
+          openModal={() => setOpenModalDetails(!openModalDetails)}
+          currentPage={page}
+          setCurrentPage={setPage}
+          setRiskId={(x: number) => setOpenedRiskId(x)}
+          columnName={"STATUS"}
+          columnType={"status"}
+        />
       )}
       {selected == "Padrão" && (
         <>

@@ -19,12 +19,12 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`px-3 py-6 w-full h-[100vh]  bg-white hidden md:flex flex-col justify-between items-start overflow-y-auto rounded-3xl ${
-        isCollapsed ? "w-[80px]" : "w-[300px] md:w-[300px]"
+      className={`px-3 py-6 h-[100vh]  bg-white hidden md:flex flex-col justify-between items-start overflow-y-auto rounded-3xl ${
+        isCollapsed ? "w-[80px]" : "w-[300px]"
       }`}
     >
       <h1
-        className={`text-xl font-bold text-[#FF8041] w-48 h-auto mb-6 ${
+        className={`text-xl font-bold text-[#FF8041] w-auto h-auto mb-6 ${
           isCollapsed ? "hidden" : "block"
         }`}
       >
@@ -39,7 +39,7 @@ const Sidebar = () => {
         </Link>
       </h1>
       <h1
-        className={`text-xl font-bold text-[#FF8041] w-8 h-auto m-2 mb-6 ${
+        className={`text-xl font-bold text-[#FF8041] w-auto h-8 m-1 mb-6 ${
           !isCollapsed ? "hidden" : "block"
         }`}
       >
@@ -109,7 +109,7 @@ const Sidebar = () => {
       </button>
       <Button
         variant={"ghost"}
-        className="flex items-end justify-start w-full h-full p-4 bg-sidebar-bg text-[#63636E]"
+        className="flex items-end justify-start w-full h-full p-4 bg-sidebar-bg text-[#B3001E]"
       >
         <a href="/signin" className="flex items-center justify-start gap-3 ">
           <RxExit />

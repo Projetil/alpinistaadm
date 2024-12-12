@@ -31,11 +31,11 @@ export default function Companies() {
   const handleDeleteCustomer = async (id: number) => {
     try {
       await CustomerService.Delete(id);
-      toast.success("Administrador excluído com sucesso");
+      toast.success("Usuário excluído com sucesso");
       fetchCompany();
     } catch (error) {
       console.log(error);
-      toast.error("Erro ao excluir administrador");
+      toast.error("Erro ao excluir usuário");
     }
   };
 

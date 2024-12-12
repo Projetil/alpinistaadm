@@ -174,7 +174,7 @@ const Editor = ({
       </div>
       <EditorContent
         placeholder="Digite aqui..."
-        className={`EditorContent overflow-y-auto p-2 max-h-72 break-words h-34 max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
+        className={`EditorContent overflow-y-auto p-2 max-h-32 break-words h-34 max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
         editor={editor}
       />
       {files.length > 0 && (

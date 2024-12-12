@@ -20,7 +20,6 @@ const schemaCompany = z.object({
     .string()
     .min(3, "Nome do perfil é obrigatório")
     .max(300, "Nome do perfil deve ter no máximo 300 caracteres"),
-  profileType: z.string().min(1, "Tipo de perfil é obrigatório"),
   dashboard: z.preprocess((val) => val === "true", z.boolean()),
   dashboardAtt: z.preprocess((val) => val === "true", z.boolean()),
   ativos: z.preprocess((val) => val === "true", z.boolean()),
@@ -94,7 +93,7 @@ const ModalCreatePerms = ({
         const newPermission: IPermission = {
           id: permissionId,
           name: data.profileName,
-          type: Number(data.profileType),
+          type: 1,
           permissionPages: [
             {
               id:
@@ -333,7 +332,7 @@ const ModalCreatePerms = ({
       } else {
         await PermissionService.Post({
           profileName: data.profileName,
-          profileType: Number(data.profileType),
+          profileType: 1,
           dashboard: dashboardField,
           dashboardAtt: dashboardAttField,
           ativos: ativosField,
@@ -411,7 +410,6 @@ const ModalCreatePerms = ({
     if (permission) {
       reset({
         profileName: permission.name,
-        profileType: String(permission.type),
       });
       setValue(
         "dashboard",
@@ -548,23 +546,6 @@ const ModalCreatePerms = ({
               {errors.profileName && (
                 <span className="text-red-500">
                   {errors.profileName.message}
-                </span>
-              )}
-            </div>
-            <div className="text-[#050506] w-full flex flex-col">
-              <Label className="font-semibold text-base">
-                Tipo de perfil <span className="text-red-500 ">*</span>
-              </Label>
-              <select
-                className="bg-transparent py-2 rounded-md px-2 border border-[#DFDFE2] mt-2"
-                {...register("profileType")}
-              >
-                <option value="1">Comum</option>
-                <option value="2">Moderador</option>
-              </select>
-              {errors.profileType && (
-                <span className="text-red-500">
-                  {errors.profileType.message}
                 </span>
               )}
             </div>
