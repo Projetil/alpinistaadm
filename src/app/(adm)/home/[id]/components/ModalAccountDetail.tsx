@@ -15,6 +15,8 @@ import RisksCommentService from "@/services/RisksCommentService";
 import RisksHistoricalService from "@/services/RisksHistoricalService";
 import { IPagedRisksHistorical } from "@/types/IRisksHistorical";
 import { IPagedRisksComment } from "@/types/IRisksComment";
+import RisksFileService from "@/services/RisksFilesService";
+import { IPagedRiskFile } from "@/types/IRiskFile";
 
 const ModalAccountDetail = ({
   open,
@@ -35,6 +37,7 @@ const ModalAccountDetail = ({
   const [risk, setRisk] = useState<IRisk>();
   const [historicalData, setHistoricalData] = useState<IPagedRisksHistorical>();
   const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
+  const [filesData, setFilesData] = useState<IPagedRiskFile>();
 
   /*  const exportRef = useRef<HTMLDivElement>(null);
   const exportToPDF = async () => {
@@ -81,11 +84,21 @@ const ModalAccountDetail = ({
     }
   };
 
+  const fetchFiles = async (id: number) => {
+    try {
+      const res = await RisksFileService.Get(0, 0, id);
+      setFilesData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useMemo(() => {
     if (riskId) {
       fetchRisk();
       fetchComments(riskId);
       fetchHistorical(riskId);
+      fetchFiles(riskId);
     }
   }, [riskId, open]);
 
@@ -186,7 +199,7 @@ const ModalAccountDetail = ({
         </div>
 
         {tabs == 1 && <Tab1Modal currentRisk={risk} />}
-        {tabs == 2 && <Tab2Modal currentRisk={risk} />}
+        {tabs == 2 && <Tab2Modal currentRisk={risk} filesData={filesData} />}
         {tabs == 3 && (
           <Tab3Modal
             currentRisk={risk}

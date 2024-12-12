@@ -74,6 +74,12 @@ export default function UserPermissionPage() {
         open={openModal}
         setOpen={() => setOpenModal(!openModal)}
       />
+      <Button
+        onClick={() => setOpenModal(!openModal)}
+        className="bg-[#3088EE] hover:bg-[#013073] rounded-full p-3 flex md:hidden fixed bottom-10 right-4"
+      >
+        <span className="text-2xl font-extralight">+</span>
+      </Button>
     </main>
   );
 }

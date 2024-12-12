@@ -19,17 +19,22 @@ import {
   Upload,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { IFileRisk } from "@/types/IRiskFile";
 
 const Editor = ({
   contentDescription,
   setContentDescription,
   styling,
+  setFilesRisk,
+  typeRisk,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentDescription?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setContentDescription?: any;
   styling: string;
+  setFilesRisk: React.Dispatch<React.SetStateAction<IFileRisk[]>>;
+  typeRisk: number;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const editor = useEditor({
@@ -65,6 +70,13 @@ const Editor = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFiles(Array.from(event.target.files));
+      setFilesRisk((prev) => [
+        ...prev,
+        ...Array.from(event.target.files!).map((file) => ({
+          File: file,
+          Type: typeRisk,
+        })),
+      ]);
     }
   };
 

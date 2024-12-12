@@ -53,6 +53,7 @@ const ModalCreateCustomer = ({
   setCustomerId: (x: number) => void;
 }) => {
   const [customer, setCustomer] = useState<ICustomer>();
+  const [loading, setLoading] = useState(false);
   const [permission, setPermission] = useState<IPermission[]>([]);
   const {
     register,
@@ -64,6 +65,7 @@ const ModalCreateCustomer = ({
   });
 
   const onSubmit = async (data: DataCompany) => {
+    setLoading(true);
     try {
       if (customerId && customerId > 0) {
         await UserService.Put(
@@ -113,6 +115,8 @@ const ModalCreateCustomer = ({
     } catch (err) {
       toast.error("Email já cadastrado");
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -296,6 +300,7 @@ const ModalCreateCustomer = ({
               Cancelar
             </Button>
             <Button
+              disabled={loading}
               className="text-white bg-[#3088EE] font-semibold"
               type="submit"
             >

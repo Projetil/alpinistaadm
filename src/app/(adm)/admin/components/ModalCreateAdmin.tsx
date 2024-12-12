@@ -214,7 +214,7 @@ const ModalCreateAdmin = ({
                 <span className="text-red-500 ">*</span>
               </Label>
               <Input
-                type="number"
+                type="text"
                 placeholder="Telefone"
                 className="font-normal border-[#D7D7DA] bg-transparent mt-2"
                 {...register("telefone")}

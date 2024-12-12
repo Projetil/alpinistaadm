@@ -36,7 +36,9 @@ function NovoClientePage() {
         </div>
       </section>
       <section className="bg-white p-4 rounded-lg max-w-[1000px]">
-        <h3 className="font-bold text-2xl text-[#0D3C73] my-5">Novo Cliente</h3>
+        <h3 className="font-bold text-2xl text-[#0D3C73] my-5">
+          {editId ? "Editar" : "Novo"} Cliente
+        </h3>
         <div className="flex flex-wrap gap-6 ">
           <div
             className={`${

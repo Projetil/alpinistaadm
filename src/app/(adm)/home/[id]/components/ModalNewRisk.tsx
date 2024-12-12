@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CustomerService from "@/services/CustomerService";
+import AwsFilesService from "@/services/AwsFilesService";
 import RisksService from "@/services/RisksService";
 import { ICustomer } from "@/types/ICustomer";
 import { IRisk } from "@/types/IRisk";
+import { IFileRisk } from "@/types/IRiskFile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -53,6 +55,7 @@ const ModalNewRisk = ({
   const [steps, setSteps] = useState(1);
   const [risk, setRisk] = useState<RiskFormInputs1>();
   const [resetRisk, setResetRisk] = useState<IRisk>();
+  const [filesRisk, setFilesRisk] = useState<IFileRisk[]>([]);
   const {
     register: register1,
     reset: reset1,
@@ -95,8 +98,9 @@ const ModalNewRisk = ({
           },
           riskId
         );
+        toast.success("Risco atualizado com sucesso");
       } else {
-        await RisksService.Post({
+        const res = await RisksService.Post({
           companyId: Number(id) ?? 0,
           status: Number(risk?.state) ?? 0,
           riskSeverity: risk ? Number(risk.severity) : 0,
@@ -107,6 +111,14 @@ const ModalNewRisk = ({
           observations: data.observations,
           actionPlan: data.actionPlan,
           evidences: data.evidences,
+        });
+
+        filesRisk.map(async (files) => {
+          await AwsFilesService.Post({
+            RiskId: res.id,
+            File: files.File,
+            Type: files.Type,
+          });
         });
         toast.success("Risco criado com sucesso");
       }
@@ -144,6 +156,7 @@ const ModalNewRisk = ({
 
   useEffect(() => {
     if (!open) {
+      setFilesRisk([]);
       if (setRiskId) {
         setRiskId(0);
         setSteps(1);
@@ -370,6 +383,8 @@ const ModalNewRisk = ({
                     styling="30rem"
                     contentDescription={value}
                     setContentDescription={onChange}
+                    setFilesRisk={setFilesRisk}
+                    typeRisk={1}
                   />
                 )}
               />
@@ -414,6 +429,8 @@ const ModalNewRisk = ({
                     styling="30rem"
                     contentDescription={value}
                     setContentDescription={onChange}
+                    setFilesRisk={setFilesRisk}
+                    typeRisk={2}
                   />
                 )}
               />
@@ -436,6 +453,8 @@ const ModalNewRisk = ({
                     styling="30rem"
                     contentDescription={value}
                     setContentDescription={onChange}
+                    setFilesRisk={setFilesRisk}
+                    typeRisk={3}
                   />
                 )}
               />
@@ -458,6 +477,8 @@ const ModalNewRisk = ({
                     styling="30rem"
                     contentDescription={value}
                     setContentDescription={onChange}
+                    setFilesRisk={setFilesRisk}
+                    typeRisk={4}
                   />
                 )}
               />
@@ -471,7 +492,7 @@ const ModalNewRisk = ({
                 className="md:w-fit w-full border-[#3088EE] text-[#3088EE] "
                 onClick={setOpen}
               >
-                Cancelar
+                Voltar
               </Button>
               <Button
                 type="submit"
