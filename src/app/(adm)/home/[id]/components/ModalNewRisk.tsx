@@ -414,7 +414,7 @@ const ModalNewRisk = ({
             onSubmit={handleSubmit2(onSubmit2)}
             className="text-[#050506] flex flex-col gap-6"
           >
-            <div>
+            <div className="h-30">
               <Label className="">
                 Observações <span className="text-red-500">*</span>
               </Label>
@@ -426,7 +426,7 @@ const ModalNewRisk = ({
                 }}
                 render={({ field: { value, onChange } }) => (
                   <Editor
-                    styling="30rem"
+                    styling="50rem"
                     contentDescription={value}
                     setContentDescription={onChange}
                     setFilesRisk={setFilesRisk}
