@@ -65,7 +65,6 @@ const AddressForm = ({
             Number(editId)
           );
         });
-        toast.success("Endereços IP editados com sucesso");
         addStep();
       } catch (error) {
         toast.error("Erro ao editar endereços IP");
@@ -180,7 +179,7 @@ const AddressForm = ({
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
         >
-          Cancelar
+          Voltar
         </Button>
         <Button className="text-white bg-[#3088EE] font-semibold" type="submit">
           Avançar

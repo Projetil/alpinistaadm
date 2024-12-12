@@ -34,7 +34,11 @@ const schemaCompany = z.object({
   senha: z
     .string()
     .min(3, "Senha é obrigatório")
-    .max(300, "Senha deve ter no máximo 300 caracteres"),
+    .max(300, "Senha deve ter no máximo 300 caracteres")
+    .regex(
+      /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d).+$/,
+      "Senha deve ter pelo menos 1 letra maiúscula, 1 caractere especial e 1 número"
+    ),
 });
 
 export type DataCompany = z.infer<typeof schemaCompany>;
@@ -53,6 +57,7 @@ const ModalCreateCustomer = ({
   setCustomerId: (x: number) => void;
 }) => {
   const [customer, setCustomer] = useState<ICustomer>();
+  const [loading, setLoading] = useState(false);
   const [permission, setPermission] = useState<IPermission[]>([]);
   const {
     register,
@@ -64,6 +69,7 @@ const ModalCreateCustomer = ({
   });
 
   const onSubmit = async (data: DataCompany) => {
+    setLoading(true);
     try {
       if (customerId && customerId > 0) {
         await UserService.Put(
@@ -113,6 +119,8 @@ const ModalCreateCustomer = ({
     } catch (err) {
       toast.error("Email já cadastrado");
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -296,6 +304,7 @@ const ModalCreateCustomer = ({
               Cancelar
             </Button>
             <Button
+              disabled={loading}
               className="text-white bg-[#3088EE] font-semibold"
               type="submit"
             >

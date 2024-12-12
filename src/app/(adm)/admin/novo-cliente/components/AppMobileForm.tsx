@@ -58,7 +58,7 @@ const AppMobileForm = ({
             Number(editId)
           );
         });
-        toast.success("Endereços IP atualizados com sucesso");
+        toast.success("Empresa atualizada com sucesso");
         navigator.push("/admin");
       } catch (error) {
         toast.error("Erro ao atualizar endereços IP");
@@ -207,7 +207,7 @@ const AppMobileForm = ({
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
         >
-          Cancelar
+          Voltar
         </Button>
         <Button className="text-white bg-[#3088EE] font-semibold" type="submit">
           Avançar

@@ -1,10 +1,18 @@
 "use client";
 import { IRisk } from "@/types/IRisk";
+import { IPagedRiskFile } from "@/types/IRiskFile";
 import { ChevronDownIcon } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { IoInformationCircle } from "react-icons/io5";
 
-const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
+const Tab2Modal = ({
+  currentRisk,
+  filesData,
+}: {
+  currentRisk?: IRisk;
+  filesData?: IPagedRiskFile;
+}) => {
   return (
     <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
       <div className="flex w-full justify-between mb-8">
@@ -16,9 +24,22 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           title={"Observações"}
           descript={
             currentRisk ? (
-              <p
-                dangerouslySetInnerHTML={{ __html: currentRisk.observations }}
-              ></p>
+              <div>
+                <p
+                  dangerouslySetInnerHTML={{ __html: currentRisk.observations }}
+                ></p>
+                {filesData?.items
+                  .filter((x) => x.type == 2)
+                  .map((file) => (
+                    <Image
+                      key={file.id}
+                      src={file.riskFileUrl}
+                      alt="imagem do arquivo"
+                      width={300}
+                      height={300}
+                    />
+                  ))}
+              </div>
             ) : (
               ""
             )
@@ -28,9 +49,22 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           title={"Plano de ação"}
           descript={
             currentRisk ? (
-              <p
-                dangerouslySetInnerHTML={{ __html: currentRisk.actionPlan }}
-              ></p>
+              <div>
+                <p
+                  dangerouslySetInnerHTML={{ __html: currentRisk.actionPlan }}
+                ></p>
+                {filesData?.items
+                  .filter((x) => x.type == 3)
+                  .map((file) => (
+                    <Image
+                      key={file.id}
+                      src={file.riskFileUrl}
+                      alt="imagem do arquivo"
+                      width={300}
+                      height={300}
+                    />
+                  ))}
+              </div>
             ) : (
               ""
             )
@@ -40,9 +74,22 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           title={"Evidências"}
           descript={
             currentRisk ? (
-              <p
-                dangerouslySetInnerHTML={{ __html: currentRisk.evidences }}
-              ></p>
+              <div>
+                <p
+                  dangerouslySetInnerHTML={{ __html: currentRisk.evidences }}
+                ></p>
+                {filesData?.items
+                  .filter((x) => x.type == 4)
+                  .map((file) => (
+                    <Image
+                      key={file.id}
+                      src={file.riskFileUrl}
+                      alt="imagem do arquivo"
+                      width={300}
+                      height={300}
+                    />
+                  ))}
+              </div>
             ) : (
               ""
             )
@@ -55,7 +102,7 @@ const Tab2Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
 
 export default Tab2Modal;
 
-const AccordingTab2 = ({
+export const AccordingTab2 = ({
   title,
   descript,
 }: {
@@ -84,7 +131,7 @@ const AccordingTab2 = ({
       </button>
       {isOpen && (
         <div className="p-4 mt-2 space-y-2  rounded-lg ">
-          <p className="font-light text-[#636267]">{descript}</p>
+          <p className="font-light text-[#636267] break-all">{descript}</p>
           <div></div>
         </div>
       )}

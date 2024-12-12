@@ -24,7 +24,13 @@ const Header = () => {
           <button onClick={() => setIsOpen(!isOpen)}>
             <MenuIcon className="w-6 h-6 text-[#003F5E]" />
           </button>
-          <h1 className="text-xl font-semibold text-[#003F5E]">Home</h1>
+          <h1 className="text-xl font-semibold text-[#003F5E]">
+            {pathname === "/home"
+              ? "Home"
+              : pathname === "/permissions"
+              ? "Perfis de usúarios"
+              : "Administração"}
+          </h1>
         </div>
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -80,7 +86,7 @@ const Header = () => {
                     className="flex items-center justify-start gap-2"
                   >
                     <RiFolderUserFill size={22} />
-                    <span>Usuário e Permissões</span>
+                    <span>Perfis de Acesso</span>
                   </Link>
                 </li>
               </ul>

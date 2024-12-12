@@ -36,7 +36,7 @@ export interface ICreateRisk {
 
 export enum riskStatus {
   Pendente = 1,
-  EmProgresso = 2,
+  "Em progresso" = 2,
   Fixado = 3,
   Aceito = 4,
   Retest = 5,

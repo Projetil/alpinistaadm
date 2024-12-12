@@ -9,7 +9,7 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
         <h4 className="font-semibold text-[#050506]">Informações principais</h4>
         <IoInformationCircle color="#1A69C4" size={24} />
       </div>
-      <div className="flex flex-col md:flex-row gap-8 justify-start text-center text-[#80828D]">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-20 justify-start text-center text-[#80828D]">
         <div className="flex flex-col gap-3 text-left">
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">ID</p>

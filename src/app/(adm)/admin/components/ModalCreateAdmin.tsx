@@ -32,7 +32,11 @@ const schemaCompany = z.object({
   senha: z
     .string()
     .min(3, "Senha é obrigatório")
-    .max(300, "Senha deve ter no máximo 300 caracteres"),
+    .max(300, "Senha deve ter no máximo 300 caracteres")
+    .regex(
+      /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*\d).+$/,
+      "Senha deve ter pelo menos 1 letra maiúscula, 1 caractere especial e 1 número"
+    ),
 });
 
 export type DataCompany = z.infer<typeof schemaCompany>;
@@ -214,7 +218,7 @@ const ModalCreateAdmin = ({
                 <span className="text-red-500 ">*</span>
               </Label>
               <Input
-                type="number"
+                type="text"
                 placeholder="Telefone"
                 className="font-normal border-[#D7D7DA] bg-transparent mt-2"
                 {...register("telefone")}

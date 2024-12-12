@@ -143,7 +143,7 @@ const AccountTable = ({
             }}
             key={index}
             id={x.id}
-            name={"teste"}
+            name={x.name}
             active={x.active}
             state={riskStatus[Number(x.status)]}
             severidade={riskSeverity[Number(x.riskSeverity)]}

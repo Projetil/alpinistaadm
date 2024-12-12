@@ -1,7 +1,7 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
 import CardAtivosMobile from "./CardAtivosMobile";
-import { IPagedRisk } from "@/types/IRisk";
+import { IPagedRisk, riskSeverity, riskStatus } from "@/types/IRisk";
 import { Dispatch, SetStateAction, useState } from "react";
 
 const AtivosTable = ({
@@ -10,12 +10,16 @@ const AtivosTable = ({
   currentPage,
   setCurrentPage,
   setRiskId,
+  columnName,
+  columnType,
 }: {
   openModal: () => void;
   risks?: IPagedRisk;
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setRiskId: (x: number) => void;
+  columnName?: string;
+  columnType?: string;
 }) => {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -63,7 +67,7 @@ const AtivosTable = ({
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => handleSort("name")}
               >
-                NOME <FaArrowsAltV />
+                {columnName} <FaArrowsAltV />
               </div>
             </th>
             <th className="py-3 px-4 text-sm font-semibold items-center">
@@ -105,7 +109,21 @@ const AtivosTable = ({
               } text-[#636267] text-center`}
             >
               <td className="py-3 px-4 text-sm max-w-[200px]">
-                <div className="flex">{row.active}</div>
+                <div className="flex">
+                  {columnType === "riskSeverity"
+                    ? riskSeverity[
+                        row[
+                          columnType as keyof typeof row
+                        ] as keyof typeof riskSeverity
+                      ]
+                    : columnType == "status"
+                    ? riskStatus[
+                        row[
+                          columnType as keyof typeof row
+                        ] as keyof typeof riskStatus
+                      ]
+                    : row[columnType as keyof typeof row]}
+                </div>
               </td>
               <td className="py-3 px-4 text-sm">
                 <div className="flex">00</div>

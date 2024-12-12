@@ -5,29 +5,34 @@ import { Minus, Plus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { ICompanyDomainAssets } from "@/types/ICompanyDomainAssets";
+import CompanyDomainAssetsService from "@/services/CompanyDomainService";
 
 const domainSchema = z.object({
-  domains: z.array(z.string().min(1, "Campo obrigatório")),
+  domains: z.array(z.string().min(1, "Apenas domínio root")),
 });
 
 type DomainFormValues = z.infer<typeof domainSchema>;
 
 const DominiosForm = ({
   addStep,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  companyId,
   editId,
 }: {
   addStep: () => void;
   editId: string;
+  companyId: number;
 }) => {
   const navigation = useRouter();
   const [domainSize, setDomainSize] = useState(1);
+  const [domainsData, setDomainsData] = useState<ICompanyDomainAssets[]>();
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<DomainFormValues>({
     resolver: zodResolver(domainSchema),
@@ -37,10 +42,65 @@ const DominiosForm = ({
   });
 
   const onSubmit = (data: DomainFormValues) => {
-    console.log(data);
-    toast.success("Domínios cadastrados com sucesso");
-    addStep();
+    if (editId && editId !== "") {
+      try {
+        data.domains.forEach(async (domain) => {
+          await CompanyDomainAssetsService.Put(
+            {
+              companyId: Number(editId),
+              domain: domain,
+            },
+            Number(editId)
+          );
+        });
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao editar domínios");
+        console.log(error);
+      }
+    } else {
+      try {
+        data.domains.forEach(async (domain) => {
+          const res = await CompanyDomainAssetsService.Post({
+            companyId: companyId,
+            domain: domain,
+          });
+          if (!res) throw new Error("Erro ao adicionar domínios");
+        });
+        toast.success("Domínios adicionados com sucesso");
+        addStep();
+      } catch (error) {
+        toast.error("Erro ao adicionar domínios");
+        console.log(error);
+      }
+    }
   };
+
+  const fetchDomains = async () => {
+    try {
+      const res = await CompanyDomainAssetsService.GetByCompanyId(
+        Number(editId)
+      );
+      setDomainsData(res);
+    } catch (erro) {
+      console.log(erro);
+    }
+  };
+
+  useMemo(() => {
+    if (editId && editId !== "") {
+      fetchDomains();
+    }
+  }, [editId]);
+
+  useMemo(() => {
+    if (domainsData) {
+      reset({
+        domains: domainsData.map((domain) => domain.domain),
+      });
+      setDomainSize(domainsData.length);
+    }
+  }, [domainsData]);
 
   return (
     <form
@@ -50,7 +110,7 @@ const DominiosForm = ({
       {[...Array(domainSize)].map((field, index) => (
         <div className="text-[#050506] w-full" key={index}>
           <Label className="font-semibold text-lg">
-            Dominio <span className="text-red-500 ">*</span>
+            Domínio <span className="text-red-500 ">*</span>
           </Label>
           <Controller
             name={`domains.${index}`}
@@ -79,7 +139,7 @@ const DominiosForm = ({
           className="text-[#1F4C85] font-semibold justify-start"
         >
           <Plus />
-          Adicionar outro aplicativo
+          Adicionar outro domínio
         </Button>
         <Button
           type="button"
@@ -90,7 +150,7 @@ const DominiosForm = ({
           className="text-red-500 flex items-center gap-2"
         >
           <Minus />
-          Remover aplicativo
+          Remover domínio
         </Button>
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
@@ -100,7 +160,7 @@ const DominiosForm = ({
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
         >
-          Cancelar
+          Voltar
         </Button>
         <Button className="text-white bg-[#3088EE] font-semibold" type="submit">
           Avançar

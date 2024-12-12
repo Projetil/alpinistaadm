@@ -20,7 +20,6 @@ const schemaCompany = z.object({
     .string()
     .min(3, "Nome do perfil é obrigatório")
     .max(300, "Nome do perfil deve ter no máximo 300 caracteres"),
-  profileType: z.string().min(1, "Tipo de perfil é obrigatório"),
   dashboard: z.preprocess((val) => val === "true", z.boolean()),
   dashboardAtt: z.preprocess((val) => val === "true", z.boolean()),
   ativos: z.preprocess((val) => val === "true", z.boolean()),
@@ -94,7 +93,7 @@ const ModalCreatePerms = ({
         const newPermission: IPermission = {
           id: permissionId,
           name: data.profileName,
-          type: Number(data.profileType),
+          type: 1,
           permissionPages: [
             {
               id:
@@ -333,7 +332,7 @@ const ModalCreatePerms = ({
       } else {
         await PermissionService.Post({
           profileName: data.profileName,
-          profileType: Number(data.profileType),
+          profileType: 1,
           dashboard: dashboardField,
           dashboardAtt: dashboardAttField,
           ativos: ativosField,
@@ -411,7 +410,6 @@ const ModalCreatePerms = ({
     if (permission) {
       reset({
         profileName: permission.name,
-        profileType: String(permission.type),
       });
       setValue(
         "dashboard",
@@ -551,23 +549,6 @@ const ModalCreatePerms = ({
                 </span>
               )}
             </div>
-            <div className="text-[#050506] w-full flex flex-col">
-              <Label className="font-semibold text-base">
-                Tipo de perfil <span className="text-red-500 ">*</span>
-              </Label>
-              <select
-                className="bg-transparent py-2 rounded-md px-2 border border-[#DFDFE2] mt-2"
-                {...register("profileType")}
-              >
-                <option value="1">Comum</option>
-                <option value="2">Moderador</option>
-              </select>
-              {errors.profileType && (
-                <span className="text-red-500">
-                  {errors.profileType.message}
-                </span>
-              )}
-            </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 w-full">
@@ -585,7 +566,7 @@ const ModalCreatePerms = ({
                   {...register("dashboard")}
                   onClick={() => {
                     setValue("dashboard", !dashboardField);
-                    setValue("dashboardAtt", false);
+                    setValue("dashboardAtt", !dashboardAttField);
                   }}
                   id="dashboard"
                 />
@@ -618,7 +599,7 @@ const ModalCreatePerms = ({
                   {...register("ativos")}
                   onClick={() => {
                     setValue("ativos", !ativosField);
-                    setValue("ativosFilter", false);
+                    setValue("ativosFilter", !ativosField);
                   }}
                   id="ativos"
                 />
@@ -650,9 +631,9 @@ const ModalCreatePerms = ({
                   {...register("pentest")}
                   onClick={() => {
                     setValue("pentest", !pentestField);
-                    setValue("pentestCreate", false);
-                    setValue("pentestEdit", false);
-                    setValue("pentestSend", false);
+                    setValue("pentestCreate", !pentestCreateField);
+                    setValue("pentestEdit", !pentestEditField);
+                    setValue("pentestSend", !pentestSendField);
                   }}
                   id="pentest"
                 />
@@ -715,9 +696,9 @@ const ModalCreatePerms = ({
                   {...register("issues")}
                   onClick={() => {
                     setValue("issues", !issuesField);
-                    setValue("issuesFilter", false);
-                    setValue("issuesExport", false);
-                    setValue("issuesClassify", false);
+                    setValue("issuesFilter", !issuesFilterField);
+                    setValue("issuesExport", !issuesExportField);
+                    setValue("issuesClassify", !issuesClassifyField);
                   }}
                   id="issues"
                 />
@@ -784,8 +765,8 @@ const ModalCreatePerms = ({
                   {...register("questionario")}
                   onClick={() => {
                     setValue("questionario", !questionarioField);
-                    setValue("questionarioCreate", false);
-                    setValue("questionarioShare", false);
+                    setValue("questionarioCreate", !questionarioCreateField);
+                    setValue("questionarioShare", !questionarioShareField);
                   }}
                   id="questionario"
                 />
@@ -842,9 +823,9 @@ const ModalCreatePerms = ({
                   {...register("ambiente")}
                   onClick={() => {
                     setValue("ambiente", !ambienteField);
-                    setValue("ambienteCreate", false);
-                    setValue("ambienteEdit", false);
-                    setValue("ambienteDelete", false);
+                    setValue("ambienteCreate", !ambienteCreateField);
+                    setValue("ambienteEdit", !ambienteEditField);
+                    setValue("ambienteDelete", !ambienteDeleteField);
                   }}
                   id="ambiente"
                 />

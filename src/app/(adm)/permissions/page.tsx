@@ -48,7 +48,7 @@ export default function UserPermissionPage() {
         <div className="hidden md:flex gap-4 w-full justify-between items-center text-[#050506]">
           <div className="flex items-center space-x-3">
             <PiFolderUserFill color="#3088EE" size={28} />
-            <h2 className="font-semibold md:text-3xl">Usuários e Permissões</h2>
+            <h2 className="font-semibold md:text-3xl">Perfis de Acesso</h2>
           </div>
           <div>
             <Button
@@ -74,6 +74,12 @@ export default function UserPermissionPage() {
         open={openModal}
         setOpen={() => setOpenModal(!openModal)}
       />
+      <Button
+        onClick={() => setOpenModal(!openModal)}
+        className="bg-[#3088EE] hover:bg-[#013073] rounded-full p-3 flex md:hidden fixed bottom-10 right-4"
+      >
+        <span className="text-2xl font-extralight">+</span>
+      </Button>
     </main>
   );
 }

@@ -54,7 +54,6 @@ const SocialMediaForm = ({
           },
           Number(editId)
         );
-        toast.success("Rede sociais editado com sucesso");
         addStep();
       } catch (error) {
         toast.error("Erro ao adicionar rede socias");
@@ -166,7 +165,7 @@ const SocialMediaForm = ({
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
         >
-          Cancelar
+          Voltar
         </Button>
         <Button className="text-white bg-[#3088EE] font-semibold" type="submit">
           Avançar

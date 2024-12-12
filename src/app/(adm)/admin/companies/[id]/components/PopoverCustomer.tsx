@@ -7,6 +7,15 @@ import {
 import { HiOutlinePencil } from "react-icons/hi2";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { SlOptionsVertical } from "react-icons/sl";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const PopoverCustomer = ({
   customerId,
@@ -20,6 +29,12 @@ const PopoverCustomer = ({
   setOpenModal: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const confirmDelete = () => {
+    onDeleteCustomer(customerId);
+    setDialogOpen(false);
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -36,16 +51,45 @@ const PopoverCustomer = ({
             setOpenModal();
             setIsOpen(false);
           }}
-          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
+          className="p-2 hover:bg-[#E0F3FF] focus:border-none focus:outline-none hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
         >
           <HiOutlinePencil size={25} /> Editar
         </button>
-        <button
-          onClick={() => onDeleteCustomer(customerId)}
-          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
-        >
-          <FaRegTrashAlt size={25} /> Excluir
-        </button>
+        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <button
+              onClick={() => setDialogOpen(true)}
+              className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
+            >
+              <FaRegTrashAlt size={25} /> Excluir
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-[#093970]">
+                Tem certeza que deseja excluir sua conta?
+              </DialogTitle>
+              <DialogDescription className="text-[#093970]">
+                Tem certeza de que deseja excluir este cliente? Essa ação não
+                pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2">
+              <button
+                onClick={() => setDialogOpen(false)}
+                className="px-4 py-2 rounded-md text-[#5CA7FF] hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Sim, desejo excluir
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </PopoverContent>
     </Popover>
   );

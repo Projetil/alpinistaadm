@@ -77,7 +77,6 @@ const CompanyForm = ({
           },
           Number(editId)
         );
-        toast.success("Empresa atualizada com sucesso");
         addStep();
       } catch (err) {
         toast.error("Erro ao atualizar empresa");

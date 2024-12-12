@@ -16,20 +16,27 @@ import {
   AlignLeft,
   AlignJustify,
   AlignRight,
+  Upload,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { IFileRisk } from "@/types/IRiskFile";
 
 const Editor = ({
   contentDescription,
   setContentDescription,
   styling,
+  setFilesRisk,
+  typeRisk,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentDescription?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setContentDescription?: any;
   styling: string;
+  setFilesRisk: React.Dispatch<React.SetStateAction<IFileRisk[]>>;
+  typeRisk: number;
 }) => {
+  const [files, setFiles] = useState<File[]>([]);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -60,13 +67,26 @@ const Editor = ({
     }
   }, [contentDescription, editor]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFiles(Array.from(event.target.files));
+      setFilesRisk((prev) => [
+        ...prev,
+        ...Array.from(event.target.files!).map((file) => ({
+          File: file,
+          Type: typeRisk,
+        })),
+      ]);
+    }
+  };
+
   if (!editor) {
     return null;
   }
 
   return (
     <div className="bg-white border p-2 rounded-md w-full">
-      <div className="flex mb-2">
+      <div className="flex mb-2 flex-wrap gap-2">
         <button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
@@ -74,13 +94,6 @@ const Editor = ({
         >
           <CornerDownLeft color="#000" size={16} />
         </button>
-        {/* <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          className="px-2 py-1"
-        >
-          <CornerDownRight color="#000" size={16} />
-        </button> */}
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -147,12 +160,35 @@ const Editor = ({
         >
           <ListOrdered color="#000" size={16} />
         </button>
+
+        {/* File Upload Button */}
+        <label className="flex items-center gap-2 px-2 py-1 border rounded cursor-pointer border-none">
+          <Upload color="#000" size={16} />
+          <input
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </label>
       </div>
       <EditorContent
         placeholder="Digite aqui..."
-        className={`EditorContent p-2 max-h-72 break-words h-34 max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
+        className={`EditorContent overflow-y-auto p-2 max-h-24 break-words h-34 max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
         editor={editor}
       />
+      {files.length > 0 && (
+        <div className="mt-2">
+          <h4 className="text-sm font-medium">Arquivos:</h4>
+          <ul className="list-disc list-inside">
+            {files.map((file, index) => (
+              <li key={index} className="text-sm">
+                {file.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
