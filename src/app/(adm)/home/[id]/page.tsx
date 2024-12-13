@@ -78,22 +78,20 @@ export default function CompanyIndPage() {
           <h2 className="font-semibold md:text-3xl">Home</h2>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-          {selected == "Padrão" && (
-            <Button
-              onClick={() => setOpenModal(!openModal)}
-              className="text-white bg-[#3088EE] border-none "
-            >
-              <Plus /> Novo risco
-            </Button>
-          )}
-          {selected == "Ativos" && (
-            <Button
-              onClick={exportToPDF}
-              className="text-white bg-[#3088EE] border-none items-center"
-            >
-              <GoChecklist /> Exportar
-            </Button>
-          )}
+          <Button
+            onClick={() => setOpenModal(!openModal)}
+            className="text-white bg-[#3088EE] border-none "
+          >
+            <Plus /> Novo risco
+          </Button>
+
+          <Button
+            onClick={exportToPDF}
+            className="text-white bg-[#3088EE] border-none items-center"
+          >
+            <GoChecklist /> Exportar
+          </Button>
+
           <PopoverClassify selected={selected} setSelected={setSelected} />
         </div>
       </section>
@@ -109,17 +107,17 @@ export default function CompanyIndPage() {
           <PopoverClassify selected={selected} setSelected={setSelected} />
         </div>
       </section>
-      {selected == "Padrão" && (
-        <AccountTable
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          risks={risks}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-        />
-      )}
-      {selected == "Ativos" && (
-        <div ref={ativosRef}>
+      <div ref={ativosRef}>
+        {selected == "Padrão" && (
+          <AccountTable
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            risks={risks}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+          />
+        )}
+        {selected == "Ativos" && (
           <AtivosTable
             risks={risks}
             openModal={() => setOpenModalDetails(!openModalDetails)}
@@ -129,80 +127,80 @@ export default function CompanyIndPage() {
             columnName={"NOME DO ATIVO"}
             columnType={"active"}
           />
-        </div>
-      )}
-      {selected == "Ambiente" && (
-        <AtivosTable
-          risks={risks}
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-          columnName={"NOME DO AMBIENTE"}
-          columnType={"environment"}
-        />
-      )}
-      {selected == "Severidade" && (
-        <AtivosTable
-          risks={risks}
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-          columnName={"SEVERIDADE"}
-          columnType={"riskSeverity"}
-        />
-      )}
-      {selected == "Responsável" && (
-        <AtivosTable
-          risks={risks}
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-          columnName={"RESPONSAVEL"}
-          columnType={"responsibleCustomerId"}
-        />
-      )}
-      {selected == "Origem" && (
-        <AtivosTable
-          risks={risks}
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-          columnName={"ORIGEM"}
-          columnType={""}
-        />
-      )}
-      {selected == "Estado" && (
-        <AtivosTable
-          risks={risks}
-          openModal={() => setOpenModalDetails(!openModalDetails)}
-          currentPage={page}
-          setCurrentPage={setPage}
-          setRiskId={(x: number) => setOpenedRiskId(x)}
-          columnName={"STATUS"}
-          columnType={"status"}
-        />
-      )}
-      {selected == "Padrão" && (
-        <>
-          <button
-            onClick={() => setOpenModal(!openModal)}
-            className="fixed bottom-10 right-10 md:hidden bg-[#3088EE] w-12 h-12 rounded-xl flex items-center justify-center"
-          >
-            <Plus color="#F8F8F8" size={30} />
-          </button>
-
-          <ModalNewRisk
-            riskId={editRiskId}
-            open={openModal}
-            setOpen={() => setOpenModal(!openModal)}
-            setRiskId={(x: number) => setEditRiskId(x)}
+        )}
+        {selected == "Ambiente" && (
+          <AtivosTable
+            risks={risks}
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"NOME DO AMBIENTE"}
+            columnType={"environment"}
           />
-        </>
-      )}
+        )}
+        {selected == "Severidade" && (
+          <AtivosTable
+            risks={risks}
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"SEVERIDADE"}
+            columnType={"riskSeverity"}
+          />
+        )}
+        {selected == "Responsável" && (
+          <AtivosTable
+            risks={risks}
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"RESPONSAVEL"}
+            columnType={"responsibleCustomerId"}
+          />
+        )}
+        {selected == "Origem" && (
+          <AtivosTable
+            risks={risks}
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"ORIGEM"}
+            columnType={"origin"}
+          />
+        )}
+        {selected == "Estado" && (
+          <AtivosTable
+            risks={risks}
+            openModal={() => setOpenModalDetails(!openModalDetails)}
+            currentPage={page}
+            setCurrentPage={setPage}
+            setRiskId={(x: number) => setOpenedRiskId(x)}
+            columnName={"STATUS"}
+            columnType={"status"}
+          />
+        )}
+      </div>
+
+      <>
+        <button
+          onClick={() => setOpenModal(!openModal)}
+          className="fixed bottom-10 right-10 md:hidden bg-[#3088EE] w-12 h-12 rounded-xl flex items-center justify-center"
+        >
+          <Plus color="#F8F8F8" size={30} />
+        </button>
+
+        <ModalNewRisk
+          riskId={editRiskId}
+          open={openModal}
+          setOpen={() => setOpenModal(!openModal)}
+          setRiskId={(x: number) => setEditRiskId(x)}
+        />
+      </>
+
       <ModalAccountDetail
         riskId={openedRiskId}
         setRiskId={(x: number) => setEditRiskId(x)}

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import CompanyAddressAssetsService from "@/services/CompanyAddressAssetsService";
 import { ICompanyAddressAssets } from "@/types/ICompanyAddressAssets";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -14,11 +14,11 @@ import { z } from "zod";
 const address = z
   .object({
     addressIp: z
-      .string()
-      .max(200, "Endereço IP deve ter no máximo 200 caracteres"),
+      .string({ message: "Endereço IP é obrigatório" })
+      .max(45, "Endereço IP deve ter no máximo 200 caracteres"),
     addressBlock: z
-      .string()
-      .max(200, "Endereço IP (Bloco) deve ter no máximo 200 caracteres"),
+      .string({ message: "Endereço IP (Bloco) é obrigatório" })
+      .max(45, "Endereço IP (Bloco) deve ter no máximo 200 caracteres"),
   })
   .refine((data) => data.addressIp || data.addressBlock, {
     message: "Pelo menos um dos campos deve ser preenchido",
@@ -35,8 +35,10 @@ const AddressForm = ({
   addStep,
   companyId,
   editId,
+  removeStep,
 }: {
   addStep: () => void;
+  removeStep: () => void;
   companyId: number;
   editId: string;
 }) => {
@@ -55,14 +57,14 @@ const AddressForm = ({
   const onSubmit = (data: AddressFormValues) => {
     if (editId && editId !== "") {
       try {
-        data.addresses.forEach(async (address) => {
+        data.addresses.forEach(async (address, index) => {
           await CompanyAddressAssetsService.Put(
             {
               companyId: Number(editId),
               addressIp: address.addressIp,
-              addressBlock: address.addressBlock,
+              addressIpBlock: address.addressBlock,
             },
-            Number(editId)
+            Number(adressRes?.[index].id)
           );
         });
         addStep();
@@ -76,7 +78,7 @@ const AddressForm = ({
           const res = await CompanyAddressAssetsService.Post({
             companyId: companyId,
             addressIp: address.addressIp,
-            addressBlock: address.addressBlock,
+            addressIpBlock: address.addressBlock,
           });
           if (!res) throw new Error("Erro ao adicionar endereço IP");
         });
@@ -86,6 +88,31 @@ const AddressForm = ({
         toast.error("Erro ao adicionar endereços IP");
         console.log(error);
       }
+    }
+  };
+
+  const onDelete = async (id?: string) => {
+    try {
+      await CompanyAddressAssetsService.Delete(Number(id));
+      fetchCompanyAddres();
+    } catch (error) {
+      toast.error("Erro ao deletar domínio");
+      console.log(error);
+    }
+  };
+
+  const onCreateAddress = async () => {
+    try {
+      await CompanyAddressAssetsService.Post({
+        companyId: editId ? Number(editId) : companyId,
+        addressIp: "",
+        addressIpBlock: "",
+      });
+      fetchCompanyAddres();
+      setAddressSize(addressSize + 1);
+    } catch (error) {
+      toast.error("Erro ao adicionar domínio");
+      console.log(error);
     }
   };
 
@@ -111,7 +138,7 @@ const AddressForm = ({
       reset({
         addresses: adressRes.map((address) => ({
           addressIp: address.addressIp,
-          addressBlock: address.addressBlock,
+          addressBlock: address.addressIpBlock,
         })),
       });
       setAddressSize(adressRes.length);
@@ -129,9 +156,28 @@ const AddressForm = ({
           key={index}
         >
           <div className="text-[#050506] w-full">
-            <Label className="font-semibold text-lg">
-              Endereço IP <span className="text-red-500 ">*</span>
-            </Label>
+            <div className="flex justify-between">
+              <Label className="font-semibold text-lg">
+                Endereço IP <span className="text-red-500 ">*</span>
+              </Label>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (!editId) {
+                    if (addressSize > 0) setAddressSize(addressSize - 1);
+                  } else {
+                    if (addressSize > 0) {
+                      setAddressSize(addressSize - 1);
+                      onDelete(adressRes?.[index].id);
+                    }
+                  }
+                }}
+                variant="ghost"
+                className="text-red-500 flex items-center gap-2"
+              >
+                <Minus /> Remover
+              </Button>
+            </div>
             <Input
               {...register(`addresses.${index}.addressIp`)}
               placeholder="Endereço IP"
@@ -161,20 +207,30 @@ const AddressForm = ({
           </div>
         </div>
       ))}
-      <Button
-        type="button"
-        onClick={() => {
-          setAddressSize(addressSize + 1);
-        }}
-        variant={"ghost"}
-        className="text-[#1F4C85] font-semibold justify-start"
-      >
-        <Plus />
-        Adicionar outro IP
-      </Button>
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+        <Button
+          type="button"
+          onClick={() => {
+            if (editId) onCreateAddress();
+            if (!editId) setAddressSize(addressSize + 1);
+          }}
+          variant={"ghost"}
+          className="text-[#1F4C85] font-semibold justify-start"
+        >
+          <Plus />
+          Adicionar outro domínio
+        </Button>
+      </div>
+
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => navigation.push("/admin")}
+          onClick={() => {
+            if (!editId) {
+              navigation.push("/admin");
+            } else {
+              removeStep();
+            }
+          }}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

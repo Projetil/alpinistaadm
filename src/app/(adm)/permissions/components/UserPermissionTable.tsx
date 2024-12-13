@@ -108,11 +108,15 @@ const UserPermissionTable = ({
               <td className="py-3 px-4 text-sm">
                 <div className="flex justify-start">
                   {row.permissionPages
-                    .map((x) => x.funcs.map((x) => x.name).join(", "))
+                    .flatMap((x) =>
+                      x.funcs.filter((x) => x.hasAcess).map((x) => x.name)
+                    )
                     .join(", ")
                     .slice(0, 40) +
                     (row.permissionPages
-                      .map((x) => x.funcs.map((x) => x.name).join(", "))
+                      .flatMap((x) =>
+                        x.funcs.filter((x) => x.hasAcess).map((x) => x.name)
+                      )
                       .join(", ").length > 40
                       ? "..."
                       : "")}

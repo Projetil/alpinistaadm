@@ -123,12 +123,14 @@ function NovoClientePage() {
             editId={editId}
             companyId={companyId}
             addStep={() => setSteps(3)}
+            removeStep={() => setSteps(1)}
           />
         )}
         {steps == 3 && (
           <AddressForm
             editId={editId}
             addStep={() => setSteps(4)}
+            removeStep={() => setSteps(2)}
             companyId={companyId}
           />
         )}
@@ -136,10 +138,17 @@ function NovoClientePage() {
           <SocialMediaForm
             editId={editId}
             addStep={() => setSteps(5)}
+            removeStep={() => setSteps(3)}
             companyId={companyId}
           />
         )}
-        {steps == 5 && <AppMobileForm editId={editId} companyId={companyId} />}
+        {steps == 5 && (
+          <AppMobileForm
+            editId={editId}
+            companyId={companyId}
+            removeStep={() => setSteps(4)}
+          />
+        )}
       </section>
     </main>
   );

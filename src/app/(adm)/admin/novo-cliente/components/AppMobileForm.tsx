@@ -27,10 +27,12 @@ export type AppMobileValue = z.infer<typeof appMobileSchema>;
 
 const AppMobileForm = ({
   companyId,
+  removeStep,
   editId,
 }: {
   companyId: number;
   editId: string;
+  removeStep: () => void;
 }) => {
   const navigator = useRouter();
   const [appMobile, setAppMobile] = useState(1);
@@ -47,7 +49,7 @@ const AppMobileForm = ({
   const onSubmit = (data: AppMobileValue) => {
     if (editId && editId !== "") {
       try {
-        data.mobiles.forEach(async (mobile) => {
+        data.mobiles.forEach(async (mobile, index) => {
           await CompanyMobileAppAssetsService.Put(
             {
               companyId: Number(editId),
@@ -55,7 +57,7 @@ const AppMobileForm = ({
               appName: mobile.appName,
               store: Number(mobile.operationalSystem),
             },
-            Number(editId)
+            Number(mobileApp?.[index].id)
           );
         });
         toast.success("Empresa atualizada com sucesso");
@@ -81,6 +83,32 @@ const AppMobileForm = ({
         toast.error("Erro ao adicionar endereços IP");
         console.log(error);
       }
+    }
+  };
+
+  const onDelete = async (id?: number) => {
+    try {
+      await CompanyMobileAppAssetsService.Delete(Number(id));
+      fetchMobileApps();
+    } catch (error) {
+      toast.error("Erro ao deletar domínio");
+      console.log(error);
+    }
+  };
+
+  const onCreateAppMobile = async () => {
+    try {
+      await CompanyMobileAppAssetsService.Post({
+        companyId: editId ? Number(editId) : companyId,
+        storeAppUrl: "",
+        appName: "",
+        store: Number(1),
+      });
+      fetchMobileApps();
+      setAppMobile(appMobile + 1);
+    } catch (error) {
+      toast.error("Erro ao adicionar domínio");
+      console.log(error);
     }
   };
 
@@ -142,9 +170,28 @@ const AppMobileForm = ({
               )}
             </div>
             <div className="text-[#050506] w-full">
-              <Label className="font-semibold text-lg">
-                Nome do aplicativo <span className="text-red-500 ">*</span>
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label className="font-semibold text-lg">
+                  Nome do aplicativo <span className="text-red-500 ">*</span>
+                </Label>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!editId) {
+                      if (appMobile > 0) setAppMobile(appMobile - 1);
+                    } else {
+                      if (appMobile > 0) {
+                        setAppMobile(appMobile - 1);
+                        onDelete(mobileApp?.[index].id);
+                      }
+                    }
+                  }}
+                  variant="ghost"
+                  className="text-red-500 flex items-center gap-2"
+                >
+                  <Minus /> Remover
+                </Button>
+              </div>
               <Input
                 placeholder="Nome do aplicativo"
                 {...register(`mobiles.${index}.appName`)}
@@ -180,7 +227,8 @@ const AppMobileForm = ({
         <Button
           type="button"
           onClick={() => {
-            setAppMobile(appMobile + 1);
+            if (editId) onCreateAppMobile();
+            if (!editId) setAppMobile(appMobile + 1);
           }}
           variant={"ghost"}
           className="text-[#1F4C85] font-semibold justify-start"
@@ -188,21 +236,16 @@ const AppMobileForm = ({
           <Plus />
           Adicionar outro aplicativo
         </Button>
-        <Button
-          type="button"
-          onClick={() => {
-            if (appMobile > 0) setAppMobile(appMobile - 1);
-          }}
-          variant="ghost"
-          className="text-red-500 flex items-center gap-2"
-        >
-          <Minus />
-          Remover aplicativo
-        </Button>
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => navigator.push("/admin")}
+          onClick={() => {
+            if (!editId) {
+              navigator.push("/admin");
+            } else {
+              removeStep();
+            }
+          }}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"

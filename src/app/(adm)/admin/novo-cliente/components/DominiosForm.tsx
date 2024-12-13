@@ -12,17 +12,24 @@ import { ICompanyDomainAssets } from "@/types/ICompanyDomainAssets";
 import CompanyDomainAssetsService from "@/services/CompanyDomainService";
 
 const domainSchema = z.object({
-  domains: z.array(z.string().min(1, "Apenas domínio root")),
+  domains: z.array(
+    z
+      .string({ message: "Apenas domínio root" })
+      .min(3, "Apenas domínio root")
+      .max(300, "Apenas domínio root")
+  ),
 });
 
 type DomainFormValues = z.infer<typeof domainSchema>;
 
 const DominiosForm = ({
   addStep,
+  removeStep,
   companyId,
   editId,
 }: {
   addStep: () => void;
+  removeStep: () => void;
   editId: string;
   companyId: number;
 }) => {
@@ -44,13 +51,13 @@ const DominiosForm = ({
   const onSubmit = (data: DomainFormValues) => {
     if (editId && editId !== "") {
       try {
-        data.domains.forEach(async (domain) => {
+        data.domains.forEach(async (domain, index) => {
           await CompanyDomainAssetsService.Put(
             {
               companyId: Number(editId),
               domain: domain,
             },
-            Number(editId)
+            Number(domainsData?.[index].id)
           );
         });
         addStep();
@@ -73,6 +80,30 @@ const DominiosForm = ({
         toast.error("Erro ao adicionar domínios");
         console.log(error);
       }
+    }
+  };
+
+  const onDelete = async (id?: string) => {
+    try {
+      await CompanyDomainAssetsService.Delete(Number(id));
+      fetchDomains();
+    } catch (error) {
+      toast.error("Erro ao deletar domínio");
+      console.log(error);
+    }
+  };
+
+  const onCreateDomain = async () => {
+    try {
+      await CompanyDomainAssetsService.Post({
+        companyId: editId ? Number(editId) : companyId,
+        domain: "",
+      });
+      fetchDomains();
+      setDomainSize(domainSize + 1);
+    } catch (error) {
+      toast.error("Erro ao adicionar domínio");
+      console.log(error);
     }
   };
 
@@ -109,9 +140,28 @@ const DominiosForm = ({
     >
       {[...Array(domainSize)].map((field, index) => (
         <div className="text-[#050506] w-full" key={index}>
-          <Label className="font-semibold text-lg">
-            Domínio <span className="text-red-500 ">*</span>
-          </Label>
+          <div className="flex justify-between">
+            <Label className="font-semibold text-lg">
+              Domínio <span className="text-red-500 ">*</span>
+            </Label>
+            <Button
+              type="button"
+              onClick={() => {
+                if (!editId) {
+                  if (domainSize > 0) setDomainSize(domainSize - 1);
+                } else {
+                  if (domainSize > 0) {
+                    setDomainSize(domainSize - 1);
+                    onDelete(domainsData?.[index].id);
+                  }
+                }
+              }}
+              variant="ghost"
+              className="text-red-500 flex items-center gap-2"
+            >
+              <Minus /> Remover
+            </Button>
+          </div>
           <Controller
             name={`domains.${index}`}
             control={control}
@@ -133,7 +183,8 @@ const DominiosForm = ({
         <Button
           type="button"
           onClick={() => {
-            setDomainSize(domainSize + 1);
+            if (editId) onCreateDomain();
+            if (!editId) setDomainSize(domainSize + 1);
           }}
           variant={"ghost"}
           className="text-[#1F4C85] font-semibold justify-start"
@@ -141,21 +192,16 @@ const DominiosForm = ({
           <Plus />
           Adicionar outro domínio
         </Button>
-        <Button
-          type="button"
-          onClick={() => {
-            if (domainSize > 0) setDomainSize(domainSize - 1);
-          }}
-          variant="ghost"
-          className="text-red-500 flex items-center gap-2"
-        >
-          <Minus />
-          Remover domínio
-        </Button>
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => navigation.push("/admin")}
+          onClick={() => {
+            if (!editId) {
+              navigation.push("/admin");
+            } else {
+              removeStep();
+            }
+          }}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
