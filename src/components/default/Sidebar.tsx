@@ -67,17 +67,8 @@ const Sidebar = () => {
               isCollapsed ? "justify-center" : "justify-start"
             }  gap-2`}
           >
-            {isCollapsed ? (
-              <Image
-                src="/logo-small-sidebar.svg"
-                alt=""
-                className="w-full h-full"
-                width={500}
-                height={500}
-              />
-            ) : (
-              <GoHomeFill size={22} />
-            )}
+            <GoHomeFill size={22} />
+
             <span className={isCollapsed ? "hidden" : "block"}>Home</span>
           </Link>
         </li>

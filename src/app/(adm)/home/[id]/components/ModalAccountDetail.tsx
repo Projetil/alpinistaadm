@@ -39,24 +39,6 @@ const ModalAccountDetail = ({
   const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
   const [filesData, setFilesData] = useState<IPagedRiskFile>();
 
-  /*  const exportRef = useRef<HTMLDivElement>(null);
-  const exportToPDF = async () => {
-    if (!exportRef.current) return;
-
-    const canvas = await html2canvas(exportRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-
-    const x = (pdf.internal.pageSize.getWidth() - pdfWidth) / 2;
-    const y = (pdf.internal.pageSize.getHeight() - pdfHeight) / 2;
-
-    pdf.addImage(imgData, "PNG", x, y, pdfWidth, pdfHeight);
-    pdf.save("tabs_content.pdf");
-  }; */
-
   const fetchRisk = async () => {
     try {
       const res = await RisksService.GetById(riskId ?? 0);
@@ -104,7 +86,7 @@ const ModalAccountDetail = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-6 px-3 md:px-10 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-auto md:w-auto w-full md:min-w-[800px]">
+      <div className="bg-white py-6 px-3 md:px-10 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-full md:w-full w-full md:min-w-screen">
         <div
           onClick={setOpen}
           className="flex w-full justify-between md:justify-end"

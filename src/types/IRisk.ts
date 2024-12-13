@@ -3,6 +3,7 @@ export interface IRisk {
   companyId: number;
   name: string;
   status: number;
+  origin: number;
   riskSeverity: number;
   responsibleCustomerId: number | null;
   active: string;
@@ -24,6 +25,7 @@ export interface ICreateRisk {
   companyId: number;
   name: string;
   status: number;
+  origin: number;
   riskSeverity: number;
   responsibleCustomerId?: number;
   active: string;
@@ -49,4 +51,13 @@ export enum riskSeverity {
   Medio = 3,
   Alto = 4,
   Critico = 5,
+}
+
+export enum riskOrigin {
+  "Superfície de ataque" = 1,
+  "Inteligência de ameaças" = 2,
+  "Gestão de vulnerabilidade" = 3,
+  "Teste de intrusão" = 4,
+  "Terceiros" = 5,
+  "Conformidade" = 6,
 }

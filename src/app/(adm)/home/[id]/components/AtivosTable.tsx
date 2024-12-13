@@ -1,7 +1,12 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
 import CardAtivosMobile from "./CardAtivosMobile";
-import { IPagedRisk, riskSeverity, riskStatus } from "@/types/IRisk";
+import {
+  IPagedRisk,
+  riskOrigin,
+  riskSeverity,
+  riskStatus,
+} from "@/types/IRisk";
 import { Dispatch, SetStateAction, useState } from "react";
 
 const AtivosTable = ({
@@ -121,6 +126,12 @@ const AtivosTable = ({
                         row[
                           columnType as keyof typeof row
                         ] as keyof typeof riskStatus
+                      ]
+                    : columnType == "origin"
+                    ? riskOrigin[
+                        row[
+                          columnType as keyof typeof row
+                        ] as keyof typeof riskOrigin
                       ]
                     : row[columnType as keyof typeof row]}
                 </div>

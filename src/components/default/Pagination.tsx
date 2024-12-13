@@ -40,10 +40,24 @@ export function Pagination({
         <div className="flex items-center gap-2">
           <Button
             onClick={() =>
+              pageIndex! >= pages ? handlePage!(pageIndex! - 1) : null
+            }
+            variant="outline"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! >= pages ? "block" : "hidden"
+            }`}
+          >
+            <span>{pageIndex! - 1}</span>
+          </Button>
+
+          <Button
+            onClick={() =>
               pageIndex! + 1 <= pages ? handlePage!(pageIndex! + 1) : null
             }
             variant="outline"
-            className="h-8 w-8 border-none p-0"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! + 1 <= pages ? "block" : "hidden"
+            }`}
           >
             <span>{pageIndex! + 1}</span>
           </Button>
@@ -53,14 +67,18 @@ export function Pagination({
               pageIndex! + 2 <= pages ? handlePage!(pageIndex! + 2) : null
             }
             variant="outline"
-            className="h-8 w-8 border-none p-0 sm:block hidden"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! + 2 <= pages ? "sm:block hidden" : "hidden"
+            }`}
           >
             <span>{pageIndex! + 2}</span>
           </Button>
 
           <Button
             variant="outline"
-            className="h-8 w-8 border-none p-0 sm:block hidden"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! + 4 <= pages ? "sm:block hidden" : "hidden"
+            }`}
           >
             <span>...</span>
           </Button>
@@ -70,7 +88,9 @@ export function Pagination({
               pageIndex! + 9 <= pages ? handlePage!(pageIndex! + 9) : null
             }
             variant="outline"
-            className="h-8 w-8 border-none p-0 sm:block hidden"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! + 9 <= pages ? "sm:block hidden" : "hidden"
+            }`}
           >
             <span>{pageIndex! + 9}</span>
           </Button>
@@ -80,7 +100,9 @@ export function Pagination({
               pageIndex! + 10 <= pages ? handlePage!(pageIndex! + 10) : null
             }
             variant="outline"
-            className="h-8 w-8 border-none p-0 sm:block hidden"
+            className={`h-8 w-8 border-none p-0 ${
+              pageIndex! + 10 <= pages ? "sm:block hidden" : "hidden"
+            }`}
           >
             <span>{pageIndex! + 10} </span>
           </Button>

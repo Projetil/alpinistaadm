@@ -22,6 +22,7 @@ const riskForm1Schema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name é obrigatorio"),
   state: z.string().min(1, "Estado é obrigatorio"),
+  origin: z.string().min(1, "Origem é obrigatorio"),
   severity: z.string().min(1, "Severidade é obrigatorio"),
   responsible: z.string().optional(),
   isActive: z.string().min(1, "Ativo é obrigatorio"),
@@ -87,6 +88,7 @@ const ModalNewRisk = ({
           {
             companyId: resetRisk?.companyId ?? 0,
             status: Number(risk?.state) ?? 0,
+            origin: Number(risk?.origin) ?? 0,
             riskSeverity: risk ? Number(risk.severity) : 0,
             active: risk ? risk.isActive : "",
             limitDate: limitDate ? limitDate : "",
@@ -103,6 +105,7 @@ const ModalNewRisk = ({
         const res = await RisksService.Post({
           companyId: Number(id) ?? 0,
           status: Number(risk?.state) ?? 0,
+          origin: Number(risk?.origin) ?? 0,
           riskSeverity: risk ? Number(risk.severity) : 0,
           active: risk ? risk.isActive : "",
           limitDate: limitDate ? limitDate : undefined,
@@ -164,6 +167,7 @@ const ModalNewRisk = ({
       reset1({
         name: "",
         state: "",
+        origin: "",
         severity: "",
         responsible: "",
         isActive: "",
@@ -190,6 +194,7 @@ const ModalNewRisk = ({
       reset1({
         id: resetRisk.id.toString(),
         name: resetRisk.name,
+        origin: resetRisk.origin.toString(),
         state: resetRisk.status.toString(),
         severity: resetRisk.riskSeverity.toString(),
         responsible: resetRisk.responsibleCustomerId?.toString(),
@@ -351,6 +356,28 @@ const ModalNewRisk = ({
                 </select>
                 {errors1.isActive && errors1.isActive && (
                   <p className="text-red-500">{errors1.isActive?.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label className="">
+                  Origem <span className="text-red-500">*</span>
+                </Label>
+                <select
+                  {...register1("origin")}
+                  className="h-10 flex border rounded-md placeholder:text-[#8C8B91] text-[#8C8B91]"
+                >
+                  <option disabled value="">
+                    Selecione uma opção
+                  </option>
+                  <option value="1">Superfície de ataque</option>
+                  <option value="2">Inteligência de ameaças</option>
+                  <option value="3">Gestão de vulnerabilidade</option>
+                  <option value="4">Teste de intrusão</option>
+                  <option value="5">Terceiros</option>
+                  <option value="6">Conformidade</option>
+                </select>
+                {errors1.origin && errors1.origin && (
+                  <p className="text-red-500">{errors1.origin?.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-2 md:w-1/3">

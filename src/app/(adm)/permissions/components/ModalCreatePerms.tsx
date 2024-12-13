@@ -566,7 +566,12 @@ const ModalCreatePerms = ({
                   {...register("dashboard")}
                   onClick={() => {
                     setValue("dashboard", !dashboardField);
-                    setValue("dashboardAtt", !dashboardAttField);
+                    if (!dashboardField) {
+                      setValue("dashboardAtt", true);
+                    }
+                    if (dashboardField) {
+                      setValue("dashboardAtt", false);
+                    }
                   }}
                   id="dashboard"
                 />
@@ -599,7 +604,12 @@ const ModalCreatePerms = ({
                   {...register("ativos")}
                   onClick={() => {
                     setValue("ativos", !ativosField);
-                    setValue("ativosFilter", !ativosField);
+                    if (!ativosField) {
+                      setValue("ativosFilter", true);
+                    }
+                    if (ativosField) {
+                      setValue("ativosFilter", false);
+                    }
                   }}
                   id="ativos"
                 />
@@ -631,9 +641,16 @@ const ModalCreatePerms = ({
                   {...register("pentest")}
                   onClick={() => {
                     setValue("pentest", !pentestField);
-                    setValue("pentestCreate", !pentestCreateField);
-                    setValue("pentestEdit", !pentestEditField);
-                    setValue("pentestSend", !pentestSendField);
+                    if (!pentestField) {
+                      setValue("pentestCreate", true);
+                      setValue("pentestEdit", true);
+                      setValue("pentestSend", true);
+                    }
+                    if (pentestField) {
+                      setValue("pentestCreate", false);
+                      setValue("pentestEdit", false);
+                      setValue("pentestSend", false);
+                    }
                   }}
                   id="pentest"
                 />
@@ -696,9 +713,16 @@ const ModalCreatePerms = ({
                   {...register("issues")}
                   onClick={() => {
                     setValue("issues", !issuesField);
-                    setValue("issuesFilter", !issuesFilterField);
-                    setValue("issuesExport", !issuesExportField);
-                    setValue("issuesClassify", !issuesClassifyField);
+                    if (!issuesField) {
+                      setValue("issuesFilter", true);
+                      setValue("issuesExport", true);
+                      setValue("issuesClassify", true);
+                    }
+                    if (issuesField) {
+                      setValue("issuesFilter", false);
+                      setValue("issuesExport", false);
+                      setValue("issuesClassify", false);
+                    }
                   }}
                   id="issues"
                 />
@@ -765,8 +789,14 @@ const ModalCreatePerms = ({
                   {...register("questionario")}
                   onClick={() => {
                     setValue("questionario", !questionarioField);
-                    setValue("questionarioCreate", !questionarioCreateField);
-                    setValue("questionarioShare", !questionarioShareField);
+                    if (!questionarioField) {
+                      setValue("questionarioCreate", true);
+                      setValue("questionarioShare", true);
+                    }
+                    if (questionarioField) {
+                      setValue("questionarioCreate", false);
+                      setValue("questionarioShare", false);
+                    }
                   }}
                   id="questionario"
                 />
@@ -823,9 +853,16 @@ const ModalCreatePerms = ({
                   {...register("ambiente")}
                   onClick={() => {
                     setValue("ambiente", !ambienteField);
-                    setValue("ambienteCreate", !ambienteCreateField);
-                    setValue("ambienteEdit", !ambienteEditField);
-                    setValue("ambienteDelete", !ambienteDeleteField);
+                    if (ambienteField) {
+                      setValue("ambienteCreate", false);
+                      setValue("ambienteEdit", false);
+                      setValue("ambienteDelete", false);
+                    }
+                    if (!ambienteField) {
+                      setValue("ambienteCreate", true);
+                      setValue("ambienteEdit", true);
+                      setValue("ambienteDelete", true);
+                    }
                   }}
                   id="ambiente"
                 />

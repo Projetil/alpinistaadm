@@ -22,10 +22,12 @@ export type SocialMediaFormValues = z.infer<typeof socialMediaSchema>;
 
 const SocialMediaForm = ({
   addStep,
+  removeStep,
   companyId,
   editId,
 }: {
   addStep: () => void;
+  removeStep: () => void;
   companyId: number;
   editId: string;
 }) => {
@@ -52,7 +54,7 @@ const SocialMediaForm = ({
             instagram: data.instagram ?? "",
             facebook: data.facebook ?? "",
           },
-          Number(editId)
+          Number(socialMediaData?.id)
         );
         addStep();
       } catch (error) {
@@ -160,7 +162,13 @@ const SocialMediaForm = ({
 
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => navigation.push("/admin")}
+          onClick={() => {
+            if (!editId) {
+              navigation.push("/admin");
+            } else {
+              removeStep();
+            }
+          }}
           variant={"outline"}
           className="text-[#1A69C4] border-[#5CA7FF] font-semibold"
           type="button"
