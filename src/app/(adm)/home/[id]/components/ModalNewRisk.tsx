@@ -213,7 +213,7 @@ const ModalNewRisk = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen w-full md:w-[1000px]">
+      <div className="bg-white py-3 px-5 rounded-lg flex flex-col gap-10 overflow-auto max-h-screen h-full w-full md:min-w-screen">
         <h3 className="font-bold text-2xl text-[#0D3C73]">Novo Risco</h3>
         <div className="flex flex-col md:flex-row gap-4">
           <button
@@ -517,7 +517,7 @@ const ModalNewRisk = ({
               <Button
                 variant={"outline"}
                 className="md:w-fit w-full border-[#3088EE] text-[#3088EE] "
-                onClick={setOpen}
+                onClick={() => setSteps(1)}
               >
                 Voltar
               </Button>

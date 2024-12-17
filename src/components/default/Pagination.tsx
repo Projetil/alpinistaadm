@@ -12,117 +12,49 @@ export interface PaginationProps {
 }
 
 export function Pagination({
-  pageIndex,
-  perPage,
-  totalCount,
+  pageIndex = 1,
+  perPage = 10,
+  totalCount = 0,
   handlePage,
 }: PaginationProps) {
-  const pages = Math.ceil(totalCount! / perPage!) || 1;
+  const pages = Math.ceil(totalCount / perPage) || 1;
 
   return (
     <div className="flex font-sans items-center justify-between rounded-lg px-3 py-1 text-[#818086]">
-      <div className="">
+      <div>
         <Button
-          onClick={() =>
-            pageIndex! <= pages && pageIndex != 1
-              ? handlePage!(pageIndex! - 1)
-              : null
-          }
+          onClick={() => pageIndex > 1 && handlePage?.(pageIndex - 1)}
           variant="outline"
-          className="bg-trasnparent border-none hover:bg-[#FEEAE7]"
+          className="bg-transparent border-none hover:bg-[#FEEAE7]"
+          disabled={pageIndex === 1}
         >
-          <ArrowLeft size={18} className="mr-2 " />
-          <span className="font-medium ">Anterior</span>
+          <ArrowLeft size={18} className="mr-2" />
+          <span className="font-medium">Anterior</span>
         </Button>
       </div>
-
       <div className="flex items-center gap-6 py-4 lg:gap-8">
-        <div className="flex items-center gap-2">
+        {Array.from({ length: pages }, (_, i) => i + 1).map((page) => (
           <Button
-            onClick={() =>
-              pageIndex! >= pages ? handlePage!(pageIndex! - 1) : null
-            }
+            key={page}
+            onClick={() => handlePage?.(page)}
             variant="outline"
             className={`h-8 w-8 border-none p-0 ${
-              pageIndex! >= pages ? "block" : "hidden"
+              page === pageIndex ? "bg-[#FEEAE7] font-bold" : ""
             }`}
           >
-            <span>{pageIndex! - 1}</span>
+            <span>{page}</span>
           </Button>
-
-          <Button
-            onClick={() =>
-              pageIndex! + 1 <= pages ? handlePage!(pageIndex! + 1) : null
-            }
-            variant="outline"
-            className={`h-8 w-8 border-none p-0 ${
-              pageIndex! + 1 <= pages ? "block" : "hidden"
-            }`}
-          >
-            <span>{pageIndex! + 1}</span>
-          </Button>
-
-          <Button
-            onClick={() =>
-              pageIndex! + 2 <= pages ? handlePage!(pageIndex! + 2) : null
-            }
-            variant="outline"
-            className={`h-8 w-8 border-none p-0 ${
-              pageIndex! + 2 <= pages ? "sm:block hidden" : "hidden"
-            }`}
-          >
-            <span>{pageIndex! + 2}</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className={`h-8 w-8 border-none p-0 ${
-              pageIndex! + 4 <= pages ? "sm:block hidden" : "hidden"
-            }`}
-          >
-            <span>...</span>
-          </Button>
-
-          <Button
-            onClick={() =>
-              pageIndex! + 9 <= pages ? handlePage!(pageIndex! + 9) : null
-            }
-            variant="outline"
-            className={`h-8 w-8 border-none p-0 ${
-              pageIndex! + 9 <= pages ? "sm:block hidden" : "hidden"
-            }`}
-          >
-            <span>{pageIndex! + 9}</span>
-          </Button>
-
-          <Button
-            onClick={() =>
-              pageIndex! + 10 <= pages ? handlePage!(pageIndex! + 10) : null
-            }
-            variant="outline"
-            className={`h-8 w-8 border-none p-0 ${
-              pageIndex! + 10 <= pages ? "sm:block hidden" : "hidden"
-            }`}
-          >
-            <span>{pageIndex! + 10} </span>
-          </Button>
-
-          {/* <Button variant="outline" className="h-8 w-8 border-none p-0">
-            <span>{pages}</span>
-          </Button> */}
-        </div>
+        ))}
       </div>
-
-      <div className="">
+      <div>
         <Button
-          onClick={() =>
-            pageIndex! + 1 <= pages ? handlePage!(pageIndex! + 1) : null
-          }
+          onClick={() => pageIndex < pages && handlePage?.(pageIndex + 1)}
           variant="outline"
-          className="bg-trasnparent border-none hover:bg-[#FEEAE7]"
+          className="bg-transparent border-none hover:bg-[#FEEAE7]"
+          disabled={pageIndex === pages}
         >
-          <span className="font-medium ">Próximo</span>
-          <ArrowRight size={18} className="ml-2 " />
+          <span className="font-medium">Próximo</span>
+          <ArrowRight size={18} className="ml-2" />
         </Button>
       </div>
     </div>

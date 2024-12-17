@@ -76,7 +76,7 @@ const ModalCreateCustomer = ({
           {
             email: data.email,
             password: data.senha,
-            type: Number(data.profileType),
+            type: 2,
           },
           customer?.userId ?? 0
         );
