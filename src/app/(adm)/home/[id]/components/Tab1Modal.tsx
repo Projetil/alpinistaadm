@@ -50,9 +50,12 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
       </div>
       <div className="flex flex-col gap-2 mt-3">
         <p className="font-semibold text-[#40414A]">Descrição</p>
-        <p className="md:w-2/3 text-[#80828D]">
-          {currentRisk ? currentRisk.description : ""}
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: currentRisk ? currentRisk.description : "",
+          }}
+          className="md:w-2/3 text-[#80828D]"
+        ></p>
       </div>
     </div>
   );

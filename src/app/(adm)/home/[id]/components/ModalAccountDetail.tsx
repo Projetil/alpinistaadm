@@ -164,7 +164,7 @@ const ModalAccountDetail = ({
                   : "font-normal text-[#636267]"
               } text-sm w-fit h-full`}
             >
-              Historico
+              Histórico
             </Button>
             <Button
               onClick={() => setHideComment(false)}
