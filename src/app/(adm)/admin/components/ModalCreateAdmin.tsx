@@ -69,7 +69,7 @@ const ModalCreateAdmin = ({
           {
             email: data.email,
             password: data.senha,
-            type: 2,
+            type: 1,
           },
           adm?.userId ?? 0
         );

@@ -86,7 +86,7 @@ const ModalAccountDetail = ({
 
   return (
     <Modal isOpen={open} onClose={setOpen}>
-      <div className="bg-white py-6 px-3 md:px-10 rounded-lg flex flex-col gap-10 max-h-screen h-full md:h-full md:w-full w-full md:min-w-screen">
+      <div className="bg-white py-6 px-3 md:px-10 rounded-lg flex flex-col gap-10 max-h-screen h-full w-full md:min-w-screen">
         <div
           onClick={setOpen}
           className="flex w-full justify-between md:justify-end"
@@ -164,7 +164,7 @@ const ModalAccountDetail = ({
                   : "font-normal text-[#636267]"
               } text-sm w-fit h-full`}
             >
-              Historico
+              Histórico
             </Button>
             <Button
               onClick={() => setHideComment(false)}

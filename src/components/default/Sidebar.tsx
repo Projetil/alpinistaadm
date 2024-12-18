@@ -122,7 +122,9 @@ const Sidebar = () => {
       </button>
       <Button
         variant={"ghost"}
-        className="flex items-end justify-start w-full h-full p-4 bg-sidebar-bg text-[#B3001E]"
+        className={`flex items-center w-full mt-20 p-4 text-[#B3001E] ${
+          isCollapsed ? "justify-start" : "justify-start"
+        }`}
       >
         <a href="/signin" className="flex items-center justify-start gap-3 ">
           <RxExit />

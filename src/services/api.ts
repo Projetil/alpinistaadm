@@ -2,7 +2,6 @@ import { createRequestAuthObj } from "@/lib/auth/auth";
 import axios from "axios";
 
 const baseApiUrl = process.env.NEXT_URL_API;
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
 export const api = axios.create({
   baseURL: baseApiUrl,
