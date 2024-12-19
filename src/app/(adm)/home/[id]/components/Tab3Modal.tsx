@@ -14,12 +14,14 @@ const Tab3Modal = ({
   currentRisk,
   commentsData,
   historicalData,
+  updateComment,
 }: {
   hideComment: boolean;
   handleComment: () => void;
   currentRisk?: IRisk;
   commentsData?: IPagedRisksComment;
   historicalData?: IPagedRisksHistorical;
+  updateComment?: () => void;
 }) => {
   return (
     <div className="flex justify-between gap-2">
@@ -51,7 +53,11 @@ const Tab3Modal = ({
           <h4 className="font-semibold text-[#050506]">Comentário</h4>
           <BsChatLeftText color="#1A69C4" size={24} />
         </div>
-        <CommentsChat comments={commentsData} riskId={currentRisk?.id} />
+        <CommentsChat
+          updateComment={updateComment}
+          comments={commentsData}
+          riskId={currentRisk?.id}
+        />
       </div>
     </div>
   );

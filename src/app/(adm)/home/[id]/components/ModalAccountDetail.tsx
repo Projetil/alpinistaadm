@@ -189,6 +189,7 @@ const ModalAccountDetail = ({
             commentsData={commentsData}
             historicalData={historicalData}
             handleComment={() => setHideComment(!hideComment)}
+            updateComment={() => fetchComments(riskId ?? 0)}
           />
         )}
       </div>

@@ -21,9 +21,11 @@ interface Message {
 const CommentsChat = ({
   comments,
   riskId,
+  updateComment,
 }: {
   comments?: IPagedRisksComment;
   riskId?: number;
+  updateComment?: () => void;
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -50,6 +52,7 @@ const CommentsChat = ({
       };
       setMessages([...messages, newMessage]);
       setInput("");
+      if (updateComment) updateComment();
     } catch (error) {
       console.log(error);
       toast.error("Erro ao enviar mensagem");
