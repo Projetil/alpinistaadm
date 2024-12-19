@@ -7,6 +7,7 @@ import { GoHomeFill } from "react-icons/go";
 
 export default function HomePage() {
   const [companies, setCompanies] = useState<IPagedCompany>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -25,7 +26,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchCompany();
-  }, [loading, page]);
+  }, [page]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
