@@ -12,11 +12,9 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const appMobile = z.object({
-  appName: z.string().max(200, "Nome do app deve ter no máximo 200 caracteres"),
-  linkApp: z
-    .string()
-    .max(200, "O link da loja deve ter no máximo 200 caracteres"),
-  operationalSystem: z.string(),
+  appName: z.string().optional(),
+  linkApp: z.string().optional(),
+  operationalSystem: z.string().optional(),
 });
 
 export const appMobileSchema = z.object({
@@ -35,30 +33,44 @@ const AppMobileForm = ({
   removeStep: () => void;
 }) => {
   const navigator = useRouter();
-  const [appMobile, setAppMobile] = useState(1);
+  const [appMobile, setAppMobile] = useState<number>(1);
   const [mobileApp, setMobileApp] = useState<ICompanyMobileAppAssets[]>([]);
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<AppMobileValue>({
     resolver: zodResolver(appMobileSchema),
+    defaultValues: {
+      mobiles: [{ appName: "", linkApp: "", operationalSystem: "1" }],
+    },
   });
 
   const onSubmit = (data: AppMobileValue) => {
-    if (editId && editId !== "") {
+    if (editId && editId !== "" && mobileApp.length > 0) {
       try {
         data.mobiles.forEach(async (mobile, index) => {
-          await CompanyMobileAppAssetsService.Put(
-            {
+          if (mobileApp?.[index]) {
+            await CompanyMobileAppAssetsService.Put(
+              {
+                companyId: Number(editId),
+                storeAppUrl: mobile.linkApp ?? "",
+                appName: mobile.appName ?? "",
+                store: Number(mobile.operationalSystem),
+              },
+              Number(mobileApp?.[index].id)
+            );
+          } else {
+            await CompanyMobileAppAssetsService.Post({
               companyId: Number(editId),
-              storeAppUrl: mobile.linkApp,
-              appName: mobile.appName,
+              storeAppUrl: mobile.linkApp ?? "",
+              appName: mobile.appName ?? "",
               store: Number(mobile.operationalSystem),
-            },
-            Number(mobileApp?.[index].id)
-          );
+            });
+          }
         });
         toast.success("Empresa atualizada com sucesso");
         navigator.push("/admin");
@@ -70,9 +82,9 @@ const AppMobileForm = ({
       try {
         data.mobiles.forEach(async (mobile) => {
           const res = await CompanyMobileAppAssetsService.Post({
-            companyId: companyId,
-            storeAppUrl: mobile.linkApp,
-            appName: mobile.appName,
+            companyId: companyId == 0 ? Number(editId) : companyId,
+            storeAppUrl: mobile.linkApp ?? "",
+            appName: mobile.appName ?? "",
             store: Number(mobile.operationalSystem),
           });
           if (!res) throw new Error("Erro ao adicionar endereço IP");
@@ -89,25 +101,8 @@ const AppMobileForm = ({
   const onDelete = async (id?: number) => {
     try {
       await CompanyMobileAppAssetsService.Delete(Number(id));
-      fetchMobileApps();
     } catch (error) {
       toast.error("Erro ao deletar domínio");
-      console.log(error);
-    }
-  };
-
-  const onCreateAppMobile = async () => {
-    try {
-      await CompanyMobileAppAssetsService.Post({
-        companyId: editId ? Number(editId) : companyId,
-        storeAppUrl: "",
-        appName: "",
-        store: Number(1),
-      });
-      fetchMobileApps();
-      setAppMobile(appMobile + 1);
-    } catch (error) {
-      toast.error("Erro ao adicionar domínio");
       console.log(error);
     }
   };
@@ -118,6 +113,7 @@ const AppMobileForm = ({
         Number(editId)
       );
       setMobileApp(res);
+      setAppMobile(res.length == 0 ? 1 : res.length);
     } catch (erro) {
       console.log(erro);
     }
@@ -130,7 +126,7 @@ const AppMobileForm = ({
   }, [editId]);
 
   useMemo(() => {
-    if (mobileApp) {
+    if (mobileApp.length > 0) {
       reset({
         mobiles: mobileApp.map(
           (app) =>
@@ -156,7 +152,6 @@ const AppMobileForm = ({
             <div className="text-[#050506] w-full">
               <Label className="font-semibold text-lg">
                 Link da loja de aplicativos{" "}
-                <span className="text-red-500 ">*</span>
               </Label>
               <Input
                 {...register(`mobiles.${index}.linkApp`)}
@@ -172,17 +167,31 @@ const AppMobileForm = ({
             <div className="text-[#050506] w-full">
               <div className="flex justify-between items-center">
                 <Label className="font-semibold text-lg">
-                  Nome do aplicativo <span className="text-red-500 ">*</span>
+                  Nome do aplicativo
                 </Label>
                 <Button
                   type="button"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     if (!editId) {
-                      if (appMobile > 0) setAppMobile(appMobile - 1);
+                      if (appMobile > 0) {
+                        setAppMobile(appMobile - 1);
+                        const updatedApps = getValues("mobiles").filter(
+                          (_, idx) => idx !== index
+                        );
+                        setValue("mobiles", updatedApps);
+                      }
                     } else {
                       if (appMobile > 0) {
                         setAppMobile(appMobile - 1);
-                        onDelete(mobileApp?.[index].id);
+                        const updatedApps = getValues("mobiles").filter(
+                          (_, idx) => idx !== index
+                        );
+                        setValue("mobiles", updatedApps);
+
+                        if (mobileApp?.[index].id) {
+                          onDelete(mobileApp?.[index].id);
+                        }
                       }
                     }
                   }}
@@ -205,9 +214,7 @@ const AppMobileForm = ({
             </div>
           </div>
           <div className="text-[#050506] w-full md:w-1/3 flex flex-col">
-            <Label className="font-semibold text-lg">
-              Sistema operacional <span className="text-red-500 ">*</span>
-            </Label>
+            <Label className="font-semibold text-lg">Sistema operacional</Label>
             <select
               className="bg-transparent py-2 rounded-md px-2 border border-[#DFDFE2] mt-2"
               {...register(`mobiles.${index}.operationalSystem`)}
@@ -226,9 +233,9 @@ const AppMobileForm = ({
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
         <Button
           type="button"
-          onClick={() => {
-            if (editId) onCreateAppMobile();
-            if (!editId) setAppMobile(appMobile + 1);
+          onClick={(e) => {
+            e.preventDefault();
+            setAppMobile(appMobile + 1);
           }}
           variant={"ghost"}
           className="text-[#1F4C85] font-semibold justify-start"

@@ -44,7 +44,7 @@ const SocialMediaForm = ({
   });
 
   const onSubmit = async (data: SocialMediaFormValues) => {
-    if (editId && editId !== "") {
+    if (editId && editId !== "" && socialMediaData?.id) {
       try {
         await CompanySocialNetworkAssetsService.Put(
           {
@@ -64,7 +64,7 @@ const SocialMediaForm = ({
     } else {
       try {
         await CompanySocialNetworkAssetsService.Post({
-          companyId: companyId,
+          companyId: companyId == 0 ? Number(editId) : companyId,
           linkedIn: data.linkedin ?? "",
           whatsapp: data.whatsapp ?? "",
           instagram: data.instagram ?? "",

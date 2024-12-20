@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ICompanyDomainAssets } from "@/types/ICompanyDomainAssets";
 import CompanyDomainAssetsService from "@/services/CompanyDomainService";
+import CompanyService from "@/services/CompanyService";
 
 const domainSchema = z.object({
   domains: z.array(
@@ -39,6 +40,8 @@ const DominiosForm = ({
   const {
     control,
     handleSubmit,
+    setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<DomainFormValues>({
@@ -48,17 +51,32 @@ const DominiosForm = ({
     },
   });
 
+  const onInactive = async () => {
+    try {
+      await CompanyService.PutStatus(companyId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onSubmit = (data: DomainFormValues) => {
     if (editId && editId !== "") {
       try {
         data.domains.forEach(async (domain, index) => {
-          await CompanyDomainAssetsService.Put(
-            {
+          if (domainsData?.[index]) {
+            await CompanyDomainAssetsService.Put(
+              {
+                companyId: Number(editId),
+                domain: domain,
+              },
+              Number(domainsData?.[index].id)
+            );
+          } else {
+            await CompanyDomainAssetsService.Post({
               companyId: Number(editId),
               domain: domain,
-            },
-            Number(domainsData?.[index].id)
-          );
+            });
+          }
         });
         addStep();
       } catch (error) {
@@ -89,20 +107,6 @@ const DominiosForm = ({
       fetchDomains();
     } catch (error) {
       toast.error("Erro ao deletar domínio");
-      console.log(error);
-    }
-  };
-
-  const onCreateDomain = async () => {
-    try {
-      await CompanyDomainAssetsService.Post({
-        companyId: editId ? Number(editId) : companyId,
-        domain: "",
-      });
-      fetchDomains();
-      setDomainSize(domainSize + 1);
-    } catch (error) {
-      toast.error("Erro ao adicionar domínio");
       console.log(error);
     }
   };
@@ -138,53 +142,66 @@ const DominiosForm = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col mt-6 gap-3"
     >
-      {[...Array(domainSize)].map((field, index) => (
-        <div className="text-[#050506] w-full" key={index}>
-          <div className="flex justify-between">
-            <Label className="font-semibold text-lg">
-              Domínio <span className="text-red-500 ">*</span>
-            </Label>
-            <Button
-              type="button"
-              onClick={() => {
-                if (!editId) {
-                  if (domainSize > 0) setDomainSize(domainSize - 1);
-                } else {
-                  if (domainSize > 0) {
-                    setDomainSize(domainSize - 1);
-                    onDelete(domainsData?.[index].id);
+      {[...Array(domainSize)].map((field, index) => {
+        return (
+          <div className="text-[#050506] w-full" key={index}>
+            <div className="flex justify-between">
+              <Label className="font-semibold text-lg">
+                Domínio <span className="text-red-500 ">*</span>
+              </Label>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (!editId) {
+                    if (domainSize > 0) {
+                      setDomainSize(domainSize - 1);
+                      const updatedDomains = getValues("domains").filter(
+                        (_, idx) => idx !== index
+                      );
+                      setValue("domains", updatedDomains);
+                    }
+                  } else {
+                    if (domainSize > 0) {
+                      const updatedDomains = getValues("domains").filter(
+                        (_, idx) => idx !== index
+                      );
+                      setValue("domains", updatedDomains);
+                      setDomainSize(domainSize - 1);
+                      if (domainsData?.[index].id) {
+                        onDelete(domainsData?.[index].id);
+                      }
+                    }
                   }
-                }
-              }}
-              variant="ghost"
-              className="text-red-500 flex items-center gap-2"
-            >
-              <Minus /> Remover
-            </Button>
-          </div>
-          <Controller
-            name={`domains.${index}`}
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                placeholder="projetil.com"
-                type="text"
-                className="font-normal border-[#D7D7DA] bg-transparent mt-2"
-              />
+                }}
+                variant="ghost"
+                className="text-red-500 flex items-center gap-2"
+              >
+                <Minus /> Remover
+              </Button>
+            </div>
+            <Controller
+              name={`domains.${index}`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="projetil.com"
+                  type="text"
+                  className="font-normal border-[#D7D7DA] bg-transparent mt-2"
+                />
+              )}
+            />
+            {errors.domains && errors.domains[index] && (
+              <p className="text-red-500">{errors.domains[index]?.message}</p>
             )}
-          />
-          {errors.domains && errors.domains[index] && (
-            <p className="text-red-500">{errors.domains[index]?.message}</p>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
         <Button
           type="button"
           onClick={() => {
-            if (editId) onCreateDomain();
-            if (!editId) setDomainSize(domainSize + 1);
+            setDomainSize(domainSize + 1);
           }}
           variant={"ghost"}
           className="text-[#1F4C85] font-semibold justify-start"
@@ -195,8 +212,9 @@ const DominiosForm = ({
       </div>
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => {
+          onClick={async () => {
             if (!editId) {
+              await onInactive();
               navigation.push("/admin");
             } else {
               removeStep();

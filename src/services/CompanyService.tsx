@@ -72,6 +72,22 @@ const CompanyService = {
       }
     }
   },
+  PutStatus: async (id: number) => {
+    try {
+      await api.put(`${endpoint}/Status/${id}`);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
   Delete: async (id: number) => {
     try {
       await api.delete(`${endpoint}/${id}`);
