@@ -14,7 +14,7 @@ const RisksHistoricalService = {
       const res = await api.get(
         `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
           riskId ? `&riskId=${riskId}&` : ""
-        }}`
+        }`
       );
       return res.data as IPagedRisksHistorical;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

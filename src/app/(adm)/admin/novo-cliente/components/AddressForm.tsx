@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CompanyAddressAssetsService from "@/services/CompanyAddressAssetsService";
+import CompanyService from "@/services/CompanyService";
 import { ICompanyAddressAssets } from "@/types/ICompanyAddressAssets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Minus, Plus } from "lucide-react";
@@ -48,24 +49,42 @@ const AddressForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
   });
 
+  const onInactive = async () => {
+    try {
+      await CompanyService.PutStatus(companyId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onSubmit = (data: AddressFormValues) => {
     if (editId && editId !== "") {
       try {
         data.addresses.forEach(async (address, index) => {
-          await CompanyAddressAssetsService.Put(
-            {
+          if (adressRes?.[index]) {
+            await CompanyAddressAssetsService.Put(
+              {
+                companyId: Number(editId),
+                addressIp: address.addressIp,
+                addressIpBlock: address.addressBlock,
+              },
+              Number(adressRes?.[index].id)
+            );
+          } else {
+            await CompanyAddressAssetsService.Post({
               companyId: Number(editId),
               addressIp: address.addressIp,
               addressIpBlock: address.addressBlock,
-            },
-            Number(adressRes?.[index].id)
-          );
+            });
+          }
         });
         addStep();
       } catch (error) {
@@ -97,21 +116,6 @@ const AddressForm = ({
       fetchCompanyAddres();
     } catch (error) {
       toast.error("Erro ao deletar domínio");
-      console.log(error);
-    }
-  };
-
-  const onCreateAddress = async () => {
-    try {
-      await CompanyAddressAssetsService.Post({
-        companyId: editId ? Number(editId) : companyId,
-        addressIp: "",
-        addressIpBlock: "",
-      });
-      fetchCompanyAddres();
-      setAddressSize(addressSize + 1);
-    } catch (error) {
-      toast.error("Erro ao adicionar domínio");
       console.log(error);
     }
   };
@@ -164,11 +168,23 @@ const AddressForm = ({
                 type="button"
                 onClick={() => {
                   if (!editId) {
-                    if (addressSize > 0) setAddressSize(addressSize - 1);
+                    if (addressSize > 0) {
+                      setAddressSize(addressSize - 1);
+                    }
+                    const updatedAddress = getValues("addresses").filter(
+                      (_, idx) => idx !== index
+                    );
+                    setValue("addresses", updatedAddress);
                   } else {
                     if (addressSize > 0) {
                       setAddressSize(addressSize - 1);
-                      onDelete(adressRes?.[index].id);
+                      const updatedAddress = getValues("addresses").filter(
+                        (_, idx) => idx !== index
+                      );
+                      setValue("addresses", updatedAddress);
+                      if (adressRes?.[index].id) {
+                        onDelete(adressRes?.[index].id);
+                      }
                     }
                   }
                 }}
@@ -211,8 +227,7 @@ const AddressForm = ({
         <Button
           type="button"
           onClick={() => {
-            if (editId) onCreateAddress();
-            if (!editId) setAddressSize(addressSize + 1);
+            setAddressSize(addressSize + 1);
           }}
           variant={"ghost"}
           className="text-[#1F4C85] font-semibold justify-start"
@@ -224,8 +239,9 @@ const AddressForm = ({
 
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
-          onClick={() => {
+          onClick={async () => {
             if (!editId) {
+              await onInactive();
               navigation.push("/admin");
             } else {
               removeStep();

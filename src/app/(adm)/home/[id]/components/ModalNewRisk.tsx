@@ -91,7 +91,7 @@ const ModalNewRisk = ({
             origin: Number(risk?.origin) ?? 0,
             riskSeverity: risk ? Number(risk.severity) : 0,
             active: risk ? risk.isActive : "",
-            limitDate: limitDate ? limitDate : "",
+            limitDate: limitDate ? limitDate : undefined,
             name: risk ? risk.name : "",
             description: risk ? risk.description : "",
             observations: data.observations,
@@ -201,8 +201,10 @@ const ModalNewRisk = ({
         isActive: resetRisk.active,
         description: resetRisk.description,
       });
-      const dateLimit = new Date(resetRisk.limitDate);
-      setLimitDate(dateLimit?.toISOString().split("T")[0] ?? "");
+      if (resetRisk.limitDate) {
+        const dateLimit = new Date(resetRisk.limitDate);
+        setLimitDate(dateLimit?.toISOString().split("T")[0] ?? "");
+      }
       reset2({
         observations: resetRisk.observations,
         actionPlan: resetRisk.actionPlan,
