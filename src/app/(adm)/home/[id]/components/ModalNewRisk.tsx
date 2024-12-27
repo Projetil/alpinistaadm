@@ -441,9 +441,9 @@ const ModalNewRisk = ({
         {steps == 2 && (
           <form
             onSubmit={handleSubmit2(onSubmit2)}
-            className="text-[#050506] flex flex-col gap-6"
+            className="text-[#050506] flex flex-col gap-6 "
           >
-            <div className="h-30">
+            <div className="h-full">
               <Label className="">
                 Observações <span className="text-red-500">*</span>
               </Label>

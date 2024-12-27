@@ -66,6 +66,10 @@ const AddressForm = ({
   };
 
   const onSubmit = (data: AddressFormValues) => {
+    if (addressSize === 0) {
+      toast.error("Adicione ao menos um endereço");
+      return;
+    }
     if (editId && editId !== "") {
       try {
         data.addresses.forEach(async (address, index) => {
@@ -240,6 +244,10 @@ const AddressForm = ({
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
           onClick={async () => {
+            if (addressSize === 0) {
+              toast.error("Adicione ao menos um endereço");
+              return;
+            }
             if (!editId) {
               await onInactive();
               navigation.push("/admin");

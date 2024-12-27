@@ -19,7 +19,7 @@ const Tab2Modal = ({
         <h4 className="font-semibold text-[#050506]">Detalhamento</h4>
         <IoInformationCircle color="#1A69C4" size={24} />
       </div>
-      <div className="flex flex-col gap-4 ">
+      <div className="flex flex-col gap-4 overflow-x-auto">
         <AccordingTab2
           title={"Observações"}
           descript={
