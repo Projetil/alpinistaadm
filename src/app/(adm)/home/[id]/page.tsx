@@ -192,22 +192,26 @@ export default function CompanyIndPage() {
         >
           <Plus color="#F8F8F8" size={30} />
         </button>
+       
+          <ModalNewRisk
+            riskId={editRiskId}
+            open={openModal}
+            setOpen={() => setOpenModal(!openModal)}
+            setRiskId={(x: number) => setEditRiskId(x)}
+          />
+     
 
-        <ModalNewRisk
-          riskId={editRiskId}
-          open={openModal}
-          setOpen={() => setOpenModal(!openModal)}
-          setRiskId={(x: number) => setEditRiskId(x)}
-        />
       </>
+    
+        <ModalAccountDetail
+          riskId={openedRiskId}
+          setRiskId={(x: number) => setEditRiskId(x)}
+          setOpenModalEdit={() => setOpenModal(!openModal)}
+          open={openModalDetails}
+          setOpen={() => setOpenModalDetails(!openModalDetails)}
+        />
 
-      <ModalAccountDetail
-        riskId={openedRiskId}
-        setRiskId={(x: number) => setEditRiskId(x)}
-        setOpenModalEdit={() => setOpenModal(!openModal)}
-        open={openModalDetails}
-        setOpen={() => setOpenModalDetails(!openModalDetails)}
-      />
+
     </main>
   );
 }

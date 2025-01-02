@@ -97,6 +97,7 @@ const ModalNewRisk = ({
             observations: data.observations,
             actionPlan: data.actionPlan,
             evidences: data.evidences,
+            responsibleCustomerId: Number(risk?.responsible)
           },
           riskId
         );
@@ -114,6 +115,7 @@ const ModalNewRisk = ({
           observations: data.observations,
           actionPlan: data.actionPlan,
           evidences: data.evidences,
+          responsibleCustomerId: Number(risk?.responsible)
         });
 
         filesRisk.map(async (files) => {
