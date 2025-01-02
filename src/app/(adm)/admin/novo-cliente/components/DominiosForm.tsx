@@ -60,6 +60,10 @@ const DominiosForm = ({
   };
 
   const onSubmit = (data: DomainFormValues) => {
+    if (domainSize === 0) {
+      toast.error("Adicione ao menos um domínio");
+      return;
+    }
     if (editId && editId !== "") {
       try {
         data.domains.forEach(async (domain, index) => {
@@ -213,6 +217,10 @@ const DominiosForm = ({
       <div className="flex w-full gap-4 justify-end items-center mt-2">
         <Button
           onClick={async () => {
+            if (domainSize === 0) {
+              toast.error("Adicione ao menos um domínio");
+              return;
+            }
             if (!editId) {
               await onInactive();
               navigation.push("/admin");

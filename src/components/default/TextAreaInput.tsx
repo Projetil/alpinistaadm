@@ -85,7 +85,7 @@ const Editor = ({
   }
 
   return (
-    <div className="bg-white border p-2 rounded-md w-full">
+    <div className="bg-white border p-2 rounded-md w-full h-fit">
       <div className="flex mb-2 flex-wrap gap-2">
         <button
           type="button"
@@ -172,13 +172,13 @@ const Editor = ({
           />
         </label>
       </div>
-      <div className="h-[80px]">
+      <>
         <EditorContent
           placeholder="Digite aqui..."
-          className={`EditorContent overflow-y-auto p-2 max-h-24 break-words max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
+          className={`EditorContent overflow-y-auto p-2 h-fit break-words max-w-[${styling}] focus-visible:border-none focus-visible:outline-none`}
           editor={editor}
         />
-      </div>
+      </>
       {files.length > 0 && (
         <div className="mt-2">
           <h4 className="text-sm font-medium">Arquivos:</h4>

@@ -54,7 +54,7 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           dangerouslySetInnerHTML={{
             __html: currentRisk ? currentRisk.description : "",
           }}
-          className="md:w-2/3 text-[#80828D]"
+          className="text-[#80828D]  overflow-auto break-words"
         ></p>
       </div>
     </div>
