@@ -94,7 +94,7 @@ const ModalCreateCustomer = ({
           },
           customerId
         );
-        toast.success("Empresa atualizada com sucesso");
+        toast.success("Usuario atualizado com sucesso");
       } else {
         const resUser = await UserService.Post({
           email: data.email,
@@ -112,7 +112,7 @@ const ModalCreateCustomer = ({
           userId: resUser.id,
           companyId: companyId,
         });
-        toast.success("Empresa cadastrada com sucesso");
+        toast.success("Usuario cadastrado com sucesso");
       }
 
       setOpen();

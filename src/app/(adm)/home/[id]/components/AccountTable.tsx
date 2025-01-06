@@ -110,7 +110,7 @@ const AccountTable = ({
               key={index}
               className={`${
                 index === 0 ? "" : "border-t border-gray-200"
-              } text-[#636267] text-center`}
+              } text-[#636267] text-center cursor-pointer`}
             >
               <td className="py-3 px-4 text-sm max-w-[200px]">
                 <div className="flex">{row.id}</div>

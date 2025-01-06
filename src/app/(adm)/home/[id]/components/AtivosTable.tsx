@@ -7,7 +7,8 @@ import {
   riskSeverity,
   riskStatus,
 } from "@/types/IRisk";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import CustomerService from "@/services/CustomerService";
 
 const AtivosTable = ({
   openModal,
@@ -26,6 +27,7 @@ const AtivosTable = ({
   columnName?: string;
   columnType?: string;
 }) => {
+  const [respNames, setRespNames] = useState<{ [key: number]: string }>({});
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "asc" | "desc";
@@ -61,6 +63,25 @@ const AtivosTable = ({
       return { key, direction: "asc" };
     });
   };
+
+  useEffect(() => {
+    const fetchResponsibleNames = async () => {
+      if (risks?.items) {
+        const names: { [key: number]: string } = {};
+        for (const risk of risks.items) {
+          if (risk.responsibleCustomerId) {
+            const customer = await CustomerService.GetById(
+              risk.responsibleCustomerId
+            );
+            names[risk.responsibleCustomerId] = customer.name;
+          }
+        }
+        setRespNames(names);
+      }
+    };
+
+    fetchResponsibleNames();
+  }, [risks]);
 
   return (
     <section className="w-full overflow-x-auto md:bg-white rounded-md">
@@ -133,6 +154,8 @@ const AtivosTable = ({
                           columnType as keyof typeof row
                         ] as keyof typeof riskOrigin
                       ]
+                    : columnType == "responsibleCustomerId"
+                    ? respNames[row.responsibleCustomerId ?? 0]
                     : row[columnType as keyof typeof row]}
                 </div>
               </td>

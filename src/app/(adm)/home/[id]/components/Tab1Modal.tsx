@@ -2,10 +2,16 @@ import { IRisk, riskSeverity, riskStatus } from "@/types/IRisk";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
 import { IoInformationCircle } from "react-icons/io5";
 
-const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
+const Tab1Modal = ({
+  currentRisk,
+  nameResponsible,
+}: {
+  currentRisk?: IRisk;
+  nameResponsible?: string;
+}) => {
   return (
-    <div>
-      <div className="flex w-full justify-between mb-8">
+    <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
+      <div className="flex w-full justify-between mb-8 ">
         <h4 className="font-semibold text-[#050506]">Informações principais</h4>
         <IoInformationCircle color="#1A69C4" size={24} />
       </div>
@@ -14,6 +20,14 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">ID</p>
             <p>{currentRisk ? currentRisk.id : ""}</p>
+          </div>
+          <div className="flex flex-col gap-3 text-left">
+            <div className="flex flex-col gap-2">
+              <p className="font-semibold text-[#40414A]">
+                Nome do responsavél
+              </p>
+              <p>{nameResponsible ? nameResponsible : ""}</p>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-semibold text-[#40414A]">Estado</p>
@@ -41,20 +55,20 @@ const Tab1Modal = ({ currentRisk }: { currentRisk?: IRisk }) => {
             <p className="font-semibold text-[#40414A]">Data de correção</p>
             <p>
               {" "}
-              {currentRisk && currentRisk.limitDate
-                ? formatDateToDDMMYYYY(currentRisk.limitDate)
+              {currentRisk && currentRisk.updatedAt
+                ? formatDateToDDMMYYYY(currentRisk.updatedAt)
                 : ""}
             </p>
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-2 mt-3">
+      <div className="flex flex-col gap-2 mt-3 overflow-auto">
         <p className="font-semibold text-[#40414A]">Descrição</p>
         <p
           dangerouslySetInnerHTML={{
             __html: currentRisk ? currentRisk.description : "",
           }}
-          className="md:w-2/3 text-[#80828D]"
+          className="text-[#80828D] overflow-auto break-words"
         ></p>
       </div>
     </div>
