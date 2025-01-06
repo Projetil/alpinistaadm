@@ -17,6 +17,7 @@ import { IPagedRisksHistorical } from "@/types/IRisksHistorical";
 import { IPagedRisksComment } from "@/types/IRisksComment";
 import RisksFileService from "@/services/RisksFilesService";
 import { IPagedRiskFile } from "@/types/IRiskFile";
+import CustomerService from "@/services/CustomerService";
 
 const ModalAccountDetail = ({
   open,
@@ -35,6 +36,7 @@ const ModalAccountDetail = ({
   const [tabs, setTabs] = useState(1);
   const [hideComment, setHideComment] = useState(true);
   const [risk, setRisk] = useState<IRisk>();
+  const [responsibleName, setResponsibleName] = useState("");
   const [historicalData, setHistoricalData] = useState<IPagedRisksHistorical>();
   const [commentsData, setCommentsData] = useState<IPagedRisksComment>();
   const [filesData, setFilesData] = useState<IPagedRiskFile>();
@@ -43,6 +45,12 @@ const ModalAccountDetail = ({
     try {
       const res = await RisksService.GetById(riskId ?? 0);
       setRisk(res);
+      if (res.responsibleCustomerId) {
+        const resNameClient = (
+          await CustomerService.GetById(res.responsibleCustomerId)
+        ).name;
+        setResponsibleName(resNameClient);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -180,7 +188,9 @@ const ModalAccountDetail = ({
           </div>
         </div>
 
-        {tabs == 1 && <Tab1Modal currentRisk={risk} />}
+        {tabs == 1 && (
+          <Tab1Modal currentRisk={risk} nameResponsible={responsibleName} />
+        )}
         {tabs == 2 && <Tab2Modal currentRisk={risk} filesData={filesData} />}
         {tabs == 3 && (
           <Tab3Modal
