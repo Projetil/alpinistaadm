@@ -5,61 +5,22 @@ import CardClientMobile from "./CardClientMobile";
 import { IPagedCompany } from "@/types/ICompany";
 import { formatCNPJ, formatDateString } from "@/utils/formatString";
 import PopoverClients from "./PopoverClients";
-import { useState } from "react";
 
 const ClientTable = ({
   companies,
   page,
   setPage,
   handleDelete,
+  setNameColumn,
+  setDirectionColumn,
 }: {
   companies?: IPagedCompany;
   page: number;
   setPage: (x: number) => void;
   handleDelete: (id: number) => void;
+  setNameColumn: (x: string) => void;
+  setDirectionColumn: () => void;
 }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedCompanies = [...(companies?.items || [])].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aValue = a[key as keyof typeof a];
-    const bValue = b[key as keyof typeof b];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    if (aValue instanceof Date && bValue instanceof Date) {
-      return direction === "asc"
-        ? aValue.getTime() - bValue.getTime()
-        : bValue.getTime() - aValue.getTime();
-    }
-
-    return 0;
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -68,7 +29,10 @@ const ClientTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("name")}
+                onClick={() => {
+                  setNameColumn("Name");
+                  setDirectionColumn();
+                }}
               >
                 EMPRESA <FaArrowsAltV />
               </div>
@@ -76,7 +40,10 @@ const ClientTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center justify-start gap-2 cursor-pointer"
-                onClick={() => handleSort("cnpj")}
+                onClick={() => {
+                  setNameColumn("Cnpj");
+                  setDirectionColumn();
+                }}
               >
                 CNPJ <FaArrowsAltV />
               </div>
@@ -84,7 +51,10 @@ const ClientTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("status")}
+                onClick={() => {
+                  setNameColumn("Status");
+                  setDirectionColumn();
+                }}
               >
                 STATUS <FaArrowsAltV />
               </div>
@@ -92,7 +62,10 @@ const ClientTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("createdAt")}
+                onClick={() => {
+                  setNameColumn("CreatedAt");
+                  setDirectionColumn();
+                }}
               >
                 DATA DE CADASTRO <FaArrowsAltV />
               </div>
@@ -101,7 +74,7 @@ const ClientTable = ({
           </tr>
         </thead>
         <tbody>
-          {sortedCompanies.map((row, index) => (
+          {companies?.items.map((row, index) => (
             <tr
               key={index}
               className={`${

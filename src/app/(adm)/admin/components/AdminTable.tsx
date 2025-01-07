@@ -5,7 +5,6 @@ import { IPagedAdministrator } from "@/types/IAdministrator";
 import CardAdminMobile from "./CardAdminMobile";
 import PopoverAdm from "./PopoverAdm";
 import { formatPhone } from "@/utils/formatString";
-import { useState } from "react";
 
 const AdminTable = ({
   administrators,
@@ -14,6 +13,8 @@ const AdminTable = ({
   setAdmId,
   setOpenModal,
   handleDelete,
+  setNameColumn,
+  setDirectionColumn,
 }: {
   administrators?: IPagedAdministrator;
   page: number;
@@ -21,45 +22,9 @@ const AdminTable = ({
   setAdmId: (x: number) => void;
   setOpenModal: () => void;
   handleDelete: (x: number) => void;
+  setNameColumn: (x: string) => void;
+  setDirectionColumn: () => void;
 }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedAdministrators = [...(administrators?.items || [])].sort(
-    (a, b) => {
-      if (!sortConfig) return 0;
-      const { key, direction } = sortConfig;
-      const aValue = a[key as keyof typeof a];
-      const bValue = b[key as keyof typeof b];
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return direction === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
-
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return direction === "asc" ? aValue - bValue : bValue - aValue;
-      }
-
-      return 0;
-    }
-  );
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -68,7 +33,10 @@ const AdminTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("name")}
+                onClick={() => {
+                  setNameColumn("Name");
+                  setDirectionColumn();
+                }}
               >
                 NOME <FaArrowsAltV />
               </div>
@@ -76,7 +44,10 @@ const AdminTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center justify-start gap-2 cursor-pointer"
-                onClick={() => handleSort("phone")}
+                onClick={() => {
+                  setNameColumn("Phone");
+                  setDirectionColumn();
+                }}
               >
                 TELEFONE <FaArrowsAltV />
               </div>
@@ -84,7 +55,10 @@ const AdminTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("position")}
+                onClick={() => {
+                  setNameColumn("Position");
+                  setDirectionColumn();
+                }}
               >
                 CARGO <FaArrowsAltV />
               </div>
@@ -92,7 +66,10 @@ const AdminTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("email")}
+                onClick={() => {
+                  setNameColumn("Email");
+                  setDirectionColumn();
+                }}
               >
                 E-MAIL <FaArrowsAltV />
               </div>
@@ -101,7 +78,7 @@ const AdminTable = ({
           </tr>
         </thead>
         <tbody>
-          {sortedAdministrators.map((row, index) => (
+          {administrators?.items.map((row, index) => (
             <tr
               key={index}
               className={`${

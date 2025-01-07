@@ -6,55 +6,21 @@ import CompanyCard from "./CardTableMobile";
 import { useRouter } from "next/navigation";
 import { IPagedCompany } from "@/types/ICompany";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
-import { useState } from "react";
 
 const CompanyTable = ({
   companies,
   pageNumber,
   setPageNumber,
+  setNameColumn,
+  setDirectionColumn,
 }: {
   companies?: IPagedCompany;
   pageNumber: number;
   setPageNumber: (x: number) => void;
+  setNameColumn: (x: string) => void;
+  setDirectionColumn: () => void;
 }) => {
   const navigate = useRouter();
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedCompanies = [...(companies?.items || [])].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aValue = a[key as keyof typeof a];
-    const bValue = b[key as keyof typeof b];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (aValue instanceof Date && bValue instanceof Date) {
-      return direction === "asc"
-        ? aValue.getTime() - bValue.getTime()
-        : bValue.getTime() - aValue.getTime();
-    }
-
-    return 0;
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
 
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
@@ -64,7 +30,10 @@ const CompanyTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("name")}
+                onClick={() => {
+                  setNameColumn("name");
+                  setDirectionColumn();
+                }}
               >
                 EMPRESA <FaArrowsAltV />
               </div>
@@ -72,7 +41,10 @@ const CompanyTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("status")}
+                onClick={() => {
+                  setNameColumn("status");
+                  setDirectionColumn();
+                }}
               >
                 STATUS <FaArrowsAltV />
               </div>
@@ -80,19 +52,31 @@ const CompanyTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("createdAt")}
+                onClick={() => {
+                  setNameColumn("createdAt");
+                  setDirectionColumn();
+                }}
               >
                 DATA DE CADASTRO <FaArrowsAltV />
               </div>
             </th>
-            <th className="py-3 px-4 text-sm font-semibold">
-              <div className="flex items-center gap-2">DATA DE ATUALIZAÇÃO</div>
+            <th className="py-3 px-4 text-sm font-semibold items-center">
+              <div
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  setNameColumn("createdAt");
+                  setDirectionColumn();
+                }}
+              >
+                DATA DE ATUALIZAÇÃO
+                <FaArrowsAltV />
+              </div>
             </th>
             <th className="py-3 px-4 text-sm font-semibold">AÇÃO</th>
           </tr>
         </thead>
         <tbody>
-          {sortedCompanies.map((row, index) => (
+          {companies?.items.map((row, index) => (
             <tr
               key={index}
               className={`${
