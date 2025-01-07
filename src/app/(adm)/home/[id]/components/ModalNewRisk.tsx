@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { LoadingSpinner } from "@/components/default/Spinner";
 
 const riskForm1Schema = z.object({
   id: z.string().optional(),
@@ -83,6 +84,7 @@ const ModalNewRisk = ({
 
   const onSubmit2 = async (data: RiskFormInputs2) => {
     try {
+      setLoading(true);
       if (riskId && riskId > 0) {
         await RisksService.Put(
           {
@@ -97,7 +99,7 @@ const ModalNewRisk = ({
             observations: data.observations,
             actionPlan: data.actionPlan,
             evidences: data.evidences,
-            responsibleCustomerId: Number(risk?.responsible)
+            responsibleCustomerId: Number(risk?.responsible),
           },
           riskId
         );
@@ -115,7 +117,7 @@ const ModalNewRisk = ({
           observations: data.observations,
           actionPlan: data.actionPlan,
           evidences: data.evidences,
-          responsibleCustomerId: Number(risk?.responsible)
+          responsibleCustomerId: Number(risk?.responsible),
         });
 
         filesRisk.map(async (files) => {
@@ -131,6 +133,8 @@ const ModalNewRisk = ({
     } catch (e) {
       console.log(e);
       toast.error("Erro ao criar risco");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -293,7 +297,7 @@ const ModalNewRisk = ({
                   </option>
                   <option value="1">Pendente</option>
                   <option value="2">Em progresso</option>
-                  <option value="3">Fixado</option>
+                  <option value="3">Corrigido</option>
                   <option value="4">Aceito</option>
                   <option value="5">Retest</option>
                   <option value="6">Reopened</option>
@@ -526,10 +530,11 @@ const ModalNewRisk = ({
                 Voltar
               </Button>
               <Button
+                disabled={loading}
                 type="submit"
                 className="md:w-fit w-full bg-[#3088EE] border-none"
               >
-                Adicionar
+                {loading ? <LoadingSpinner /> : "Adicionar"}
               </Button>
             </div>
           </form>

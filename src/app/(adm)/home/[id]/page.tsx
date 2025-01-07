@@ -30,10 +30,19 @@ export default function CompanyIndPage() {
   const [openedRiskId, setOpenedRiskId] = useState<number>();
   const [editRiskId, setEditRiskId] = useState<number>();
   const ativosRef = useRef<HTMLDivElement>(null);
+  const [orderColumn, setOrderColumn] = useState("Id");
+  const [orderDirection, setOrderDirection] = useState(true);
 
   const fetchRisks = async () => {
     try {
-      const res = await RisksService.Get(page, 10, undefined, Number(id));
+      const res = await RisksService.Get(
+        page,
+        10,
+        undefined,
+        Number(id),
+        orderColumn,
+        orderDirection ? "asc" : "desc"
+      );
       setRisks(res);
     } catch (error) {
       console.log(error);
@@ -64,7 +73,7 @@ export default function CompanyIndPage() {
 
   useEffect(() => {
     fetchRisks();
-  }, [page, openModal]);
+  }, [page, openModal, orderColumn, orderDirection]);
 
   useEffect(() => {
     fetchCompany();
@@ -115,6 +124,8 @@ export default function CompanyIndPage() {
             currentPage={page}
             setCurrentPage={setPage}
             setRiskId={(x: number) => setOpenedRiskId(x)}
+            setNameColumn={(x: string) => setOrderColumn(x)}
+            setDirectionColumn={() => setOrderDirection(!orderDirection)}
           />
         )}
         {selected == "Ativos" && (
@@ -192,26 +203,22 @@ export default function CompanyIndPage() {
         >
           <Plus color="#F8F8F8" size={30} />
         </button>
-       
-          <ModalNewRisk
-            riskId={editRiskId}
-            open={openModal}
-            setOpen={() => setOpenModal(!openModal)}
-            setRiskId={(x: number) => setEditRiskId(x)}
-          />
-     
 
-      </>
-    
-        <ModalAccountDetail
-          riskId={openedRiskId}
+        <ModalNewRisk
+          riskId={editRiskId}
+          open={openModal}
+          setOpen={() => setOpenModal(!openModal)}
           setRiskId={(x: number) => setEditRiskId(x)}
-          setOpenModalEdit={() => setOpenModal(!openModal)}
-          open={openModalDetails}
-          setOpen={() => setOpenModalDetails(!openModalDetails)}
         />
+      </>
 
-
+      <ModalAccountDetail
+        riskId={openedRiskId}
+        setRiskId={(x: number) => setEditRiskId(x)}
+        setOpenModalEdit={() => setOpenModal(!openModal)}
+        open={openModalDetails}
+        setOpen={() => setOpenModalDetails(!openModalDetails)}
+      />
     </main>
   );
 }

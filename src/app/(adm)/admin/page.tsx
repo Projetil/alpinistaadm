@@ -21,10 +21,20 @@ export default function AdminPage() {
   const [pageCompany, setPageCompany] = useState(1);
   const [editAdmId, setEditAdmId] = useState<number>();
   const [pageAdmin, setPageAdmin] = useState(1);
+  const [orderColumn, setOrderColumn] = useState("id");
+  const [orderDirection, setOrderDirection] = useState(true);
+  const [orderAdminColumn, setOrderAdminColumn] = useState("id");
+  const [orderAdminDirection, setOrderAdminDirection] = useState(true);
 
   const fetchAdmins = async () => {
     try {
-      const res = await AdministratorService.GetAll(pageAdmin, 10);
+      const res = await AdministratorService.GetAll(
+        pageAdmin,
+        10,
+        undefined,
+        orderAdminColumn,
+        orderAdminDirection ? "asc" : "desc"
+      );
       setAdmins(res);
     } catch (error) {
       console.log(error);
@@ -55,7 +65,12 @@ export default function AdminPage() {
 
   const fetchCompany = async () => {
     try {
-      const res = await CompanyService.GetAll(pageCompany, 10);
+      const res = await CompanyService.GetAll(
+        pageCompany,
+        10,
+        orderColumn,
+        orderDirection ? "asc" : "desc"
+      );
       setCompany(res);
     } catch (error) {
       console.log(error);
@@ -63,9 +78,12 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchCompany();
     fetchAdmins();
-  }, [open, pageAdmin, pageCompany]);
+  }, [open, pageAdmin, orderAdminColumn, orderAdminDirection]);
+
+  useEffect(() => {
+    fetchCompany();
+  }, [open, pageCompany, orderColumn, orderDirection]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -121,6 +139,8 @@ export default function AdminPage() {
                 setPageCompany(x);
               }}
               handleDelete={handleDeleteCompany}
+              setNameColumn={(x: string) => setOrderColumn(x)}
+              setDirectionColumn={() => setOrderDirection(!orderDirection)}
             />
             <Button
               onClick={() => navigation.push("/admin/novo-cliente")}
@@ -139,6 +159,8 @@ export default function AdminPage() {
                 setPageAdmin(x);
               }}
               handleDelete={handleDeleteAdm}
+              setNameColumn={(x: string) => setOrderAdminColumn(x)}
+              setDirectionColumn={() => setOrderAdminDirection(!orderDirection)}
             />
             <Button
               onClick={() => setOpen(!open)}

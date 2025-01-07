@@ -10,11 +10,18 @@ export default function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [orderColumn, setOrderColumn] = useState("id");
+  const [orderDirection, setOrderDirection] = useState(true);
 
   const fetchCompany = async () => {
     try {
       setLoading(true);
-      const res = await CompanyService.GetAll(page, 10);
+      const res = await CompanyService.GetAll(
+        page,
+        10,
+        orderColumn,
+        orderDirection ? "asc" : "desc"
+      );
       setCompanies(res);
     } catch (error) {
       console.log(error);
@@ -26,7 +33,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchCompany();
-  }, [page]);
+  }, [page, orderColumn, orderDirection]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -40,6 +47,8 @@ export default function HomePage() {
         companies={companies}
         pageNumber={page}
         setPageNumber={(x: number) => setPage(x)}
+        setNameColumn={(x: string) => setOrderColumn(x)}
+        setDirectionColumn={() => setOrderDirection(!orderDirection)}
       />
     </main>
   );

@@ -10,26 +10,9 @@ import { toast } from "react-toastify";
 import UserService from "@/services/UserService";
 import { LoadingSpinner } from "@/components/default/Spinner";
 
-const resetPasswordSchema = z
-  .object({
-    email: z
-      .string()
-      .email("Por favor, insira um email válido.")
-      .optional()
-      .or(z.literal("")),
-    phone: z
-      .string()
-      .regex(
-        /^\d{2}\s\d{1}\s\d{4}\s\d{4}$/,
-        "Por favor, insira um número de telefone válido."
-      )
-      .optional()
-      .or(z.literal("")),
-  })
-  .refine((data) => data.email || data.phone, {
-    message: "Por favor, insira um email ou um número de telefone válido.",
-    path: ["email"],
-  });
+const resetPasswordSchema = z.object({
+  email: z.string().email("Por favor, insira um email válido."),
+});
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
@@ -44,7 +27,6 @@ export default function ResetPassword({
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -64,31 +46,11 @@ export default function ResetPassword({
     }
   };
 
-  const formatPhoneNumber = (input: string) => {
-    const cleaned = input.replace(/\D/g, "");
-    if (cleaned.length <= 2) return cleaned;
-    if (cleaned.length <= 3)
-      return `${cleaned.slice(0, 2)} ${cleaned.slice(2)}`;
-    if (cleaned.length <= 7)
-      return `${cleaned.slice(0, 2)} ${cleaned.slice(2, 3)} ${cleaned.slice(
-        3
-      )}`;
-    return `${cleaned.slice(0, 2)} ${cleaned.slice(2, 3)} ${cleaned.slice(
-      3,
-      7
-    )} ${cleaned.slice(7, 11)}`;
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedPhone = formatPhoneNumber(e.target.value);
-    setValue("phone", formattedPhone);
-  };
-
   return (
     <Container>
       <Header title="Recuperar Senha" onClose={onClose} />
       <p className="p-4">
-        Para recuperar sua senha, digite o e-mail ou telefone cadastrado.
+        Para recuperar sua senha, digite o e-mail cadastrado.
       </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -100,20 +62,19 @@ export default function ResetPassword({
             type="email"
             {...register("email")}
             placeholder="mail.example@gmail.com"
-            disabled={Boolean(errors.phone)}
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
 
-        <div className="w-full flex justify-between items-center">
+        {/*  <div className="w-full flex justify-between items-center">
           <div className="w-full h-[2px] bg-gray-100" />
           <p className="mx-2 text-gray-200">Ou</p>
           <div className="w-full h-[2px] bg-gray-100" />
-        </div>
+        </div> */}
 
-        <div className="space-y-1">
+        {/* <div className="space-y-1">
           <label className="block font-semibold">SMS:</label>
           <Input
             type="text"
@@ -126,7 +87,7 @@ export default function ResetPassword({
           {errors.phone && (
             <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
           )}
-        </div>
+        </div> */}
 
         <Button type="submit" className="w-full bg-[#3088EE]">
           {loading ? <LoadingSpinner /> : "Enviar"}

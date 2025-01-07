@@ -1,7 +1,7 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
 import CardAccountMobile from "./CardAccountMobile";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { IPagedRisk, riskSeverity, riskStatus } from "@/types/IRisk";
 
 const AccountTable = ({
@@ -10,49 +10,17 @@ const AccountTable = ({
   currentPage,
   setCurrentPage,
   setRiskId,
+  setNameColumn,
+  setDirectionColumn,
 }: {
   openModal: () => void;
   risks?: IPagedRisk;
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setRiskId: (x: number) => void;
+  setNameColumn: (x: string) => void;
+  setDirectionColumn: () => void;
 }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedRisks = [...(risks?.items || [])].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aValue = a[key as keyof typeof a];
-    const bValue = b[key as keyof typeof b];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    return 0;
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
   return (
     <section className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -61,7 +29,10 @@ const AccountTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("id")}
+                onClick={() => {
+                  setNameColumn("id");
+                  setDirectionColumn();
+                }}
               >
                 ID <FaArrowsAltV />
               </div>
@@ -69,7 +40,10 @@ const AccountTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("name")}
+                onClick={() => {
+                  setNameColumn("name");
+                  setDirectionColumn();
+                }}
               >
                 NOME <FaArrowsAltV />
               </div>
@@ -77,7 +51,10 @@ const AccountTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("active")}
+                onClick={() => {
+                  setNameColumn("active");
+                  setDirectionColumn();
+                }}
               >
                 ATIVO <FaArrowsAltV />
               </div>
@@ -85,7 +62,10 @@ const AccountTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("status")}
+                onClick={() => {
+                  setNameColumn("status");
+                  setDirectionColumn();
+                }}
               >
                 ESTADO <FaArrowsAltV />
               </div>
@@ -93,7 +73,10 @@ const AccountTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("riskSeverity")}
+                onClick={() => {
+                  setNameColumn("riskSeverity");
+                  setDirectionColumn();
+                }}
               >
                 SEVERIDADE <FaArrowsAltV />
               </div>
@@ -101,7 +84,7 @@ const AccountTable = ({
           </tr>
         </thead>
         <tbody>
-          {sortedRisks.map((row, index) => (
+          {risks?.items.map((row, index) => (
             <tr
               onClick={() => {
                 openModal();
@@ -135,7 +118,7 @@ const AccountTable = ({
       </table>
 
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {sortedRisks.map((x, index) => (
+        {risks?.items.map((x, index) => (
           <CardAccountMobile
             openModalDetails={() => {
               openModal();
