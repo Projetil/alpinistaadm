@@ -6,10 +6,17 @@ import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
 const endpoint = "/Companies";
 
 const CompanyService = {
-  GetAll: async (pageNumber: number, pageSize: number) => {
+  GetAll: async (
+    pageNumber: number,
+    pageSize: number,
+    orderByColumn?: string,
+    orderByDirection?: string
+  ) => {
     try {
       const res = await api.get(
-        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          orderByColumn ? `&orderByColumn=${orderByColumn}` : ""
+        }${orderByDirection ? `&orderByDirection=${orderByDirection}` : ""}`
       );
       return res.data as IPagedCompany;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

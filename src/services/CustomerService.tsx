@@ -9,12 +9,16 @@ const CustomerService = {
   GetAllByCompanyId: async (
     pageNumber: number,
     pageSize: number,
-    companyId?: number
+    companyId?: number,
+    orderByColumn?: string,
+    orderByDirection?: string
   ) => {
     try {
       const res = await api.get(
         `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
           companyId ? `&companyId=${companyId}` : ""
+        }${orderByColumn ? `&orderByColumn=${orderByColumn}` : ""}${
+          orderByDirection ? `&orderByDirection=${orderByDirection}` : ""
         }`
       );
       return res.data as IPagedCustomer;

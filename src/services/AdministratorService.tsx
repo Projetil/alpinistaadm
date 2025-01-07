@@ -10,11 +10,19 @@ import {
 const endpoint = "/Administrators";
 
 const AdministratorService = {
-  GetAll: async (pageNumber: number, pageSize: number, userId?: number) => {
+  GetAll: async (
+    pageNumber: number,
+    pageSize: number,
+    userId?: number,
+    orderByColumn?: string,
+    orderByDirection?: string
+  ) => {
     try {
       const res = await api.get(
         `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
           userId ? `&userId=${userId}` : ""
+        }${orderByColumn ? `&orderByColumn=${orderByColumn}` : ""}${
+          orderByDirection ? `&orderByDirection=${orderByDirection}` : ""
         }`
       );
       return res.data as IPagedAdministrator;

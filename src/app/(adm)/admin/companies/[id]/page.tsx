@@ -23,10 +23,8 @@ export default function Companies() {
   const [page, setPage] = useState(1);
   const navigation = useRouter();
   const [editCustomerId, setEditCustomerId] = useState<number>();
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
+  const [orderColumn, setOrderColumn] = useState("id");
+  const [orderDirection, setOrderDirection] = useState(true);
 
   const handleDeleteCustomer = async (id: number) => {
     try {
@@ -41,7 +39,13 @@ export default function Companies() {
 
   const fetchCompany = async () => {
     try {
-      const res = await CustomerService.GetAllByCompanyId(page, 10, Number(id));
+      const res = await CustomerService.GetAllByCompanyId(
+        page,
+        10,
+        Number(id),
+        orderColumn,
+        orderDirection ? "asc" : "desc"
+      );
       const resCompany = await CompanyService.GetById(Number(id));
       setCompanyName(resCompany.name);
       setCustomers(res);
@@ -50,40 +54,9 @@ export default function Companies() {
     }
   };
 
-  const sortedCustomers = [...(customers?.items || [])].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aValue = a[key as keyof typeof a];
-    const bValue = b[key as keyof typeof b];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    return 0;
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
   useEffect(() => {
     fetchCompany();
-  }, [open, page]);
+  }, [open, page, orderColumn, orderDirection]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -116,7 +89,10 @@ export default function Companies() {
               <th className="py-3 px-4 text-sm font-semibold items-center">
                 <div
                   className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSort("name")}
+                  onClick={() => {
+                    setOrderColumn(" Name");
+                    setOrderDirection(!orderDirection);
+                  }}
                 >
                   NOME <FaArrowsAltV />
                 </div>
@@ -124,7 +100,10 @@ export default function Companies() {
               <th className="py-3 px-4 text-sm font-semibold items-center">
                 <div
                   className="flex items-center justify-start gap-2 cursor-pointer"
-                  onClick={() => handleSort("number")}
+                  onClick={() => {
+                    setOrderColumn("Number");
+                    setOrderDirection(!orderDirection);
+                  }}
                 >
                   TELEFONE <FaArrowsAltV />
                 </div>
@@ -132,7 +111,10 @@ export default function Companies() {
               <th className="py-3 px-4 text-sm font-semibold items-center">
                 <div
                   className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSort("profileId")}
+                  onClick={() => {
+                    setOrderColumn("ProfileId");
+                    setOrderDirection(!orderDirection);
+                  }}
                 >
                   TIPO <FaArrowsAltV />
                 </div>
@@ -140,7 +122,10 @@ export default function Companies() {
               <th className="py-3 px-4 text-sm font-semibold items-center">
                 <div
                   className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSort("position")}
+                  onClick={() => {
+                    setOrderColumn("Position");
+                    setOrderDirection(!orderDirection);
+                  }}
                 >
                   CARGO <FaArrowsAltV />
                 </div>
@@ -148,7 +133,10 @@ export default function Companies() {
               <th className="py-3 px-4 text-sm font-semibold items-center">
                 <div
                   className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSort("email")}
+                  onClick={() => {
+                    setOrderColumn("Email");
+                    setOrderDirection(!orderDirection);
+                  }}
                 >
                   E-MAIL <FaArrowsAltV />
                 </div>
@@ -157,7 +145,7 @@ export default function Companies() {
             </tr>
           </thead>
           <tbody>
-            {sortedCustomers.map((row, index) => (
+            {customers?.items.map((row, index) => (
               <tr
                 key={index}
                 className={`${

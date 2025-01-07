@@ -10,7 +10,9 @@ const RisksService = {
     pageNumber: number,
     pageSize: number,
     responsibleCustomerId?: number,
-    companyId?: number
+    companyId?: number,
+    orderByColumn?: string,
+    orderByDirection?: string
   ) => {
     try {
       const res = await api.get(
@@ -18,7 +20,9 @@ const RisksService = {
           responsibleCustomerId
             ? `&responsibleCustomerId=${responsibleCustomerId}&`
             : ""
-        }${companyId ? `&companyId=${companyId}` : ""}`
+        }${companyId ? `&companyId=${companyId}` : ""}${
+          orderByColumn ? `&orderByColumn=${orderByColumn}` : ""
+        }${orderByDirection ? `&orderByDirection=${orderByDirection}` : ""}`
       );
       return res.data as IPagedRisk;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
