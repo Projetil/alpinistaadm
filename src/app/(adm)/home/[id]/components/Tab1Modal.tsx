@@ -9,7 +9,16 @@ const Tab1Modal = ({
   currentRisk?: IRisk;
   nameResponsible?: string;
 }) => {
+const Tab1Modal = ({
+  currentRisk,
+  nameResponsible,
+}: {
+  currentRisk?: IRisk;
+  nameResponsible?: string;
+}) => {
   return (
+    <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
+      <div className="flex w-full justify-between mb-8 ">
     <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
       <div className="flex w-full justify-between mb-8 ">
         <h4 className="font-semibold text-[#050506]">Informações principais</h4>
@@ -57,17 +66,21 @@ const Tab1Modal = ({
               {" "}
               {currentRisk && currentRisk.updatedAt
                 ? formatDateToDDMMYYYY(currentRisk.updatedAt)
+              {currentRisk && currentRisk.updatedAt
+                ? formatDateToDDMMYYYY(currentRisk.updatedAt)
                 : ""}
             </p>
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-3 overflow-auto">
+      <div className="flex flex-col gap-2 mt-3 overflow-auto">
         <p className="font-semibold text-[#40414A]">Descrição</p>
         <p
           dangerouslySetInnerHTML={{
             __html: currentRisk ? currentRisk.description : "",
           }}
+          className="text-[#80828D] overflow-auto break-words"
           className="text-[#80828D] overflow-auto break-words"
         ></p>
       </div>
