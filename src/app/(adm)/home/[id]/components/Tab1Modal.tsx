@@ -24,7 +24,7 @@ const Tab1Modal = ({
           <div className="flex flex-col gap-3 text-left">
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-[#40414A]">
-                Nome do responsavél
+                Nome do responsável
               </p>
               <p>{nameResponsible ? nameResponsible : ""}</p>
             </div>
