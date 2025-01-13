@@ -1,8 +1,7 @@
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
 import { HttpStatusCode } from "axios";
 import { api } from "./api";
-import { GetAssetsResponse } from "@/types/IAssets";
-
+import { GetAssetsResponse, IAssetsAdm, ICreateAssets } from "@/types/IAssets";
 
 const endpoint = "/Assets";
 
@@ -32,6 +31,70 @@ const AssetsService = {
       const res = await api.get(`${endpoint}/Adm?${params.toString()}`);
       return res.data as GetAssetsResponse;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Get: async (id: number) => {
+    try {
+      const res = await api.get(`${endpoint}/Adm/${id}`);
+      return res.data as IAssetsAdm;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Post: async (data: ICreateAssets) => {
+    try {
+      const res = await api.post(`${endpoint}/Adm`, data);
+      return res.data as IAssetsAdm;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Put: async (data: IAssetsAdm, id: number) => {
+    try {
+      const res = await api.put(`${endpoint}/Adm/${id}`, data);
+      return res.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  Delete: async (id: number) => {
+    try {
+      const res = await api.delete(`${endpoint}/Adm/${id}`);
+      return res;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {

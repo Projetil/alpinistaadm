@@ -1,79 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import IPInput from "./IpInput";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 interface IPManagerProps {
-  selectedActiveOption: string
+  selectedActiveOption: string;
 }
 
-const IPManager: React.FC<IPManagerProps> = ({selectedActiveOption}) => {
-  const [ipInputs, setIpInputs] = useState<{ ip: string; ports: string[] }[]>(
-    []
-  );
+const IPManager: React.FC<IPManagerProps> = ({ selectedActiveOption }) => {
+  const { control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "assetIps",
+  });
 
   const addIpInput = () => {
-    setIpInputs((prev) => [...prev, { ip: "", ports: [""] }]);
+    append({ ip: "", assetIpPorts: [] });
   };
 
   const deleteIpInput = (index: number) => {
-    setIpInputs((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateIp = (index: number, value: string) => {
-    setIpInputs((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, ip: value } : item))
-    );
-  };
-
-  const updatePort = (ipIndex: number, portIndex: number, value: string) => {
-    setIpInputs((prev) =>
-      prev.map((item, i) =>
-        i === ipIndex
-          ? {
-              ...item,
-              ports: item.ports.map((port, j) =>
-                j === portIndex ? value : port
-              ),
-            }
-          : item
-      )
-    );
-  };
-
-  const addPort = (ipIndex: number) => {
-    setIpInputs((prev) =>
-      prev.map((item, i) =>
-        i === ipIndex ? { ...item, ports: [...item.ports, ""] } : item
-      )
-    );
-  };
-
-  const deletePort = (ipIndex: number, portIndex: number) => {
-    setIpInputs((prev) =>
-      prev.map((item, i) =>
-        i === ipIndex
-          ? {
-              ...item,
-              ports: item.ports.filter((_, j) => j !== portIndex),
-            }
-          : item
-      )
-    );
+    remove(index);
   };
 
   return (
     <div className="flex flex-col w-full mr-16">
-      {ipInputs.map((field, index) => (
+      {fields.map((field, index) => (
         <IPInput
-        selectedActiveOption={selectedActiveOption}
-          key={index}
+          key={field.id}
           index={index}
-          ipData={field}
-          updateIp={updateIp}
-          addPort={addPort}
-          updatePort={updatePort}
-          deletePort={deletePort}
+          selectedActiveOption={selectedActiveOption}
           deleteIpInput={deleteIpInput}
         />
       ))}
@@ -81,7 +37,7 @@ const IPManager: React.FC<IPManagerProps> = ({selectedActiveOption}) => {
         <Button
           variant={"ghost"}
           onClick={addIpInput}
-          className=" text-[#1F4C85] font-semibold justify-start"
+          className="text-[#1F4C85] font-semibold justify-start"
           type="button"
         >
           <Plus />

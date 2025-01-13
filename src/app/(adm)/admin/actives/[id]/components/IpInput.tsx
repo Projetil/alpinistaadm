@@ -2,29 +2,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 interface IPInputProps {
-  ipData: { ip: string; ports: string[] };
   index: number;
   selectedActiveOption: string;
-  updateIp: (index: number, value: string) => void;
-  addPort: (ipIndex: number) => void;
-  updatePort: (ipIndex: number, portIndex: number, value: string) => void;
-  deletePort: (ipIndex: number, portIndex: number) => void;
   deleteIpInput: (index: number) => void;
 }
 
 const IPInput: React.FC<IPInputProps> = ({
-  ipData,
   index,
   selectedActiveOption,
-  updateIp,
-  addPort,
-  updatePort,
-  deletePort,
   deleteIpInput,
 }) => {
-  
+  const { register, control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `assetIps.${index}.assetIpPorts`,
+  });
+
   const webOptions = [
     "80",
     "8080",
@@ -67,66 +63,65 @@ const IPInput: React.FC<IPInputProps> = ({
           </label>
           <Input
             placeholder="IP"
-            name={`ip-${index}`}
-            className="placeholder:text-[#636267] w-full"
-            value={ipData.ip}
-            onChange={(e) => updateIp(index, e.target.value)}
+            {...register(`assetIps.${index}.ip`, {
+              required: "O IP é obrigatório",
+            })}
+            className="placeholder:text-[#636267] w-full m-1"
           />
         </div>
         <div className="flex flex-col gap-2 w-4/6">
           <div className="flex items-center gap-2">
             <label className="font-semibold">Porta(s)</label>
             <Button
+              type="button"
               className="bg-[#3088EE] text-white w-6 h-6 p-0"
-              onClick={() => addPort(index)}
+              onClick={() => append("")}
             >
               +
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-[90px] overflow-y-auto">
-            {ipData.ports.map((port, portIndex) => (
-              <div key={portIndex} className="relative w-30">
+            {fields.map((field, portIndex) => (
+              <div key={field.id} className="relative w-30">
                 {selectedActiveOption === "Web" ? (
-                    <div className="flex gap-2 items-center">
-                  <select
-                    name={`port-${index}-${portIndex}`}
-                    className="w-full h-10 rounded-md border border-neutral-200"
-                    value={port}
-                    onChange={(e) => updatePort(index, portIndex, e.target.value)}
+                  <div className="flex gap-2 items-center">
+                    <select
+                      {...register(
+                        `assetIps.${index}.assetIpPorts.${portIndex}`,
+                        { required: "A porta é obrigatória" }
+                      )}
+                      className="w-full h-10 rounded-md border border-neutral-200"
                     >
-                    {webOptions.map((item, idx) => (
+                      {webOptions.map((item, idx) => (
                         <option key={idx} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                  {portIndex > 0 && (
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                    {portIndex > 0 && (
                       <IoClose
-                      size={20}
+                        size={20}
                         color="#D9232B"
                         className="cursor-pointer"
-                        onClick={() => deletePort(index, portIndex)}
+                        onClick={() => remove(portIndex)}
                       />
                     )}
-                  
-                    </div>
-                  
+                  </div>
                 ) : (
                   <>
                     <Input
                       placeholder="Porta"
-                      name={`port-${index}-${portIndex}`}
-                      className="placeholder:text-[#636267] w-full"
-                      value={port}
-                      onChange={(e) =>
-                        updatePort(index, portIndex, e.target.value)
-                      }
+                      {...register(
+                        `assetIps.${index}.assetIpPorts.${portIndex}.port`,
+                        { required: "A porta é obrigatória" }
+                      )}
+                      className="placeholder:text-[#636267] w-full m-1"
                     />
                     {portIndex > 0 && (
                       <IoClose
                         color="#D9232B"
                         className="absolute top-3 right-2 cursor-pointer"
-                        onClick={() => deletePort(index, portIndex)}
+                        onClick={() => remove(portIndex)}
                       />
                     )}
                   </>
