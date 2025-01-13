@@ -4,16 +4,26 @@ import { api } from "./api";
 import {
   ICreatePermission,
   ICreatePermissionFront,
+  IPaginatedPermission,
   IPermission,
 } from "@/types/IPermission";
 
 const endpoint = "/Profiles";
 
 const PermissionService = {
-  GetAll: async () => {
+  GetAll: async (
+    pageNumber: number,
+    pageSize: number,
+    orderByColumn: string,
+    orderByDirection: string
+  ) => {
     try {
-      const res = await api.get(`${endpoint}`);
-      return res.data as IPermission[];
+      const res = await api.get(
+        `${endpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          orderByColumn ? `&orderByColumn=${orderByColumn}` : ""
+        }${orderByDirection ? `&orderByDirection=${orderByDirection}` : ""}`
+      );
+      return res.data as IPaginatedPermission;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {
@@ -130,7 +140,7 @@ const PermissionService = {
             },
             {
               name: "Excluir",
-              hasAcess: false,
+              hasAcess: data.ambienteDelete,
             },
           ],
           hasAcess: data.ambiente,

@@ -5,6 +5,11 @@ export interface IPermission {
   permissionPages: IPermissionPage[];
 }
 
+export interface IPaginatedPermission {
+  items: IPermission[];
+  totalItems: number;
+}
+
 export interface IPagedPermission {
   totalItems: number;
   items: IPermission[];

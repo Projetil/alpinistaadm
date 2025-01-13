@@ -5,25 +5,27 @@ import UserPermissionTable from "./components/UserPermissionTable";
 import { useEffect, useState } from "react";
 import PermissionService from "@/services/PermissionService";
 import ModalCreatePerms from "./components/ModalCreatePerms";
-import { IPermission } from "@/types/IPermission";
+import { IPaginatedPermission } from "@/types/IPermission";
 import { toast } from "react-toastify";
 export default function UserPermissionPage() {
-  const [usersPerms, setUsersPerms] = useState<IPermission[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false);
+  const [usersPerms, setUsersPerms] = useState<IPaginatedPermission>();
   const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState(1);
   const [editId, setEditId] = useState<number>();
+  const [orderBy, setOrderBy] = useState("name");
+  const [order, setOrder] = useState(true);
 
   const fetchPerms = async () => {
-    setLoading(true);
     try {
-      const res = await PermissionService.GetAll();
+      const res = await PermissionService.GetAll(
+        page,
+        10,
+        orderBy,
+        order ? "asc" : "desc"
+      );
       setUsersPerms(res);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -40,7 +42,7 @@ export default function UserPermissionPage() {
 
   useEffect(() => {
     fetchPerms();
-  }, [openModal, page]);
+  }, [openModal, page, orderBy, order]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -63,6 +65,8 @@ export default function UserPermissionPage() {
       <UserPermissionTable
         page={page}
         setPage={(x: number) => setPage(x)}
+        setOrder={() => setOrder(!order)}
+        setOrderBy={(x: string) => setOrderBy(x)}
         perms={usersPerms}
         setPermissionId={(x: number) => setEditId(x)}
         setOpenModal={() => setOpenModal(!openModal)}

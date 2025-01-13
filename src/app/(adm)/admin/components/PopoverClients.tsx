@@ -16,6 +16,8 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import { FaRegTrashAlt, FaRegUserCircle } from "react-icons/fa";
 import { SlOptionsVertical } from "react-icons/sl";
 import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 const PopoverClients = ({
   clientId,
@@ -37,18 +39,24 @@ const PopoverClients = ({
         <SlOptionsVertical className="cursor-pointer text-[#1A69C4]" />
       </PopoverTrigger>
       <PopoverContent className="w-52 right-4 top-3 relative flex flex-col gap-2 justify-start items-start">
-        <a
+        <Link
           href={`/admin/companies/${clientId}`}
           className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
         >
           <FaRegUserCircle size={25} /> Ver contas
-        </a>
-        <a
+        </Link>
+        <Link
+          href={`/admin/actives/${clientId}`}
+          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
+        >
+          <Image src={"/interactive_space.svg"} width={23} height={25} alt="Ver ativos icon" /> Ver ativos
+        </Link>
+        <Link
           href={`/admin/novo-cliente?id=${clientId}`}
           className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
         >
           <HiOutlinePencil size={25} /> Editar
-        </a>
+        </Link>
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <button
