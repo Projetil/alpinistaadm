@@ -1,11 +1,10 @@
 "use client";
 import { Pagination } from "@/components/default/Pagination";
-import { Button } from "@/components/ui/button";
 import { FaArrowsAltV } from "react-icons/fa";
 import CompanyCard from "./CardTableMobile";
-import { useRouter } from "next/navigation";
 import { IPagedCompany } from "@/types/ICompany";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
+import PopoverHome from "./PopoverHome";
 
 const CompanyTable = ({
   companies,
@@ -20,7 +19,6 @@ const CompanyTable = ({
   setNameColumn: (x: string) => void;
   setDirectionColumn: () => void;
 }) => {
-  const navigate = useRouter();
 
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
@@ -101,13 +99,8 @@ const CompanyTable = ({
                   {formatDateToDDMMYYYY(row.createdAt)}
                 </div>
               </td>
-              <td className="py-3 px-4">
-                <Button
-                  onClick={() => navigate.push(`/home/${row.id}`)}
-                  className="py-2 px-4 text-white text-xs font-semibold rounded-lg bg-[#3088EE]"
-                >
-                  Visualizar
-                </Button>
+              <td className="py-3  flex justify-center">
+                <PopoverHome companyId={row.id}/>
               </td>
             </tr>
           ))}

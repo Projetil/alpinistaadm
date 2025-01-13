@@ -131,7 +131,7 @@ export default function AdminPage() {
               Administradores
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="Customers">
+          <TabsContent value="Customers"> 
             <ClientTable
               companies={company}
               page={pageCompany}

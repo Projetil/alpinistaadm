@@ -99,7 +99,7 @@ const ModalCreateCustomer = ({
         const resUser = await UserService.Post({
           email: data.email,
           password: data.senha,
-          type: Number(data.profileType),
+          type: 2,
         });
 
         await CustomerService.Post({
@@ -126,8 +126,8 @@ const ModalCreateCustomer = ({
 
   const fetchPermissions = async () => {
     try {
-      const res = await PermissionService.GetAll();
-      setPermission(res);
+      const res = await PermissionService.GetAll(0, 0, "name", "asc");
+      setPermission(res.items);
     } catch (e) {
       console.log(e);
     }

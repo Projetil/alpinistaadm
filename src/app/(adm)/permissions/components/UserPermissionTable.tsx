@@ -2,9 +2,8 @@
 import { Pagination } from "@/components/default/Pagination";
 import { FaArrowsAltV } from "react-icons/fa";
 import CardPermission from "./CardPermissionTableMobile";
-import { IPermission } from "@/types/IPermission";
+import { IPaginatedPermission } from "@/types/IPermission";
 import PopoverPermission from "./PopoverPermission";
-import { useState } from "react";
 
 const UserPermissionTable = ({
   perms,
@@ -12,51 +11,19 @@ const UserPermissionTable = ({
   setPage,
   setPermissionId,
   setOpenModal,
+  setOrder,
+  setOrderBy,
   handleDelete,
 }: {
-  perms?: IPermission[];
+  perms?: IPaginatedPermission;
   page: number;
   setPage: (x: number) => void;
   setPermissionId: (x: number) => void;
   setOpenModal: () => void;
+  setOrder: () => void;
+  setOrderBy: (x: string) => void;
   handleDelete: (x: number) => void;
 }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedPermissions = [...(perms || [])].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aValue = a[key as keyof typeof a];
-    const bValue = b[key as keyof typeof b];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    return 0;
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prevConfig) => {
-      if (prevConfig?.key === key) {
-        return {
-          key,
-          direction: prevConfig.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
   return (
     <div className="w-full overflow-x-auto md:bg-white rounded-md">
       <table className="min-w-full hidden md:table">
@@ -65,7 +32,10 @@ const UserPermissionTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() => handleSort("name")}
+                onClick={() => {
+                  setOrderBy("name");
+                  setOrder();
+                }}
               >
                 NOME <FaArrowsAltV />
               </div>
@@ -73,7 +43,10 @@ const UserPermissionTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center justify-start gap-2 cursor-pointer"
-                onClick={() => handleSort("type")}
+                onClick={() => {
+                  setOrderBy("type");
+                  setOrder();
+                }}
               >
                 TIPO <FaArrowsAltV />
               </div>
@@ -81,7 +54,10 @@ const UserPermissionTable = ({
             <th className="py-3 px-4 text-sm font-semibold items-center">
               <div
                 className="flex items-center justify-start gap-2 cursor-pointer"
-                onClick={() => handleSort("permissionPages")}
+                onClick={() => {
+                  setOrderBy("permissionPages");
+                  setOrder();
+                }}
               >
                 PERMISSÕES <FaArrowsAltV />
               </div>
@@ -90,7 +66,7 @@ const UserPermissionTable = ({
           </tr>
         </thead>
         <tbody>
-          {sortedPermissions.map((row, index) => (
+          {perms?.items.map((row, index) => (
             <tr
               key={index}
               className={`${
@@ -136,7 +112,7 @@ const UserPermissionTable = ({
         </tbody>
       </table>
       <div className="flex flex-col gap-4 md:hidden p-4">
-        {sortedPermissions.map((x, index) => {
+        {perms?.items.map((x, index) => {
           const perms =
             x.permissionPages
               .map((x) => x.funcs.map((x) => x.name).join(", "))
@@ -166,7 +142,7 @@ const UserPermissionTable = ({
         pageIndex={page}
         perPage={10}
         handlePage={setPage}
-        totalCount={20}
+        totalCount={perms?.totalItems}
       />
     </div>
   );
