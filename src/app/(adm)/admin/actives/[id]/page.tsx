@@ -166,7 +166,11 @@ const ActivesTablePage = () => {
                   <div className="flex justify-start">{row.ip}</div>
                 </td>
                 <td className="py-5 px-4 text-sm">
-                  <div className="flex">{row.description}</div>
+                  <div className="flex">
+                    {row.description.length > 22
+                      ? `${row.description.substring(0, 22)}...`
+                      : row.description}
+                  </div>
                 </td>
                 <td className="py-5 px-4 flex items-center justify-center">
                   <Popover>
