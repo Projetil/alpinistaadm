@@ -32,6 +32,7 @@ const CreteActiveDialog = ({
   editFocus: number;
 }) => {
   const [selectedActiveOption, setSelectedActiveOption] = useState("");
+  const [editType, setEditType] = useState("");
   const methods = useForm<NewActiveValues>({
     resolver: zodResolver(newActiveSchema),
   });
@@ -53,7 +54,10 @@ const CreteActiveDialog = ({
             id: editFocus,
             companyId: companyId,
             hostname: data.domain,
-            activetype: Number(data.type),
+            activetype:
+              data.type == selectedActiveOption
+                ? Number(editType)
+                : Number(data.type),
             emailAddress: data.email,
             severityType: data.severity ? Number(data.severity) : undefined,
             description: data.description,
@@ -119,7 +123,10 @@ const CreteActiveDialog = ({
         severity: assetsAdm.severityType
           ? assetsAdm.severityType.toString()
           : "",
-        type: assetsAdm.activetype.toString(),
+        type:
+          assetsAdm.activetype == 1 || assetsAdm.activetype == 2
+            ? "1"
+            : (assetsAdm.activetype - 1).toString(),
         email: assetsAdm.emailAddress,
         description: assetsAdm.description,
         assetIps: assetsAdm.ips?.map((ip) => ({
@@ -131,6 +138,12 @@ const CreteActiveDialog = ({
           })),
         })),
       });
+      setSelectedActiveOption(
+        assetsAdm.activetype == 1 || assetsAdm.activetype == 2
+          ? "1"
+          : (assetsAdm.activetype - 1).toString()
+      );
+      setEditType(assetsAdm.activetype.toString());
     }
   }, [assetsAdm]);
 
@@ -174,7 +187,7 @@ const CreteActiveDialog = ({
         <FormProvider {...methods}>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="overflow-y-auto flex flex-col gap-2 max-h-[500px]"
+            className="overflow-y-auto flex flex-col gap-2"
           >
             <div className="w-full gap-3 flex flex-col md:flex-row ">
               <div className="flex flex-col w-full md:w-2/4 mx-1">
@@ -302,7 +315,7 @@ const CreteActiveDialog = ({
                 type="submit"
                 className="px-4 py-2 rounded-md bg-[#3088EE] text-white hover:bg-[#2a76ce]"
               >
-                Adicionar
+                {editFocus > 0 ? "Editar" : "Adicionar"}
               </button>
             </DialogFooter>
           </form>
