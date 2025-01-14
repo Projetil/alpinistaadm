@@ -17,7 +17,6 @@ import { FaRegTrashAlt, FaRegUserCircle } from "react-icons/fa";
 import { SlOptionsVertical } from "react-icons/sl";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 const PopoverClients = ({
   clientId,
@@ -44,12 +43,6 @@ const PopoverClients = ({
           className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
         >
           <FaRegUserCircle size={25} /> Ver contas
-        </Link>
-        <Link
-          href={`/admin/actives/${clientId}`}
-          className="p-2 hover:bg-[#E0F3FF] hover:text-[#1A69C4] hover:font-semibold text-[#1E1F24] flex gap-2 items-center rounded-lg w-full"
-        >
-          <Image src={"/interactive_space.svg"} width={23} height={25} alt="Ver ativos icon" /> Ver ativos
         </Link>
         <Link
           href={`/admin/novo-cliente?id=${clientId}`}

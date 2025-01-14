@@ -45,24 +45,22 @@ const CreteActiveDialog = ({
     formState: { errors },
   } = methods;
 
-  console.log(errors);
-
   const onSubmit = async (data: NewActiveValues) => {
     if (editFocus > 0) {
       try {
-        const res = await AssetsService.Put(
+        await AssetsService.Put(
           {
             id: editFocus,
             companyId: companyId,
             hostname: data.domain,
             activetype: Number(data.type),
             emailAddress: data.email,
-            severityType: Number(data.severity),
+            severityType: data.severity ? Number(data.severity) : undefined,
             description: data.description,
-            ips: data.assetIps.map((ip) => ({
+            assetIps: data.assetIps.map((ip) => ({
               id: ip.id ? Number(ip.id) : 0,
               ip: ip.ip,
-              ports: ip.assetIpPorts.map((port) => ({
+              assetIpPorts: ip.assetIpPorts.map((port) => ({
                 id: port.id ? Number(port.id) : 0,
                 port: port.port,
               })),
@@ -73,37 +71,37 @@ const CreteActiveDialog = ({
           editFocus
         );
 
-        if (res) {
-          toast.success("Ativo editado com sucesso");
-          setNewActiveOpen(false);
-        }
+        toast.success("Ativo editado com sucesso");
+        setNewActiveOpen(false);
+        reset();
       } catch (error) {
         console.log(error);
         toast.error("Erro ao editar ativo");
       }
-    }
-    try {
-      const res = await AssetsService.Post({
-        companyId: companyId,
-        hostname: data.domain,
-        activetype: Number(data.type),
-        emailAddress: data.email,
-        severityType: Number(data.severity),
-        createdBy: Number(session?.user.id),
-        description: data.description,
-        assetIps: data.assetIps.map((ip) => ({
-          ip: ip.ip,
-          assetIpPorts: ip.assetIpPorts.map((port) => port),
-        })),
-      });
+    } else {
+      try {
+        const res = await AssetsService.Post({
+          companyId: companyId,
+          hostname: data.domain,
+          activetype: Number(data.type),
+          emailAddress: data.email,
+          severityType: data.severity ? Number(data.severity) : undefined,
+          createdBy: Number(session?.user.id),
+          description: data.description,
+          assetIps: data.assetIps.map((ip) => ({
+            ip: ip.ip,
+            assetIpPorts: ip.assetIpPorts.map((port) => port),
+          })),
+        });
 
-      if (res) {
-        toast.success("Ativo adicionado com sucesso");
-        setNewActiveOpen(false);
+        if (res) {
+          toast.success("Ativo adicionado com sucesso");
+          setNewActiveOpen(false);
+          reset();
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro ao adicionar ativo");
     }
   };
 
@@ -118,7 +116,9 @@ const CreteActiveDialog = ({
     if (assetsAdm) {
       reset({
         domain: assetsAdm.hostname,
-        severity: assetsAdm.severityType.toString(),
+        severity: assetsAdm.severityType
+          ? assetsAdm.severityType.toString()
+          : "",
         type: assetsAdm.activetype.toString(),
         email: assetsAdm.emailAddress,
         description: assetsAdm.description,
@@ -157,9 +157,15 @@ const CreteActiveDialog = ({
     }
   }, [editFocus]);
 
+  useEffect(() => {
+    if (errors.assetIps) {
+      toast.warn("As portas deve ser um número entre 1 e 65535");
+    }
+  }, [errors]);
+
   return (
     <Dialog open={newActiveOpen} onOpenChange={setNewActiveOpen}>
-      <DialogContent className="w-full max-w-screen md:max-w-[1000px]">
+      <DialogContent className="w-full max-w-screen h-full rounded-none">
         <DialogHeader>
           <DialogTitle className="text-[#093970] font-bold text-xl">
             Novo ativo
@@ -173,12 +179,22 @@ const CreteActiveDialog = ({
             <div className="w-full gap-3 flex flex-col md:flex-row ">
               <div className="flex flex-col w-full md:w-2/4 mx-1">
                 <label htmlFor="domain" className="font-semibold">
-                  Domínio
+                  {selectedActiveOption == "4"
+                    ? "E-mail"
+                    : selectedActiveOption == "2"
+                    ? "URL"
+                    : "Domínio"}
                   <span className="text-red-700 font-semibold">*</span>
                 </label>
                 <Input
                   {...register("domain")}
-                  placeholder="Domínio"
+                  placeholder={
+                    selectedActiveOption == "4"
+                      ? "E-mail"
+                      : selectedActiveOption == "2"
+                      ? "URL"
+                      : "Domínio"
+                  }
                   className="placeholder:text-[#636267]"
                 />
                 {errors.domain && (
@@ -237,7 +253,7 @@ const CreteActiveDialog = ({
               </div>
             </div>
 
-            {selectedActiveOption === "5" ? (
+            {/* {selectedActiveOption === "5" ? (
               <div className="flex flex-col w-full md:w-1/2 md:pr-3 mx-1">
                 <label htmlFor="email" className="font-semibold">
                   E-mail
@@ -253,7 +269,7 @@ const CreteActiveDialog = ({
               </div>
             ) : (
               <></>
-            )}
+            )} */}
             <div className="w-full gap-4 flex flex-col md:flex-row">
               <IPManager selectedActiveOption={selectedActiveOption} />
             </div>
