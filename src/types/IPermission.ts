@@ -54,6 +54,7 @@ export interface ICreatePermissionFront {
   dashboardAtt: boolean;
   ativos: boolean;
   ativosFilter: boolean;
+  ativosEdit: boolean;
   pentest: boolean;
   pentestCreate: boolean;
   pentestEdit: boolean;

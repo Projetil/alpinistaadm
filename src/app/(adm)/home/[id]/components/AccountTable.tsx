@@ -102,7 +102,7 @@ const AccountTable = ({
                 <div className="flex">{row.name}</div>
               </td>
               <td className="py-3 px-4 text-sm">
-                <div className="flex">{row.active ? "Sim" : "Não"}</div>
+                <div className="flex">{row.assetName}</div>
               </td>
               <td className="py-3 px-4 text-sm">
                 <div className="flex">{riskStatus[Number(row.status)]}</div>
@@ -127,7 +127,7 @@ const AccountTable = ({
             key={index}
             id={x.id}
             name={x.name}
-            active={x.active}
+            active={x.assetId.toString()}
             state={riskStatus[Number(x.status)]}
             severidade={riskSeverity[Number(x.riskSeverity)]}
           />

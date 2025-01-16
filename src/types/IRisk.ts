@@ -6,7 +6,8 @@ export interface IRisk {
   origin: number;
   riskSeverity: number;
   responsibleCustomerId: number | null;
-  active: string;
+  assetId: number;
+  assetName: string;
   limitDate: string;
   description: string;
   observations: string;
@@ -14,6 +15,18 @@ export interface IRisk {
   evidences: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IGroupRiks {
+  groupName: string;
+  totalRisks: number;
+  severityCounts: { [key: string]: number };
+  statusCounts: { [key: string]: number };
+}
+
+export interface IPagedGroupRisk {
+  totalItems: number;
+  items: IGroupRiks[];
 }
 
 export interface IPagedRisk {
@@ -28,7 +41,7 @@ export interface ICreateRisk {
   origin: number;
   riskSeverity: number;
   responsibleCustomerId?: number;
-  active: string;
+  assetId: number;
   limitDate?: string;
   description: string;
   observations: string;

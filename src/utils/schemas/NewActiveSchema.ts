@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const newActiveSchema = z.object({
   domain: z.string().min(1, "O domínio é obrigatório"),
-  severity: z.string().min(1, "Selecione uma severidade"),
+  severity: z.string().optional(),
   type: z.string().min(1, "Selecione um tipo"),
   email: z.string().optional(),
-  description: z.string().min(1, "A descrição é obrigatória"),
+  description: z.string().optional(),
   assetIps: z.array(
     z.object({
       id: z.string().optional(),
@@ -13,7 +13,13 @@ export const newActiveSchema = z.object({
       assetIpPorts: z.array(
         z.object({
           id: z.string().optional(),
-          port: z.string().min(1, "A porta é obrigatória"),
+          port: z
+            .string()
+            .min(1, "A porta é obrigatória")
+            .refine((val) => {
+              const portNumber = parseInt(val, 10);
+              return portNumber >= 0 && portNumber <= 65535;
+            }, "A porta deve ser um número entre 0 e 65535"),
         })
       ),
     })

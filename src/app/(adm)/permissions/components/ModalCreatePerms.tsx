@@ -24,6 +24,7 @@ const schemaCompany = z.object({
   dashboardAtt: z.preprocess((val) => val === "true", z.boolean()),
   ativos: z.preprocess((val) => val === "true", z.boolean()),
   ativosFilter: z.preprocess((val) => val === "true", z.boolean()),
+  ativosEdit: z.preprocess((val) => val === "true", z.boolean()),
   pentest: z.preprocess((val) => val === "true", z.boolean()),
   pentestCreate: z.preprocess((val) => val === "true", z.boolean()),
   pentestEdit: z.preprocess((val) => val === "true", z.boolean()),
@@ -67,9 +68,9 @@ const ModalCreatePerms = ({
     resolver: zodResolver(schemaCompany),
   });
   const dashboardField = watch("dashboard");
-  const dashboardAttField = watch("dashboardAtt");
   const ativosField = watch("ativos");
   const ativosFilterField = watch("ativosFilter");
+  const ativosEditField = watch("ativosEdit");
   const pentestField = watch("pentest");
   const pentestCreateField = watch("pentestCreate");
   const pentestEditField = watch("pentestEdit");
@@ -115,10 +116,10 @@ const ModalCreatePerms = ({
                     permission?.permissionPages?.find(
                       (x) => x.name == "Dashboard"
                     )?.id || 0,
-                  hasAcess: dashboardAttField,
+                  hasAcess: true,
                 },
               ],
-              hasAcess: dashboardField,
+              hasAcess: true,
             },
             {
               id:
@@ -139,6 +140,17 @@ const ModalCreatePerms = ({
                     permission?.permissionPages?.find((x) => x.name == "Ativos")
                       ?.id || 0,
                   hasAcess: ativosFilterField,
+                },
+                {
+                  id:
+                    permission?.permissionPages
+                      ?.find((x) => x.name == "Ativos")
+                      ?.funcs?.find((x) => x.name == "Editar")?.id || 0,
+                  name: "Editar",
+                  profilePermissionPagesId:
+                    permission?.permissionPages?.find((x) => x.name == "Ativos")
+                      ?.id || 0,
+                  hasAcess: ativosEditField,
                 },
               ],
               hasAcess: ativosField,
@@ -333,10 +345,11 @@ const ModalCreatePerms = ({
         await PermissionService.Post({
           profileName: data.profileName,
           profileType: 1,
-          dashboard: dashboardField,
-          dashboardAtt: dashboardAttField,
+          dashboard: true,
+          dashboardAtt: true,
           ativos: ativosField,
           ativosFilter: ativosFilterField,
+          ativosEdit: ativosEditField,
           pentest: pentestField,
           pentestCreate: pentestCreateField,
           pentestEdit: pentestEditField,
@@ -381,6 +394,7 @@ const ModalCreatePerms = ({
         dashboardAtt: false,
         ativos: false,
         ativosFilter: false,
+        ativosEdit: false,
         pentest: false,
         pentestCreate: false,
         pentestEdit: false,
@@ -432,6 +446,12 @@ const ModalCreatePerms = ({
         permission.permissionPages
           .find((x) => x.name == "Ativos")
           ?.funcs.find((x) => x.name == "Filtrar")?.hasAcess || false
+      );
+      setValue(
+        "ativosEdit",
+        permission.permissionPages
+          .find((x) => x.name == "Ativos")
+          ?.funcs.find((x) => x.name == "Editar")?.hasAcess || false
       );
       setValue(
         "pentest",
@@ -576,18 +596,6 @@ const ModalCreatePerms = ({
                   id="dashboard"
                 />
               </div>
-              <div className="flex mt-2 items-center space-x-2">
-                <Checkbox
-                  checked={dashboardAttField}
-                  onClick={() => setValue("dashboardAtt", !dashboardAttField)}
-                  disabled={!dashboardField}
-                  {...register("dashboardAtt")}
-                  id="service-dashboard"
-                />
-                <Label className="text-[#636267]" htmlFor="service-dashboard">
-                  Atualizar serviços
-                </Label>
-              </div>
             </div>
 
             <div
@@ -606,25 +614,41 @@ const ModalCreatePerms = ({
                     setValue("ativos", !ativosField);
                     if (!ativosField) {
                       setValue("ativosFilter", true);
+                      setValue("ativosEdit", true);
                     }
                     if (ativosField) {
                       setValue("ativosFilter", false);
+                      setValue("ativosEdit", false);
                     }
                   }}
                   id="ativos"
                 />
               </div>
-              <div className="flex mt-2 items-center space-x-2">
-                <Checkbox
-                  checked={ativosFilterField}
-                  onClick={() => setValue("ativosFilter", !ativosFilterField)}
-                  disabled={!ativosField}
-                  {...register("ativos")}
-                  id="filtrar-ativos"
-                />
-                <Label className="text-[#636267]" htmlFor="filtrar-ativos">
-                  Filtrar
-                </Label>
+              <div className="flex gap-3 mt-2 items-start flex-col">
+                <div className="flex gap-2 items-center">
+                  <Checkbox
+                    checked={ativosFilterField}
+                    onClick={() => setValue("ativosFilter", !ativosFilterField)}
+                    disabled={!ativosField}
+                    {...register("ativos")}
+                    id="filtrar-ativos"
+                  />
+                  <Label className="text-[#636267]" htmlFor="filtrar-ativos">
+                    Filtrar
+                  </Label>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Checkbox
+                    checked={ativosEditField}
+                    onClick={() => setValue("ativosEdit", !ativosEditField)}
+                    disabled={!ativosField}
+                    {...register("ativos")}
+                    id="editar-ativos"
+                  />
+                  <Label className="text-[#636267]" htmlFor="editar-ativos">
+                    Editar
+                  </Label>
+                </div>
               </div>
             </div>
             <div

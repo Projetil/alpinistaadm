@@ -1,24 +1,33 @@
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
 import { HttpStatusCode } from "axios";
 import { api } from "./api";
-import { GetAssetsResponse, IAssetsAdm, ICreateAssets } from "@/types/IAssets";
+import {
+  GetAssetsResponse,
+  IAssetsAdm,
+  ICreateAssets,
+  IUpdateAssetsAdm,
+} from "@/types/IAssets";
+import { toast } from "react-toastify";
 
 const endpoint = "/Assets";
 
 const AssetsService = {
   GetAll: async (
-    companyId: number,
     pageNumber: number,
     pageSize: number,
+    companyId?: number,
     domainName?: string,
     severityType?: number
   ) => {
     try {
       const params = new URLSearchParams({
-        CompanyId: companyId.toString(),
         PageNumber: pageNumber.toString(),
         PageSize: pageSize.toString(),
       });
+
+      if (companyId) {
+        params.append("CompanyId", companyId.toString());
+      }
 
       if (domainName) {
         params.append("DomainName", domainName);
@@ -67,15 +76,30 @@ const AssetsService = {
     } catch (error: any) {
       switch (error.statusCode) {
         case HttpStatusCode.BadRequest:
-          throw new ValidationError(error.body.erros);
+          throw new ValidationError(error.data);
         case HttpStatusCode.NotFound:
           throw new NotFoundError();
         default:
+          const errorMessage = error.response.data
+            .split("System.Exception: ")[1]
+            .split(" at ")[0];
+          if (
+            errorMessage.toString().trim() ==
+            "Não é possível adicionar IPs duplicados na lista."
+          ) {
+            toast.error("Não é possível adicionar IPs duplicados na lista.");
+          }
+          if (
+            errorMessage.toString().trim() ==
+            "Já existe um ativo com esse email cadastrado."
+          ) {
+            toast.error("Já existe um ativo com esse email cadastrado.");
+          }
           throw new UnexpectedError();
       }
     }
   },
-  Put: async (data: IAssetsAdm, id: number) => {
+  Put: async (data: IUpdateAssetsAdm, id: number) => {
     try {
       const res = await api.put(`${endpoint}/Adm/${id}`, data);
       return res.data;

@@ -18,6 +18,8 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { LoadingSpinner } from "@/components/default/Spinner";
+import AssetsService from "@/services/AssetsService";
+import { GetAssetsResponse } from "@/types/IAssets";
 
 const riskForm1Schema = z.object({
   id: z.string().optional(),
@@ -58,6 +60,7 @@ const ModalNewRisk = ({
   const [risk, setRisk] = useState<RiskFormInputs1>();
   const [resetRisk, setResetRisk] = useState<IRisk>();
   const [filesRisk, setFilesRisk] = useState<IFileRisk[]>([]);
+  const [assets, setAssets] = useState<GetAssetsResponse>();
   const {
     register: register1,
     reset: reset1,
@@ -92,7 +95,7 @@ const ModalNewRisk = ({
             status: Number(risk?.state) ?? 0,
             origin: Number(risk?.origin) ?? 0,
             riskSeverity: risk ? Number(risk.severity) : 0,
-            active: risk ? risk.isActive : "",
+            assetId: risk ? Number(risk.isActive) : 0,
             limitDate: limitDate ? limitDate : undefined,
             name: risk ? risk.name : "",
             description: risk ? risk.description : "",
@@ -110,7 +113,7 @@ const ModalNewRisk = ({
           status: Number(risk?.state) ?? 0,
           origin: Number(risk?.origin) ?? 0,
           riskSeverity: risk ? Number(risk.severity) : 0,
-          active: risk ? risk.isActive : "",
+          assetId: risk ? Number(risk.isActive) : 0,
           limitDate: limitDate ? limitDate : undefined,
           name: risk ? risk.name : "",
           description: risk ? risk.description : "",
@@ -159,7 +162,17 @@ const ModalNewRisk = ({
     }
   };
 
+  const fetchAssets = async () => {
+    try {
+      const res = await AssetsService.GetAll(0, 0);
+      setAssets(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
+    fetchAssets();
     fetchCustomers();
   }, []);
 
@@ -204,7 +217,7 @@ const ModalNewRisk = ({
         state: resetRisk.status.toString(),
         severity: resetRisk.riskSeverity.toString(),
         responsible: resetRisk.responsibleCustomerId?.toString(),
-        isActive: resetRisk.active,
+        isActive: resetRisk.assetId.toString(),
         description: resetRisk.description,
       });
       if (resetRisk.limitDate) {
@@ -360,7 +373,11 @@ const ModalNewRisk = ({
                   <option disabled value="">
                     Selecione uma opção
                   </option>
-                  <option value="pending">Info</option>
+                  {assets?.items.map((asset, index) => (
+                    <option key={index} value={asset.id}>
+                      {asset.hostname}
+                    </option>
+                  ))}
                 </select>
                 {errors1.isActive && errors1.isActive && (
                   <p className="text-red-500">{errors1.isActive?.message}</p>

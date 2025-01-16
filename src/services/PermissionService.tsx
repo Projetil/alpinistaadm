@@ -74,6 +74,10 @@ const PermissionService = {
               name: "Filtrar",
               hasAcess: data.ativosFilter,
             },
+            {
+              name: "Editar",
+              hasAcess: data.ativosEdit,
+            },
           ],
           hasAcess: data.ativos,
         },
