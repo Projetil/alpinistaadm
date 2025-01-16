@@ -178,7 +178,7 @@ const CreteActiveDialog = ({
 
   return (
     <Dialog open={newActiveOpen} onOpenChange={setNewActiveOpen}>
-      <DialogContent className="w-full max-w-screen h-full rounded-none">
+      <DialogContent className="w-full max-w-screen h-[600px] rounded-none">
         <DialogHeader>
           <DialogTitle className="text-[#093970] font-bold text-xl">
             Novo ativo
@@ -217,7 +217,6 @@ const CreteActiveDialog = ({
               <div className="flex flex-col w-full md:w-1/4">
                 <label htmlFor="severity" className="font-semibold">
                   Severidade
-                  <span className="text-red-700 ">*</span>
                 </label>
                 <select
                   className="h-10 rounded-md border pl-3"

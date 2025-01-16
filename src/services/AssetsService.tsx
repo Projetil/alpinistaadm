@@ -13,18 +13,21 @@ const endpoint = "/Assets";
 
 const AssetsService = {
   GetAll: async (
-    companyId: number,
     pageNumber: number,
     pageSize: number,
+    companyId?: number,
     domainName?: string,
     severityType?: number
   ) => {
     try {
       const params = new URLSearchParams({
-        CompanyId: companyId.toString(),
         PageNumber: pageNumber.toString(),
         PageSize: pageSize.toString(),
       });
+
+      if (companyId) {
+        params.append("CompanyId", companyId.toString());
+      }
 
       if (domainName) {
         params.append("DomainName", domainName);
@@ -82,9 +85,9 @@ const AssetsService = {
             .split(" at ")[0];
           if (
             errorMessage.toString().trim() ==
-            "Não é possivel adicionar o IPs duplicados"
+            "Não é possível adicionar IPs duplicados na lista."
           ) {
-            toast.error("Não é possivel adicionar o IPs duplicados");
+            toast.error("Não é possível adicionar IPs duplicados na lista.");
           }
           if (
             errorMessage.toString().trim() ==

@@ -49,9 +49,9 @@ const ActivesTablePage = () => {
   const getAssets = async () => {
     if (id) {
       const response = await AssetsService.GetAll(
-        parseInt(id as string),
         page,
-        10
+        10,
+        parseInt(id as string)
       );
       if (response) setActives(response);
     }

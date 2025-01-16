@@ -6,7 +6,8 @@ export interface IRisk {
   origin: number;
   riskSeverity: number;
   responsibleCustomerId: number | null;
-  active: string;
+  assetId: number;
+  assetName: string;
   limitDate: string;
   description: string;
   observations: string;
@@ -28,7 +29,7 @@ export interface ICreateRisk {
   origin: number;
   riskSeverity: number;
   responsibleCustomerId?: number;
-  active: string;
+  assetId: number;
   limitDate?: string;
   description: string;
   observations: string;
