@@ -1,7 +1,7 @@
 import { NotFoundError, UnexpectedError, ValidationError } from "@/errors";
 import { HttpStatusCode } from "axios";
 import { api } from "./api";
-import { ICreateRisk, IPagedRisk, IRisk } from "@/types/IRisk";
+import { ICreateRisk, IPagedGroupRisk, IPagedRisk, IRisk } from "@/types/IRisk";
 
 const endpoint = "/Risks";
 
@@ -25,6 +25,38 @@ const RisksService = {
         }${orderByDirection ? `&orderByDirection=${orderByDirection}` : ""}`
       );
       return res.data as IPagedRisk;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
+  GetByColumn: async (
+    groupedName: string,
+    pageNumber: number,
+    pageSize: number,
+    orderByColumn?: string,
+    orderByDirection?: string,
+    responsibleCustomerId?: number,
+    companyId?: number
+  ) => {
+    try {
+      const res = await api.get(
+        `${endpoint}/Grouped/${groupedName}?pageNumber=${pageNumber}&pageSize=${pageSize}${
+          responsibleCustomerId
+            ? `&responsibleCustomerId=${responsibleCustomerId}&`
+            : ""
+        }${companyId ? `&companyId=${companyId}` : ""}${
+          orderByColumn ? `&orderByColumn=${orderByColumn}` : ""
+        }${orderByDirection ? `&orderByDirection=${orderByDirection}` : ""}`
+      );
+      return res.data as IPagedGroupRisk;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       switch (error.statusCode) {

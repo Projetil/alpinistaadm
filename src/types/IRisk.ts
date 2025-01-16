@@ -17,6 +17,18 @@ export interface IRisk {
   updatedAt: string;
 }
 
+export interface IGroupRiks {
+  groupName: string;
+  totalRisks: number;
+  severityCounts: { [key: string]: number };
+  statusCounts: { [key: string]: number };
+}
+
+export interface IPagedGroupRisk {
+  totalItems: number;
+  items: IGroupRiks[];
+}
+
 export interface IPagedRisk {
   totalItems: number;
   items: IRisk[];

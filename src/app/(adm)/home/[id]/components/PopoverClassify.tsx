@@ -10,6 +10,7 @@ import { FaAngleDown } from "react-icons/fa";
 const classiNames = [
   "Padrão",
   "Ativos",
+  "Ativos Ignorados",
   "Ambiente",
   "Severidade",
   "Responsável",

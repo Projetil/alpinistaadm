@@ -110,7 +110,7 @@ const ModalAccountDetail = ({
             <div className="flex flex-col gap-4">
               <h3 className="text-[#050506] font-semibold">{risk?.name}</h3>
               <p className="text-sm text-[#818086]">
-                {risk?.active}: {risk?.responsibleCustomerId} | Criado em{" "}
+                {risk?.assetName}: {risk?.responsibleCustomerId} | Criado em{" "}
                 {formatDateToDDMMYYYY(risk?.createdAt ?? "")}
               </p>
             </div>

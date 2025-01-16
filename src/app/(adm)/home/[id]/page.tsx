@@ -129,70 +129,34 @@ export default function CompanyIndPage() {
           />
         )}
         {selected == "Ativos" && (
+          <AtivosTable columnName={"NOME DO ATIVO"} groupName={"AssetId"} />
+        )}
+        {selected == "Ativos Ignorados" && (
           <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
-            columnName={"NOME DO ATIVO"}
-            columnType={"active"}
+            columnName={"NOME DO ATIVO IGNORADO"}
+            groupName={"NonAsset"}
           />
         )}
         {selected == "Ambiente" && (
           <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
             columnName={"NOME DO AMBIENTE"}
-            columnType={"environment"}
+            groupName={"environment"}
           />
         )}
         {selected == "Severidade" && (
-          <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
-            columnName={"SEVERIDADE"}
-            columnType={"riskSeverity"}
-          />
+          <AtivosTable columnName={"SEVERIDADE"} groupName={"RiskSeverity"} />
         )}
         {selected == "Responsável" && (
           <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
+            groupName={"ResponsibleCustomerId"}
             columnName={"RESPONSAVEL"}
-            columnType={"responsibleCustomerId"}
           />
         )}
         {selected == "Origem" && (
-          <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
-            columnName={"ORIGEM"}
-            columnType={"origin"}
-          />
+          <AtivosTable columnName={"ORIGEM"} groupName={"Origin"} />
         )}
         {selected == "Estado" && (
-          <AtivosTable
-            risks={risks}
-            openModal={() => setOpenModalDetails(!openModalDetails)}
-            currentPage={page}
-            setCurrentPage={setPage}
-            setRiskId={(x: number) => setOpenedRiskId(x)}
-            columnName={"STATUS"}
-            columnType={"status"}
-          />
+          <AtivosTable columnName={"STATUS"} groupName={"Status"} />
         )}
       </div>
 
