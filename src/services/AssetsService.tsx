@@ -15,6 +15,8 @@ const AssetsService = {
   GetAll: async (
     pageNumber: number,
     pageSize: number,
+    orderBy: string,
+    orderDirection: string,
     companyId?: number,
     domainName?: string,
     severityType?: number
@@ -23,6 +25,8 @@ const AssetsService = {
       const params = new URLSearchParams({
         PageNumber: pageNumber.toString(),
         PageSize: pageSize.toString(),
+        OrderBy: orderBy,
+        OrderDirection: orderDirection,
       });
 
       if (companyId) {
@@ -94,6 +98,12 @@ const AssetsService = {
             "Já existe um ativo com esse email cadastrado."
           ) {
             toast.error("Já existe um ativo com esse email cadastrado.");
+          }
+          if (
+            errorMessage.toString().trim() ==
+            "Já existe um ativo com esse domínio cadastrado."
+          ) {
+            toast.error("Já existe um ativo com esse domínio cadastrado.");
           }
           throw new UnexpectedError();
       }
