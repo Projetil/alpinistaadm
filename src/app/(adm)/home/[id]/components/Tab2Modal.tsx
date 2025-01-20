@@ -34,6 +34,9 @@ const Tab2Modal = ({
                     <Image
                       key={file.id}
                       src={file.riskFileUrl}
+                      loader={({ src, quality }) => {
+                        return `${src}?w=${32}&h=${32}&q=${quality || 75}`;
+                      }}
                       alt="imagem do arquivo"
                       width={300}
                       height={300}
@@ -59,6 +62,9 @@ const Tab2Modal = ({
                     <Image
                       key={file.id}
                       src={file.riskFileUrl}
+                      loader={({ src, quality }) => {
+                        return `${src}?w=${32}&h=${32}&q=${quality || 75}`;
+                      }}
                       alt="imagem do arquivo"
                       width={300}
                       height={300}
@@ -84,6 +90,9 @@ const Tab2Modal = ({
                     <Image
                       key={file.id}
                       src={file.riskFileUrl}
+                      loader={({ src, quality }) => {
+                        return `${src}?w=${32}&h=${32}&q=${quality || 75}`;
+                      }}
                       alt="imagem do arquivo"
                       width={300}
                       height={300}

@@ -178,9 +178,9 @@ const CreteActiveDialog = ({
 
   return (
     <Dialog open={newActiveOpen} onOpenChange={setNewActiveOpen}>
-      <DialogContent className="w-full max-w-screen h-[600px] rounded-none">
+      <DialogContent className="w-full max-w-screen h-full rounded-none flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-[#093970] font-bold text-xl">
+          <DialogTitle className="text-[#093970] font-bold text-xl ">
             Novo ativo
           </DialogTitle>
         </DialogHeader>

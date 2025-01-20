@@ -31,26 +31,21 @@ import { toast } from "react-toastify";
 const ActivesTablePage = () => {
   const { id } = useParams();
   const [actives, setActives] = useState<GetAssetsResponse>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [sortColumn, setSortColumn] = useState<"Name" | "Ip" | "Description">(
-    "Name"
-  );
-  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("DESC");
   const [newActiveOpen, setNewActiveOpen] = useState<boolean>(false);
   const [deleteActiveOpen, setDeleteActiveOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [assetsFocus, setAssetsFocus] = useState<number>(0);
   const navigation = useRouter();
-
-  const handleSortDirection = () => {
-    setSortDirection(sortDirection === "DESC" ? "ASC" : "DESC");
-  };
+  const [orderBy, setOrderBy] = useState("Hostname");
+  const [orderDirection, setOrderDirection] = useState(true);
 
   const getAssets = async () => {
     if (id) {
       const response = await AssetsService.GetAll(
         page,
         10,
+        orderBy,
+        orderDirection ? "asc" : "desc",
         parseInt(id as string)
       );
       if (response) setActives(response);
@@ -73,7 +68,7 @@ const ActivesTablePage = () => {
 
   useEffect(() => {
     getAssets();
-  }, [id, page, newActiveOpen]);
+  }, [id, page, newActiveOpen, orderBy, orderDirection]);
 
   return (
     <main className="text-[#FCFCFD] w-full p-2 md:p-6 flex flex-col gap-10 mt-6">
@@ -119,8 +114,8 @@ const ActivesTablePage = () => {
                 <div
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => {
-                    setSortColumn("Name");
-                    handleSortDirection();
+                    setOrderBy("Hostname");
+                    setOrderDirection(!orderDirection);
                   }}
                 >
                   ATIVO <FaArrowsAltV />
@@ -130,8 +125,8 @@ const ActivesTablePage = () => {
                 <div
                   className="flex items-center justify-start gap-2 cursor-pointer"
                   onClick={() => {
-                    setSortColumn("Ip");
-                    handleSortDirection();
+                    setOrderBy("Ip");
+                    setOrderDirection(!orderDirection);
                   }}
                 >
                   IP <FaArrowsAltV />
@@ -141,8 +136,8 @@ const ActivesTablePage = () => {
                 <div
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => {
-                    setSortColumn("Description");
-                    handleSortDirection();
+                    setOrderBy("Description");
+                    setOrderDirection(!orderDirection);
                   }}
                 >
                   DESCRIÇÃO <FaArrowsAltV />
