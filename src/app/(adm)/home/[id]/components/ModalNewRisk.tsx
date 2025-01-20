@@ -164,7 +164,7 @@ const ModalNewRisk = ({
 
   const fetchAssets = async () => {
     try {
-      const res = await AssetsService.GetAll(0, 0);
+      const res = await AssetsService.GetAll(0, 0, "hostname", "asc");
       setAssets(res);
     } catch (e) {
       console.log(e);
