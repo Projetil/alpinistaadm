@@ -1,14 +1,18 @@
 "use client";
 import { IRisk, riskSeverity, riskStatus } from "@/types/IRisk";
+import { IPagedRiskFile } from "@/types/IRiskFile";
 import { formatDateToDDMMYYYY } from "@/utils/formatString";
+import Image from "next/image";
 import { IoInformationCircle } from "react-icons/io5";
 
 const Tab1Modal = ({
   currentRisk,
   nameResponsible,
+  filesData,
 }: {
   currentRisk?: IRisk;
   nameResponsible?: string;
+  filesData?: IPagedRiskFile;
 }) => {
   return (
     <div className="bg-[#FBFBFB] p-3 rounded-lg overflow-y-auto">
@@ -65,12 +69,28 @@ const Tab1Modal = ({
       </div>
       <div className="flex flex-col gap-2 mt-3 overflow-auto">
         <p className="font-semibold text-[#40414A]">Descrição</p>
-        <p
-          dangerouslySetInnerHTML={{
-            __html: currentRisk ? currentRisk.description : "",
-          }}
-          className="text-[#80828D] overflow-auto break-words"
-        ></p>
+        <div>
+          <p
+            dangerouslySetInnerHTML={{
+              __html: currentRisk ? currentRisk.description : "",
+            }}
+            className="text-[#80828D] overflow-auto break-words"
+          ></p>
+          {filesData?.items
+            .filter((x) => x.type == 1)
+            .map((file) => (
+              <Image
+                key={file.id}
+                src={file.riskFileUrl}
+                loader={({ src, quality }) => {
+                  return `${src}?w=${32}&h=${32}&q=${quality || 75}`;
+                }}
+                alt="imagem do arquivo"
+                width={300}
+                height={300}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );
