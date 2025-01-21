@@ -84,9 +84,7 @@ const AssetsService = {
         case HttpStatusCode.NotFound:
           throw new NotFoundError();
         default:
-          const errorMessage = error.response.data
-            .split("System.Exception: ")[1]
-            .split(" at ")[0];
+          const errorMessage = error.response.data.message;
           if (
             errorMessage.toString().trim() ==
             "Não é possível adicionar IPs duplicados na lista."

@@ -162,7 +162,7 @@ const ActivesTablePage = () => {
                 </td>
                 <td className="py-5 px-4 text-sm">
                   <div className="flex">
-                    {row.description.length > 22
+                    {row.description?.length > 22
                       ? `${row.description.substring(0, 22)}...`
                       : row.description}
                   </div>
