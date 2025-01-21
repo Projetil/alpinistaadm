@@ -189,7 +189,11 @@ const ModalAccountDetail = ({
         </div>
 
         {tabs == 1 && (
-          <Tab1Modal currentRisk={risk} nameResponsible={responsibleName} />
+          <Tab1Modal
+            currentRisk={risk}
+            nameResponsible={responsibleName}
+            filesData={filesData}
+          />
         )}
         {tabs == 2 && <Tab2Modal currentRisk={risk} filesData={filesData} />}
         {tabs == 3 && (
