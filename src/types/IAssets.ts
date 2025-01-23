@@ -56,6 +56,7 @@ export interface IUpdateAssetsAdm {
   hostname: string;
   activetype: number;
   modifiedBy: number;
+  ip: string;
   isIgnored: boolean;
   description?: string;
   severityType?: number;

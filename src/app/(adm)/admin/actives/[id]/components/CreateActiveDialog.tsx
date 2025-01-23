@@ -49,28 +49,54 @@ const CreteActiveDialog = ({
   const onSubmit = async (data: NewActiveValues) => {
     if (editFocus > 0) {
       try {
+        const ipSet = new Set();
+        data.assetIps.forEach((ip) => {
+          if (ipSet.has(ip.ip)) {
+            toast.error("Você não pode adicionar IPs com o mesmo valor");
+            throw new Error("Você não pode adicionar IPs com o mesmo valor");
+          }
+          ipSet.add(ip.ip);
+        });
+
         await Promise.all(
           data.assetIps.map(async (ip) => {
-            await AssetsService.Put(
-              {
-                id: editFocus,
+            if (assetsAdm.find((item) => item.ip === ip.ip)) {
+              await AssetsService.Put(
+                {
+                  id: editFocus,
+                  hostname: data.domain,
+                  activetype:
+                    data.type == selectedActiveOption
+                      ? Number(editType)
+                      : Number(data.type),
+                  ip: ip.ip,
+                  emailAddress: data.email,
+                  severityType: data.severity
+                    ? Number(data.severity)
+                    : undefined,
+                  description: data.description,
+                  assetIpPorts: ip.assetIpPorts.map((port) => ({
+                    id: port.id ? Number(port.id) : 0,
+                    port: port.port,
+                  })),
+                  modifiedBy: Number(session?.user.id),
+                  isIgnored: false,
+                },
+                editFocus
+              );
+            } else {
+              await AssetsService.Post({
+                companyId: companyId,
                 hostname: data.domain,
-                activetype:
-                  data.type == selectedActiveOption
-                    ? Number(editType)
-                    : Number(data.type),
+                activetype: Number(data.type),
                 emailAddress: data.email,
                 severityType: data.severity ? Number(data.severity) : undefined,
+                createdBy: Number(session?.user.id),
                 description: data.description,
-                assetIpPorts: ip.assetIpPorts.map((port) => ({
-                  id: port.id ? Number(port.id) : 0,
-                  port: port.port,
-                })),
-                modifiedBy: Number(session?.user.id),
-                isIgnored: false,
-              },
-              editFocus
-            );
+                ports: ip.assetIpPorts.map((port) => port),
+                ip: ip.ip,
+              });
+            }
           })
         );
         toast.success("Ativo editado com sucesso");
@@ -78,10 +104,20 @@ const CreteActiveDialog = ({
         reset();
       } catch (error) {
         console.log(error);
-        toast.error("Erro ao editar ativo");
       }
     } else {
       try {
+        const ipSet = new Set();
+        data.assetIps.forEach((ip) => {
+          console.log(ip.ip);
+          console.log(ipSet);
+          if (ipSet.has(ip.ip)) {
+            toast.error("Você não pode adicionar IPs com o mesmo valor");
+            throw new Error("Você não pode adicionar IPs com o mesmo valor");
+          }
+          ipSet.add(ip.ip);
+        });
+
         await Promise.all(
           data.assetIps.map(async (ip) => {
             await AssetsService.Post({
