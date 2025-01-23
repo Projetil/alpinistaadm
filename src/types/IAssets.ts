@@ -1,3 +1,6 @@
+export const severityType = ["Info", "Baixo", "Médio", "Alto", "Crítico"];
+export const activeTypes = ["Infra / Web", "Mobile", "Domínio", "Pessoa"];
+
 export interface GetAssetsRequest {
   companyId: number;
   pageNumber: number;
@@ -18,67 +21,55 @@ export interface GetAssetsItem {
   description: string;
 }
 
-export const severityType = ["Info", "Baixo", "Médio", "Alto", "Crítico"];
-export const activeTypes = ["Infra / Web", "Mobile", "Domínio", "Pessoa"];
-
 export interface ICreateAssets {
   companyId: number;
   hostname: string;
   activetype: number;
+  ip: string;
+  createdBy: number;
   emailAddress?: string;
   severityType?: number;
-  createdBy: number;
   description?: string;
-  assetIps: ICreateAssetsIps[];
+  ports?: ICreateAssetPorts[];
 }
 
-export interface ICreateAssetsIps {
-  ip: string;
-  assetIpPorts: {
-    port: string;
-  }[];
+export interface ICreateAssetPorts {
+  port: string;
 }
 
 export interface IAssetsAdm {
   id: number;
   hostname: string;
-  companyId: number;
-  description?: string;
+  ip: string;
   activetype: number;
-  severityType?: number;
-  emailAddress?: string;
   modifiedBy: number;
   isIgnored: boolean;
-  ips: IAssetsIpsAdm[];
+  companyId?: number;
+  description?: string;
+  severityType?: number;
+  emailAddress?: string;
+  ports: IAssetsAdmPorts[];
 }
 
 export interface IUpdateAssetsAdm {
   id: number;
   hostname: string;
-  companyId: number;
-  description?: string;
   activetype: number;
-  severityType?: number;
-  emailAddress?: string;
   modifiedBy: number;
   isIgnored: boolean;
-  assetIps: IUpdateAssetsIpsAdm[];
+  description?: string;
+  severityType?: number;
+  emailAddress?: string;
+  assetIpPorts: IUpdateAssetsPortsAdm[];
 }
 
-export interface IUpdateAssetsIpsAdm {
+export interface IUpdateAssetsPortsAdm {
   id: number;
-  ip: string;
-  assetIpPorts: {
-    id: number;
-    port: string;
-  }[];
+  port: string;
 }
 
-export interface IAssetsIpsAdm {
+export interface IAssetsAdmPorts {
   id: number;
-  ip: string;
-  ports: {
-    id: number;
-    port: string;
-  }[];
+  assetId?: number;
+  port: string;
 }

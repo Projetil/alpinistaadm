@@ -37,7 +37,7 @@ const CreteActiveDialog = ({
     resolver: zodResolver(newActiveSchema),
   });
   const { data: session } = useSession();
-  const [assetsAdm, setAssetsAdm] = useState<IAssetsAdm>();
+  const [assetsAdm, setAssetsAdm] = useState<IAssetsAdm[]>([]);
 
   const {
     register,
@@ -49,32 +49,30 @@ const CreteActiveDialog = ({
   const onSubmit = async (data: NewActiveValues) => {
     if (editFocus > 0) {
       try {
-        await AssetsService.Put(
-          {
-            id: editFocus,
-            companyId: companyId,
-            hostname: data.domain,
-            activetype:
-              data.type == selectedActiveOption
-                ? Number(editType)
-                : Number(data.type),
-            emailAddress: data.email,
-            severityType: data.severity ? Number(data.severity) : undefined,
-            description: data.description,
-            assetIps: data.assetIps.map((ip) => ({
-              id: ip.id ? Number(ip.id) : 0,
-              ip: ip.ip,
-              assetIpPorts: ip.assetIpPorts.map((port) => ({
-                id: port.id ? Number(port.id) : 0,
-                port: port.port,
-              })),
-            })),
-            modifiedBy: Number(session?.user.id),
-            isIgnored: false,
-          },
-          editFocus
+        await Promise.all(
+          data.assetIps.map(async (ip) => {
+            await AssetsService.Put(
+              {
+                id: editFocus,
+                hostname: data.domain,
+                activetype:
+                  data.type == selectedActiveOption
+                    ? Number(editType)
+                    : Number(data.type),
+                emailAddress: data.email,
+                severityType: data.severity ? Number(data.severity) : undefined,
+                description: data.description,
+                assetIpPorts: ip.assetIpPorts.map((port) => ({
+                  id: port.id ? Number(port.id) : 0,
+                  port: port.port,
+                })),
+                modifiedBy: Number(session?.user.id),
+                isIgnored: false,
+              },
+              editFocus
+            );
+          })
         );
-
         toast.success("Ativo editado com sucesso");
         setNewActiveOpen(false);
         reset();
@@ -84,52 +82,53 @@ const CreteActiveDialog = ({
       }
     } else {
       try {
-        const res = await AssetsService.Post({
-          companyId: companyId,
-          hostname: data.domain,
-          activetype: Number(data.type),
-          emailAddress: data.email,
-          severityType: data.severity ? Number(data.severity) : undefined,
-          createdBy: Number(session?.user.id),
-          description: data.description,
-          assetIps: data.assetIps.map((ip) => ({
-            ip: ip.ip,
-            assetIpPorts: ip.assetIpPorts.map((port) => port),
-          })),
-        });
-
-        if (res) {
-          toast.success("Ativo adicionado com sucesso");
-          setNewActiveOpen(false);
-          reset();
-        }
+        await Promise.all(
+          data.assetIps.map(async (ip) => {
+            await AssetsService.Post({
+              companyId: companyId,
+              hostname: data.domain,
+              activetype: Number(data.type),
+              emailAddress: data.email,
+              severityType: data.severity ? Number(data.severity) : undefined,
+              createdBy: Number(session?.user.id),
+              description: data.description,
+              ports: ip.assetIpPorts.map((port) => port),
+              ip: ip.ip,
+            });
+          })
+        );
+        toast.success("Ativo adicionado com sucesso");
+        setNewActiveOpen(false);
+        reset();
       } catch (error) {
         console.log(error);
       }
     }
   };
 
-  const fetchDataEdit = async (companyId: number) => {
-    const response = await AssetsService.Get(companyId);
+  const fetchDataEdit = async (id: number) => {
+    const response = await AssetsService.GetByHostname(id);
     if (response) {
       setAssetsAdm(response);
     }
   };
 
   useEffect(() => {
-    if (assetsAdm) {
+    if (assetsAdm.length > 0) {
       reset({
-        domain: assetsAdm.hostname,
-        severity: assetsAdm.severityType
-          ? assetsAdm.severityType.toString()
+        domain: assetsAdm[0].hostname,
+        severity: assetsAdm[0].severityType
+          ? assetsAdm[0].severityType.toString()
           : "",
         type:
-          assetsAdm.activetype == 1 || assetsAdm.activetype == 2
+          assetsAdm[0].activetype == 1 ||
+          assetsAdm[0].activetype == 2 ||
+          assetsAdm[0].activetype == 3
             ? "1"
-            : (assetsAdm.activetype - 1).toString(),
-        email: assetsAdm.emailAddress,
-        description: assetsAdm.description,
-        assetIps: assetsAdm.ips?.map((ip) => ({
+            : (assetsAdm[0].activetype - 2).toString(),
+        email: assetsAdm[0].emailAddress,
+        description: assetsAdm[0].description,
+        assetIps: assetsAdm?.map((ip) => ({
           id: ip.id?.toString(),
           ip: ip.ip,
           assetIpPorts: ip.ports.map((port) => ({
@@ -139,11 +138,11 @@ const CreteActiveDialog = ({
         })),
       });
       setSelectedActiveOption(
-        assetsAdm.activetype == 1 || assetsAdm.activetype == 2
+        assetsAdm[0].activetype == 1 || assetsAdm[0].activetype == 2
           ? "1"
-          : (assetsAdm.activetype - 1).toString()
+          : (assetsAdm[0].activetype - 1).toString()
       );
-      setEditType(assetsAdm.activetype.toString());
+      setEditType(assetsAdm[0].activetype.toString());
     }
   }, [assetsAdm]);
 
@@ -152,7 +151,7 @@ const CreteActiveDialog = ({
       fetchDataEdit(editFocus);
     }
     if (editFocus === 0) {
-      setAssetsAdm(undefined);
+      setAssetsAdm([]);
       reset({
         domain: "",
         severity: "",
@@ -264,24 +263,6 @@ const CreteActiveDialog = ({
                 )}
               </div>
             </div>
-
-            {/* {selectedActiveOption === "5" ? (
-              <div className="flex flex-col w-full md:w-1/2 md:pr-3 mx-1">
-                <label htmlFor="email" className="font-semibold">
-                  E-mail
-                </label>
-                <Input
-                  {...register("email")}
-                  placeholder="E-mail"
-                  className="placeholder:text-[#636267]"
-                />
-                {errors.type && (
-                  <span className="text-red-700">{errors.type.message}</span>
-                )}
-              </div>
-            ) : (
-              <></>
-            )} */}
             <div className="w-full gap-4 flex flex-col md:flex-row">
               <IPManager selectedActiveOption={selectedActiveOption} />
             </div>

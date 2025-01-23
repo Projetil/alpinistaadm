@@ -72,6 +72,22 @@ const AssetsService = {
       }
     }
   },
+  GetByHostname: async (id: number) => {
+    try {
+      const res = await api.get(`${endpoint}/Domain/${id}`);
+      return res.data as IAssetsAdm[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.statusCode) {
+        case HttpStatusCode.BadRequest:
+          throw new ValidationError(error.body.erros);
+        case HttpStatusCode.NotFound:
+          throw new NotFoundError();
+        default:
+          throw new UnexpectedError();
+      }
+    }
+  },
   Post: async (data: ICreateAssets) => {
     try {
       const res = await api.post(`${endpoint}/Adm`, data);
@@ -99,9 +115,11 @@ const AssetsService = {
           }
           if (
             errorMessage.toString().trim() ==
-            "Já existe um ativo com esse domínio cadastrado."
+            "Não é possível adicionar IPs e hostnames duplicados na lista."
           ) {
-            toast.error("Já existe um ativo com esse domínio cadastrado.");
+            toast.error(
+              "Não é possível adicionar IPs e hostnames duplicados na lista."
+            );
           }
           throw new UnexpectedError();
       }
